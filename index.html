@@ -3,69 +3,85 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Receta Médica Personalizada 2025</title>
+  <title>Receta Médica 2025</title>
+
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #ffffff;
       margin: 0;
       padding: 0;
     }
 
-    header {
+    .container {
+      width: 210mm;
+      min-height: 297mm;
+      background-color: #ffffff;
+      margin: 20px auto;
+      padding: 20mm;
+      border: 1px solid #000;
+      box-sizing: border-box;
+    }
+
+    .header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      background: white;
-      padding: 10px 20px;
+      align-items: flex-start;
       border-bottom: 2px solid #000;
+      padding-bottom: 10px;
     }
 
     .logo {
-      width: 120px;
+      width: 100px;
       height: auto;
       object-fit: contain;
     }
 
-    .receta {
-      max-width: 800px;
-      background: #fff;
-      margin: 30px auto;
-      padding: 20px;
-      border: 1px solid #000;
-    }
-
-    .receta h2 {
+    .titulo {
       text-align: center;
+      font-weight: bold;
       text-transform: uppercase;
-      border-bottom: 1px solid #000;
-      padding-bottom: 5px;
-      margin-bottom: 15px;
-    }
-
-    .info {
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    .campo {
-      margin: 5px 0;
-    }
-
-    .barcode, #qr {
-      text-align: center;
+      font-size: 16px;
       margin-top: 10px;
     }
 
-    .boton {
+    .folio {
+      text-align: right;
+      margin-top: 5px;
+      font-weight: bold;
+    }
+
+    .datos {
+      margin-top: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .datos strong {
       display: inline-block;
-      margin: 15px 5px 0 0;
-      background: #007bff;
-      color: #fff;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 4px;
-      cursor: pointer;
+      width: 200px;
+    }
+
+    .section {
+      border: 1px solid #000;
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    .medicamentos {
+      font-size: 13px;
+      margin-top: 10px;
+      border-top: 1px solid #000;
+      border-bottom: 1px solid #000;
+      padding: 10px 0;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      text-align: center;
+      border-top: 1px solid #000;
+      padding-top: 10px;
     }
 
     .formulario {
@@ -74,6 +90,7 @@
       margin: 30px auto;
       padding: 20px;
       border: 1px solid #ccc;
+      border-radius: 8px;
     }
 
     .formulario label {
@@ -90,159 +107,170 @@
       border-radius: 4px;
     }
 
-    .whatsapp {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #25d366;
+    .boton {
+      background: #007bff;
       color: white;
-      border-radius: 50%;
-      padding: 12px;
-      font-size: 24px;
-      text-align: center;
-      text-decoration: none;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 15px;
     }
 
-    .banco {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      background: white;
-      border: 1px solid #ccc;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 13px;
+    .firma {
+      margin-top: 20px;
+      text-align: left;
     }
 
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .logo { width: 100px; }
+    .firma img {
+      width: 180px;
+      height: auto;
+      border-bottom: 1px solid #000;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <!-- AGREGA AQUÍ TUS LOGOS MANUALMENTE -->
-    <!-- Ejemplo: <img src="images/logo-izquierdo.png" class="logo" alt="Logo Izquierdo"> -->
-    <img src="images/logo-izquierdo.png" class="logo" alt="Logo Izquierdo">
-    <h1>Receta Médica Personalizada</h1>
-    <img src="images/logo-derecho.png" class="logo" alt="Logo Derecho">
-  </header>
-
-  <div class="receta" id="receta">
-    <h2>Receta Individual</h2>
-    <div class="info">
-      <div class="campo"><strong>Dirección:</strong> <span id="direccion">—</span></div>
-      <div class="campo"><strong>Delegación/Estado:</strong> <span id="delegacion">—</span></div>
-      <div class="campo"><strong>Fecha:</strong> <span id="fecha">—</span></div>
-      <div class="campo"><strong>NSS:</strong> <span id="nss">—</span></div>
-      <div class="campo"><strong>Nombre:</strong> <span id="nombre">—</span></div>
-      <div class="campo"><strong>CURP:</strong> <span id="curp">—</span></div>
-      <div class="campo"><strong>Fecha de nacimiento:</strong> <span id="nacimiento">—</span></div>
-      <div class="campo"><strong>Clínica:</strong> <span id="clinica">—</span></div>
-      <div class="campo"><strong>Consultorio:</strong> <span id="consultorio">—</span></div>
-      <div class="campo"><strong>Turno:</strong> <span id="turno">—</span></div>
-    </div>
-
-    <div class="barcode">
-      <svg id="barcode"></svg>
-    </div>
-
-    <div id="qr"></div>
-  </div>
-
   <div class="formulario">
-    <h3>🚨 Receta 2025 - Llena con datos del cliente 🚨</h3>
+    <h3>🚨 Receta Médica 2025 - Llena los datos 🚨</h3>
 
-    <label>Dirección IMSS:</label>
-    <input id="inputDireccion" type="text">
-
-    <label>Delegación o estado:</label>
-    <input id="inputDelegacion" type="text">
-
-    <label>Fecha:</label>
-    <input id="inputFecha" type="text">
-
-    <label>NSS:</label>
-    <input id="inputNSS" type="text">
-
-    <label>Nombre:</label>
-    <input id="inputNombre" type="text">
+    <label>Nombre del paciente:</label>
+    <input id="nombre" type="text">
 
     <label>CURP:</label>
-    <input id="inputCURP" type="text">
+    <input id="curp" type="text">
 
-    <label>Fecha de nacimiento:</label>
-    <input id="inputNaci" type="text">
+    <label>NSS:</label>
+    <input id="nss" type="text">
+
+    <label>Delegación o estado:</label>
+    <input id="delegacion" type="text">
+
+    <label>Dirección:</label>
+    <input id="direccion" type="text">
 
     <label>Clínica:</label>
-    <input id="inputClinica" type="text">
+    <input id="clinica" type="text">
 
     <label>Consultorio:</label>
-    <input id="inputConsultorio" type="text">
+    <input id="consultorio" type="text">
 
     <label>Turno:</label>
-    <input id="inputTurno" type="text">
+    <input id="turno" type="text">
+
+    <label>Fecha:</label>
+    <input id="fecha" type="date">
+
+    <label>Medicamentos Recetados:</label>
+    <input id="medicamentos" type="text" placeholder="Ejemplo: Paracetamol 500 mg, 1 cada 8 hrs">
+
+    <label>Firma del Médico (sube imagen PNG/JPG):</label>
+    <input type="file" id="firmaInput" accept="image/*">
 
     <button class="boton" onclick="generarReceta()">Generar Receta</button>
     <button class="boton" onclick="descargarPDF()">Descargar PDF</button>
   </div>
 
-  <a href="https://wa.me/message/AZLK65CETSPQL1" target="_blank" class="whatsapp">💬</a>
+  <div id="receta" class="container" style="display:none;">
+    <div class="header">
+      <!-- Logos personalizados -->
+      <img src="images/logo-izquierdo.png" class="logo" alt="Logo Izquierdo">
+      <div class="titulo">
+        <div>DIRECCIÓN DE PRESTACIONES MÉDICAS</div>
+        <div>RECETA INDIVIDUAL</div>
+      </div>
+      <img src="images/logo-derecho.png" class="logo" alt="Logo Derecho">
+    </div>
 
-  <div class="banco">
-    <strong>Transferencias Bancarias:</strong><br>
-    Cuenta: 1234 5678 9012 3456<br>
-    Autorización: Propietario del sitio
+    <div class="folio">
+      <div>Folio: <span id="folio"></span></div>
+      <div>Fecha: <span id="fechaReceta"></span></div>
+    </div>
+
+    <div class="datos">
+      <strong>Nombre del Paciente:</strong> <span id="outNombre"></span><br>
+      <strong>CURP:</strong> <span id="outCurp"></span><br>
+      <strong>NSS:</strong> <span id="outNss"></span><br>
+      <strong>Delegación:</strong> <span id="outDelegacion"></span><br>
+      <strong>Dirección:</strong> <span id="outDireccion"></span><br>
+      <strong>Clínica:</strong> <span id="outClinica"></span><br>
+      <strong>Consultorio:</strong> <span id="outConsultorio"></span><br>
+      <strong>Turno:</strong> <span id="outTurno"></span><br>
+    </div>
+
+    <div class="medicamentos">
+      <strong>Medicamentos Recetados:</strong>
+      <p id="outMedicamentos"></p>
+    </div>
+
+    <div class="firma">
+      <strong>Nombre y Firma del Médico:</strong><br>
+      <img id="firmaPreview" alt="Firma del médico" style="display:none;">
+    </div>
+
+    <div class="footer">
+      <p>ACUDIR EN ESTE MOMENTO A LA FARMACIA</p>
+    </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
-
   <script>
+    function generarFolio() {
+      const hoy = new Date();
+      return hoy.getFullYear().toString() +
+             (hoy.getMonth()+1).toString().padStart(2,'0') +
+             hoy.getDate().toString().padStart(2,'0') +
+             Math.floor(Math.random()*9000+1000);
+    }
+
+    let firmaDataURL = "";
+
+    document.getElementById("firmaInput").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          firmaDataURL = evt.target.result;
+          const img = document.getElementById("firmaPreview");
+          img.src = firmaDataURL;
+          img.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
     function generarReceta() {
-      document.getElementById("direccion").textContent = document.getElementById("inputDireccion").value || "—";
-      document.getElementById("delegacion").textContent = document.getElementById("inputDelegacion").value || "—";
-      document.getElementById("fecha").textContent = document.getElementById("inputFecha").value || "—";
-      document.getElementById("nss").textContent = document.getElementById("inputNSS").value || "—";
-      document.getElementById("nombre").textContent = document.getElementById("inputNombre").value || "—";
-      document.getElementById("curp").textContent = document.getElementById("inputCURP").value || "—";
-      document.getElementById("nacimiento").textContent = document.getElementById("inputNaci").value || "—";
-      document.getElementById("clinica").textContent = document.getElementById("inputClinica").value || "—";
-      document.getElementById("consultorio").textContent = document.getElementById("inputConsultorio").value || "—";
-      document.getElementById("turno").textContent = document.getElementById("inputTurno").value || "—";
+      document.getElementById("receta").style.display = "block";
 
-      // Generar código de barras
-      JsBarcode("#barcode", document.getElementById("inputNSS").value || "00000000000", {
-        format: "CODE128",
-        width: 2,
-        height: 40,
-        displayValue: true
-      });
+      document.getElementById("folio").textContent = generarFolio();
+      document.getElementById("fechaReceta").textContent = document.getElementById("fecha").value || new Date().toLocaleDateString();
+      document.getElementById("outNombre").textContent = document.getElementById("nombre").value;
+      document.getElementById("outCurp").textContent = document.getElementById("curp").value;
+      document.getElementById("outNss").textContent = document.getElementById("nss").value;
+      document.getElementById("outDelegacion").textContent = document.getElementById("delegacion").value;
+      document.getElementById("outDireccion").textContent = document.getElementById("direccion").value;
+      document.getElementById("outClinica").textContent = document.getElementById("clinica").value;
+      document.getElementById("outConsultorio").textContent = document.getElementById("consultorio").value;
+      document.getElementById("outTurno").textContent = document.getElementById("turno").value;
+      document.getElementById("outMedicamentos").textContent = document.getElementById("medicamentos").value;
 
-      // Generar QR
-      document.getElementById("qr").innerHTML = "";
-      new QRCode(document.getElementById("qr"), {
-        text: `Nombre: ${document.getElementById("inputNombre").value}\nNSS: ${document.getElementById("inputNSS").value}`,
-        width: 100,
-        height: 100
-      });
+      if (firmaDataURL) {
+        document.getElementById("firmaPreview").src = firmaDataURL;
+        document.getElementById("firmaPreview").style.display = "block";
+      }
     }
 
     function descargarPDF() {
-      const receta = document.getElementById("receta");
-      html2pdf().set({margin: 0.5, filename: 'receta.pdf', html2canvas: {scale: 2}}).from(receta).save();
+      const element = document.getElementById("receta");
+      const opt = {
+        margin: 0,
+        filename: 'receta_medica.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
     }
   </script>
-
-  <div style="text-align:center; margin:20px;">
-    <p>✅ Si tienes una duda antes de llenar tu información, pregunta tus dudas ✅</p>
-  </div>
-
 </body>
 </html>
