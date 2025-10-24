@@ -1,276 +1,248 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Receta Médica 2025</title>
-
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background-color: #ffffff;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container {
-      width: 210mm;
-      min-height: 297mm;
-      background-color: #ffffff;
-      margin: 20px auto;
-      padding: 20mm;
-      border: 1px solid #000;
-      box-sizing: border-box;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      border-bottom: 2px solid #000;
-      padding-bottom: 10px;
-    }
-
-    .logo {
-      width: 100px;
-      height: auto;
-      object-fit: contain;
-    }
-
-    .titulo {
-      text-align: center;
-      font-weight: bold;
-      text-transform: uppercase;
-      font-size: 16px;
-      margin-top: 10px;
-    }
-
-    .folio {
-      text-align: right;
-      margin-top: 5px;
-      font-weight: bold;
-    }
-
-    .datos {
-      margin-top: 10px;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .datos strong {
-      display: inline-block;
-      width: 200px;
-    }
-
-    .section {
-      border: 1px solid #000;
-      padding: 10px;
-      margin-top: 10px;
-    }
-
-    .medicamentos {
-      font-size: 13px;
-      margin-top: 10px;
-      border-top: 1px solid #000;
-      border-bottom: 1px solid #000;
-      padding: 10px 0;
-    }
-
-    .footer {
-      margin-top: 20px;
-      font-size: 12px;
-      text-align: center;
-      border-top: 1px solid #000;
-      padding-top: 10px;
-    }
-
-    .formulario {
-      max-width: 800px;
-      background: #fff;
-      margin: 30px auto;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-
-    .formulario label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-
-    .formulario input {
-      width: 100%;
-      padding: 8px;
-      margin-top: 4px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    .boton {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 15px;
-    }
-
-    .firma {
-      margin-top: 20px;
-      text-align: left;
-    }
-
-    .firma img {
-      width: 180px;
-      height: auto;
-      border-bottom: 1px solid #000;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Receta IMSS 2025</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: white;
+  margin: 0;
+  padding: 20px;
+}
+.container {
+  max-width: 800px;
+  margin: auto;
+}
+form {
+  background: #f5f5f5;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+label {
+  font-weight: bold;
+}
+input, textarea {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+}
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+button:hover {
+  background-color: #0056b3;
+}
+#receta {
+  border: 1px solid black;
+  padding: 20px;
+  background: white;
+  width: 794px;
+  margin: auto;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.header img {
+  width: 80px;
+  height: 80px;
+}
+.header .info {
+  border: 1px solid black;
+  padding: 10px;
+  font-size: 12px;
+}
+h3 {
+  text-align: center;
+  margin: 10px 0;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 5px;
+}
+.table td, .table th {
+  border: 1px solid black;
+  padding: 5px;
+  font-size: 12px;
+}
+.firma {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 12px;
+}
+.footer {
+  text-align: center;
+  font-size: 12px;
+  margin-top: 15px;
+}
+#firmaImg {
+  max-width: 200px;
+  max-height: 80px;
+  display: block;
+  margin: 10px auto;
+}
+.qr {
+  text-align: right;
+}
+</style>
 </head>
 <body>
 
-  <div class="formulario">
-    <h3>🚨 Receta Médica 2025 - Llena los datos 🚨</h3>
-
-    <label>Nombre del paciente:</label>
-    <input id="nombre" type="text">
-
-    <label>CURP:</label>
-    <input id="curp" type="text">
-
+<div class="container">
+  <h2>🚨 Receta IMSS 2025 — Formulario 🚨</h2>
+  <form id="formulario">
+    <label>Dirección IMSS:</label>
+    <input type="text" id="direccion">
+    <label>Delegación o Estado:</label>
+    <input type="text" id="delegacion">
+    <label>Fecha Receta:</label>
+    <input type="text" id="fecha">
     <label>NSS:</label>
-    <input id="nss" type="text">
-
-    <label>Delegación o estado:</label>
-    <input id="delegacion" type="text">
-
-    <label>Dirección:</label>
-    <input id="direccion" type="text">
-
+    <input type="text" id="nss">
+    <label>Nombre del Paciente:</label>
+    <input type="text" id="nombre">
+    <label>CURP:</label>
+    <input type="text" id="curp">
+    <label>Fecha de Nacimiento:</label>
+    <input type="text" id="nacimiento">
     <label>Clínica:</label>
-    <input id="clinica" type="text">
-
+    <input type="text" id="clinica">
     <label>Consultorio:</label>
-    <input id="consultorio" type="text">
-
+    <input type="text" id="consultorio">
     <label>Turno:</label>
-    <input id="turno" type="text">
+    <input type="text" id="turno">
+    <label>Medicamentos con su MG:</label>
+    <textarea id="medicamentos" rows="5"></textarea>
 
-    <label>Fecha:</label>
-    <input id="fecha" type="date">
+    <label>Subir firma del médico (imagen PNG o JPG):</label>
+    <input type="file" id="firmaFile" accept="image/*">
 
-    <label>Medicamentos Recetados:</label>
-    <input id="medicamentos" type="text" placeholder="Ejemplo: Paracetamol 500 mg, 1 cada 8 hrs">
+    <button type="button" onclick="llenarReceta()">Generar Receta</button>
+    <button type="button" onclick="generarQR()">Generar QR</button>
+    <button type="button" onclick="descargarPDF()">Descargar PDF</button>
+  </form>
 
-    <label>Firma del Médico (sube imagen PNG/JPG):</label>
-    <input type="file" id="firmaInput" accept="image/*">
-
-    <button class="boton" onclick="generarReceta()">Generar Receta</button>
-    <button class="boton" onclick="descargarPDF()">Descargar PDF</button>
-  </div>
-
-  <div id="receta" class="container" style="display:none;">
+  <div id="receta">
     <div class="header">
-      <!-- Logos personalizados -->
-      <img src="images/logo-izquierdo.png" class="logo" alt="Logo Izquierdo">
-      <div class="titulo">
-        <div>DIRECCIÓN DE PRESTACIONES MÉDICAS</div>
-        <div>RECETA INDIVIDUAL</div>
+      <div>
+        <!-- Puedes cambiar este logo -->
+        <img src="logo.png" alt="Logo IMSS">
+        <p><strong>INSTITUTO MEXICANO DEL SEGURO SOCIAL</strong><br>SEGURIDAD Y SOLIDARIDAD SOCIAL</p>
       </div>
-      <img src="images/logo-derecho.png" class="logo" alt="Logo Derecho">
+      <div class="info">
+        <p><strong>NSS:</strong> <span id="r_nss"></span><br>
+        <strong>NOMBRE DEL PACIENTE:</strong> <span id="r_nombre"></span><br>
+        <strong>CURP:</strong> <span id="r_curp"></span><br>
+        <strong>DELEGACIÓN:</strong> <span id="r_delegacion"></span><br>
+        <strong>UNIDAD:</strong> <span id="r_clinica"></span><br>
+        <strong>CONSULTORIO:</strong> <span id="r_consultorio"></span><br>
+        <strong>TURNO:</strong> <span id="r_turno"></span><br>
+        <strong>Folio:</strong> <span id="r_folio"></span></p>
+      </div>
     </div>
 
-    <div class="folio">
-      <div>Folio: <span id="folio"></span></div>
-      <div>Fecha: <span id="fechaReceta"></span></div>
-    </div>
+    <h3>RECETA INDIVIDUAL</h3>
+    <p><strong>Dirección:</strong> <span id="r_direccion"></span></p>
 
-    <div class="datos">
-      <strong>Nombre del Paciente:</strong> <span id="outNombre"></span><br>
-      <strong>CURP:</strong> <span id="outCurp"></span><br>
-      <strong>NSS:</strong> <span id="outNss"></span><br>
-      <strong>Delegación:</strong> <span id="outDelegacion"></span><br>
-      <strong>Dirección:</strong> <span id="outDireccion"></span><br>
-      <strong>Clínica:</strong> <span id="outClinica"></span><br>
-      <strong>Consultorio:</strong> <span id="outConsultorio"></span><br>
-      <strong>Turno:</strong> <span id="outTurno"></span><br>
-    </div>
+    <table class="table">
+      <tr>
+        <th>Fecha:</th>
+        <td id="r_fecha"></td>
+        <th>Primer Nivel de Atención</th>
+      </tr>
+    </table>
 
-    <div class="medicamentos">
-      <strong>Medicamentos Recetados:</strong>
-      <p id="outMedicamentos"></p>
+    <div id="r_medicamentos" style="margin-top:10px; font-size:12px;"></div>
+
+    <div class="qr">
+      <canvas id="qrCanvas"></canvas>
     </div>
 
     <div class="firma">
-      <strong>Nombre y Firma del Médico:</strong><br>
-      <img id="firmaPreview" alt="Firma del médico" style="display:none;">
+      <p><strong>Nombre y firma del Médico:</strong></p>
+      <img id="firmaImg" src="" alt="Firma del médico">
+      <p><strong>Cédula Profesional:</strong> ____________________<br>
+      <strong>Matrícula:</strong> ____________________</p>
     </div>
 
     <div class="footer">
       <p>ACUDIR EN ESTE MOMENTO A LA FARMACIA</p>
     </div>
   </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
-  <script>
-    function generarFolio() {
-      const hoy = new Date();
-      return hoy.getFullYear().toString() +
-             (hoy.getMonth()+1).toString().padStart(2,'0') +
-             hoy.getDate().toString().padStart(2,'0') +
-             Math.floor(Math.random()*9000+1000);
+<script>
+let folio = '';
+
+function generarFolio() {
+  const random = Math.floor(Math.random() * 1000000000);
+  folio = '3021' + random.toString().padStart(8, '0');
+  document.getElementById("r_folio").innerText = folio;
+}
+
+function llenarReceta() {
+  generarFolio();
+  document.getElementById("r_direccion").innerText = document.getElementById("direccion").value;
+  document.getElementById("r_delegacion").innerText = document.getElementById("delegacion").value;
+  document.getElementById("r_fecha").innerText = document.getElementById("fecha").value;
+  document.getElementById("r_nss").innerText = document.getElementById("nss").value;
+  document.getElementById("r_nombre").innerText = document.getElementById("nombre").value;
+  document.getElementById("r_curp").innerText = document.getElementById("curp").value;
+  document.getElementById("r_clinica").innerText = document.getElementById("clinica").value;
+  document.getElementById("r_consultorio").innerText = document.getElementById("consultorio").value;
+  document.getElementById("r_turno").innerText = document.getElementById("turno").value;
+  document.getElementById("r_medicamentos").innerText = document.getElementById("medicamentos").value;
+}
+
+document.getElementById("firmaFile").addEventListener("change", function(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById("firmaImg").src = e.target.result;
     }
+    reader.readAsDataURL(file);
+  }
+});
 
-    let firmaDataURL = "";
+function generarQR() {
+  if (!folio) {
+    alert("Primero genera la receta para obtener un folio.");
+    return;
+  }
+  const qr = new QRious({
+    element: document.getElementById("qrCanvas"),
+    value: folio,
+    size: 100
+  });
+}
 
-    document.getElementById("firmaInput").addEventListener("change", function(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          firmaDataURL = evt.target.result;
-          const img = document.getElementById("firmaPreview");
-          img.src = firmaDataURL;
-          img.style.display = "block";
-        };
-        reader.readAsDataURL(file);
-      }
-    });
+function descargarPDF() {
+  const element = document.getElementById("receta");
+  const opt = {
+    margin: 0,
+    filename: 'receta_imss_2025.pdf',
+    image: { type: 'jpeg', quality: 1 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'px', format: 'a4', orientation: 'portrait' }
+  };
+  html2pdf().set(opt).from(element).save();
+}
+</script>
 
-    function generarReceta() {
-      document.getElementById("receta").style.display = "block";
-
-      document.getElementById("folio").textContent = generarFolio();
-      document.getElementById("fechaReceta").textContent = document.getElementById("fecha").value || new Date().toLocaleDateString();
-      document.getElementById("outNombre").textContent = document.getElementById("nombre").value;
-      document.getElementById("outCurp").textContent = document.getElementById("curp").value;
-      document.getElementById("outNss").textContent = document.getElementById("nss").value;
-      document.getElementById("outDelegacion").textContent = document.getElementById("delegacion").value;
-      document.getElementById("outDireccion").textContent = document.getElementById("direccion").value;
-      document.getElementById("outClinica").textContent = document.getElementById("clinica").value;
-      document.getElementById("outConsultorio").textContent = document.getElementById("consultorio").value;
-      document.getElementById("outTurno").textContent = document.getElementById("turno").value;
-      document.getElementById("outMedicamentos").textContent = document.getElementById("medicamentos").value;
-
-      if (firmaDataURL) {
-        document.getElementById("firmaPreview").src = firmaDataURL;
-        document.getElementById("firmaPreview").style.display = "block";
-      }
-    }
-
-    function descargarPDF() {
-      const element = document.getElementById("receta");
-      const opt = {
-        margin: 0,
-        filename: 'receta_medica.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-      html2pdf().set(opt).from(element).save();
-    }
-  </script>
 </body>
 </html>
