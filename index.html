@@ -50,8 +50,10 @@
         .btn-action:hover { background-color: #d35400; }
         .back-button { background-color: #95a5a6; width:auto; padding:10px 15px; font-size:1em; }
         
-        /* ⚠️ Estilos originales de botones eliminados/reemplazados por menu-card */
-        .form-section { display:none; }
+        /* Estilos de Control de Vistas */
+        .form-section, #main-menu { display:none; }
+        #app-container { min-height: 500px; } /* Asegura espacio para la vista inicial */
+        
         #btn-go-admin { width:100%; background-color:#2c3e50; color:white; padding:10px; margin-top:20px; border:none; border-radius:5px; cursor:pointer; font-size:1em; transition: background-color 0.3s; }
         #btn-go-admin:hover { background-color:#1f2a36; }
         .status-page { text-align:center; padding:50px; background-color:#fff; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); min-height:250px; display:flex; flex-direction:column; justify-content:center; }
@@ -65,23 +67,21 @@
         .fixed-payment-info { position:fixed; bottom:0; right:0; background-color:#34495e; color:white; padding:10px 15px; border-top-left-radius:8px; font-size:0.85em; z-index:99; text-align:right; max-width:350px; }
         .fixed-payment-info strong { color:#f1c40f; }
         .fixed-payment-info p { margin:2px 0; }
-        .request-item { border:1px solid #ccc; padding:10px; margin-bottom:10px; background-color:#fff; display:flex; justify-content:space-between; align-items:center; }
+        .request-item, .client-item { border:1px solid #ccc; padding:10px; margin-bottom:10px; background-color:#fff; display:flex; justify-content:space-between; align-items:center; }
         .request-actions button { width:auto; padding:8px 12px; font-size:0.9em; margin-left:10px; }
         .btn-authorize { background-color:#3498db; color:#fff; border:none; padding:8px 10px; border-radius:4px; cursor:pointer; }
         .btn-reject { background-color:#c0392b; color:#fff; border:none; padding:8px 10px; border-radius:4px; cursor:pointer; }
         .download-link-box { background-color:#f0f0f0; border:1px dashed #3498db; padding:10px; margin-top:10px; word-break:break-all; font-size:0.9em; }
         input[type="file"] { padding:6px 10px; }
 
-        /* --- NUEVOS ESTILOS PARA LA CUADRÍCULA DE ICONOS Y ANIMACIÓN --- */
+        /* Estilos de Grid y Menú */
         .icon-grid {
             display: grid;
-            /* Crea columnas flexibles, mínimo 150px de ancho */
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-top: 10px;
             margin-bottom: 25px;
         }
-
         .menu-card {
             background-color: #ffffff;
             color: #34495e;
@@ -90,28 +90,23 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             cursor: pointer;
             text-align: center;
-            /* 💡 Añade la transición para el efecto suave */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 120px; 
-            border: 1px solid #eee; /* Borde suave */
+            border: 1px solid #eee;
         }
-
-        /* 💡 ANIMACIÓN: Efecto al pasar el ratón */
         .menu-card:hover {
-            transform: scale(1.05); /* Escala ligeramente (zoom) */
-            box-shadow: 0 8px 15px rgba(0,0,0,0.25); /* Sombra más pronunciada */
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.25);
         }
-
         .menu-card i {
-            font-size: 2.5em; /* Tamaño grande para el icono */
+            font-size: 2.5em;
             margin-bottom: 8px;
             transition: color 0.3s ease;
         }
-
         .menu-card strong {
             font-size: 0.9em;
             font-weight: bold;
@@ -131,6 +126,23 @@
         .category-receta:hover i { color: #1e8449; }
         .category-certificado:hover i { color: #2980b9; }
         .category-especializado:hover i { color: #8e44ad; }
+        
+        /* Estilos para el log de actividad */
+        #activity-log-display {
+            max-height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .log-entry {
+            border-bottom: 1px dashed #eee;
+            padding: 5px 0;
+            font-size: 0.85em;
+        }
+        .log-entry:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
@@ -142,6 +154,40 @@
     </div>
 
     <div id="app-container">
+
+        <div id="auth-splash" class="form-section" style="display:block;">
+            <h2>👤 Acceso Requerido</h2>
+            <p>Inicie sesión para acceder al menú de servicios, o regístrese si es un usuario nuevo.</p>
+
+            <div id="login-form" class="input-group">
+                <h3>Iniciar Sesión</h3>
+                <label for="loginUser">Correo Electrónico:</label>
+                <input type="email" id="loginUser" placeholder="trollgaga999@gmail.com" value="trollgaga999@gmail.com">
+                <label for="loginPass">Contraseña:</label>
+                <input type="password" id="loginPass" placeholder="Ingrese su contraseña" value="Johan207">
+                <button class="btn-action" style="background-color:#2c3e50;" onclick="authenticateUser()">Iniciar Sesión</button>
+            </div>
+            
+            <div class="input-group">
+                <h3>¿No tiene cuenta?</h3>
+                <p>Regístrese y espere la autorización del administrador.</p>
+                <button class="btn-action back-button" style="background-color: #3498db;" onclick="showForm('register')">Regístrarme Ahora</button>
+            </div>
+        </div>
+        <div id="form-register" class="form-section">
+            <button class="back-button" onclick="showForm('auth_splash')">← Volver al Acceso</button>
+            <h2>📝 Registro de Nuevo Usuario</h2>
+            <p>Complete los datos. Su cuenta quedará en estado <strong>PENDIENTE</strong> hasta que el administrador la apruebe.</p>
+            <div class="input-group">
+                <label for="regName">Nombre Completo:</label>
+                <input type="text" id="regName" placeholder="Su nombre completo" required>
+                <label for="regUser">Correo Electrónico (Será su Usuario):</label>
+                <input type="email" id="regUser" placeholder="Ingrese su email" required>
+                <label for="regPass">Contraseña:</label>
+                <input type="password" id="regPass" placeholder="Cree una contraseña" required>
+                <button class="btn-action" style="background-color:#27ae60;" onclick="registerUser()">Registrar Solicitud de Cuenta</button>
+            </div>
+        </div>
         <div id="main-menu">
             
             <h2>🌐 Acceso a Grupo y Soporte</h2>
@@ -153,7 +199,6 @@
             </div>
             
             <hr/>
-
             <h2>✉️ Cartas de Recomendación</h2>
             <div class="icon-grid">
                 <div class="menu-card category-carta" onclick="showForm('laboral')">
@@ -238,49 +283,30 @@
             
             <hr/>
 
-            <button id="btn-go-admin" onclick="showForm('admin_login')">Acceso de Administrador</button>
-        </div>
+            <button id="btn-go-admin" onclick="showForm('admin_dashboard')">Panel de Administrador</button>
+            <button class="btn-action back-button" style="margin-top:10px;" onclick="logOut()">Cerrar Sesión</button>
 
-        <div id="admin-login" class="form-section">
-            <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
-            <h2>🔒 Acceso de Administrador/Usuario</h2>
-            <p>Ingrese sus credenciales para autorizar las solicitudes.</p>
-            <div class="input-group">
-                <label for="adminUser">Usuario:</label>
-                <input type="text" id="adminUser" placeholder="Ingrese su usuario" value="trollgaga999@gmail.com">
-                <label for="adminPass">Contraseña:</label>
-                <input type="password" id="adminPass" placeholder="Ingrese su contraseña" value="Johan207">
-                <button class="btn-action" style="background-color:#2c3e50;" onclick="authenticateAdmin()">Iniciar Sesión</button>
-                <button class="btn-action back-button" style="margin-top:10px; background-color: #3498db;" onclick="showForm('register')">¿No tienes cuenta? Regístrate</button>
-                </div>
-        </div>
-
-        <div id="form-register" class="form-section">
-            <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
-            <h2>📝 Registro de Nuevo Usuario</h2>
-            <p>Complete los datos para crear su cuenta y acceder a los servicios.</p>
-            <div class="input-group">
-                <label for="regName">Nombre Completo:</label>
-                <input type="text" id="regName" placeholder="Su nombre completo" required>
-                <label for="regUser">Correo Electrónico:</label>
-                <input type="email" id="regUser" placeholder="Ingrese su email" required>
-                <label for="regPass">Contraseña:</label>
-                <input type="password" id="regPass" placeholder="Cree una contraseña" required>
-                <button class="btn-action" style="background-color:#27ae60;" onclick="registerUser()">Registrarme</button>
-                <button class="btn-action back-button" onclick="showForm('admin_login')">← Volver al Acceso</button>
-            </div>
         </div>
         <div id="admin-dashboard" class="form-section">
-            <button class="back-button" onclick="showForm('menu')">← Cerrar Sesión</button>
-            <h2>⚙️ Panel de Autorización de Solicitudes</h2>
-            <p>Al autorizar, el cliente verá automáticamente el botón de descarga en su página de espera.</p>
+            <button class="back-button" onclick="logOut()">← Cerrar Sesión</button>
+            <h2>⚙️ Panel de Administrador</h2>
 
-            <h3>Solicitudes Pendientes:</h3>
+            <h3>Clientes Registrados (Autorización)</h3>
+            <div id="client-authorization-list" class="input-group">
+                <p id="no-clients-msg">Cargando lista de clientes...</p>
+            </div>
+            
+            <h3>Registro de Actividad del Último Cliente Seleccionado</h3>
+            <div id="activity-log-display" class="input-group">
+                <p>Seleccione un cliente para ver su actividad detallada.</p>
+            </div>
+
+            <h3>Solicitudes de Documentos Pendientes</h3>
+            <p>Al autorizar, el cliente verá automáticamente el botón de descarga en su página de espera.</p>
             <div id="pending-requests-list" class="input-group">
-                <p id="no-requests-msg">No hay solicitudes pendientes en el almacenamiento local de este navegador.</p>
+                <p id="no-requests-msg">No hay solicitudes pendientes.</p>
             </div>
         </div>
-
         <div id="form-receta_similares" class="form-section">
             <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
 
@@ -438,27 +464,28 @@
         const { jsPDF } = window.jspdf;
         const STORAGE_KEY = 'pending_requests_list';
         const APPROVED_KEY = 'approved_requests_list';
-        // START: MODIFICACIÓN - Nueva clave para usuarios registrados
+        // 🔑 Nuevas claves para usuarios y actividad
         const REGISTERED_USERS_KEY = 'registered_app_users';
-        // END: MODIFICACIÓN
+        const USER_ACTIVITY_KEY = 'user_activity_log';
+        // 🔑 Credenciales de administrador fijas (Solo para el Admin)
         const ADMIN_USER = 'trollgaga999@gmail.com';
         const ADMIN_PASS = 'Johan207';
-
+        // 🔑 Estado de la sesión
         let statusCheckInterval = null;
+        let currentUser = null; // Variable global para el usuario logueado
 
         function getBaseUrl() {
             return window.location.href.split('#')[0];
         }
 
         const viewIdMap = {
+            'auth_splash': 'auth-splash', // Nueva pantalla de inicio
+            'register': 'form-register', // Nuevo formulario de registro
             'menu': 'main-menu',
             'laboral': 'form-laboral',
             'personal': 'form-personal',
-            'admin_login': 'admin-login',
+            // 'admin_login': 'admin-login', // Reemplazado por 'auth-splash' para simplificar
             'admin_dashboard': 'admin-dashboard',
-            // START: MODIFICACIÓN - Nuevo ID de vista para registro
-            'register': 'form-register',
-            // END: MODIFICACIÓN
             'incapacidad_imss': 'form-incapacidad_imss',
             'receta_similares': 'form-receta_similares',
             'receta_ahorro': 'form-receta_ahorro',
@@ -475,16 +502,31 @@
         };
 
         function showForm(viewId, pushHistory = true) {
+            // Verifica el estado de autenticación para todas las vistas que no son de auth/register
+            const requiresAuth = !['auth_splash', 'register', 'status', 'whatsapp_group'].includes(viewId);
+            const isMenuOrService = viewId === 'menu' || viewIdMap[viewId]?.startsWith('form-');
+            const isDashboard = viewId === 'admin_dashboard';
+            
+            if (requiresAuth && !currentUser) {
+                alert("Debe iniciar sesión para acceder a este contenido.");
+                viewId = 'auth_splash';
+            } else if (isDashboard && (!currentUser || currentUser.user !== ADMIN_USER)) {
+                alert("Acceso denegado. Solo el administrador puede ver el panel.");
+                viewId = 'menu';
+            }
+
             const sections = Object.values(viewIdMap);
             sections.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
+
             const targetId = viewIdMap[viewId] || viewId;
             const viewElement = document.getElementById(targetId);
 
             if (viewId === 'whatsapp_group') {
                 window.open('https://chat.whatsapp.com/GbkvIbPwCRX1JacpJJOS9D', '_blank');
+                logActivity(currentUser?.user || 'anon', 'VIEW_WHATSAPP_GROUP');
                 return;
             }
 
@@ -497,16 +539,26 @@
                     if (viewId !== 'menu') { url += `#${viewId}`; } else { url = getBaseUrl(); }
                     history.pushState(state, '', url);
                 }
+                
+                // Registro de actividad (solo si no es auth/register/status)
+                if (isMenuOrService) {
+                    logActivity(currentUser.user, viewId === 'menu' ? 'ACCESS_MENU' : `VIEW_FORM:${viewId}`);
+                }
+                if (isDashboard) {
+                    logActivity(currentUser.user, 'ACCESS_ADMIN_DASHBOARD');
+                    loadAdminDashboard();
+                }
             }
         }
 
         window.addEventListener('popstate', (e) => {
             const state = history.state;
-            if (!state) { showForm('menu', false); return; }
-            showForm(state.viewId || 'menu', false);
+            if (!state) { showForm('auth_splash', false); return; }
+            showForm(state.viewId || 'auth_splash', false);
         });
 
-        // START: NUEVA FUNCIÓN - Obtener y guardar usuarios
+        // --- FUNCIONES DE ALMACENAMIENTO (USERS & ACTIVITY) ---
+
         function getRegisteredUsers() {
             const data = localStorage.getItem(REGISTERED_USERS_KEY);
             return data ? JSON.parse(data) : [];
@@ -514,6 +566,29 @@
         function saveRegisteredUsers(users) {
             localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(users));
         }
+        
+        function getActivityLog() {
+            const data = localStorage.getItem(USER_ACTIVITY_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+        function saveActivityLog(log) {
+            localStorage.setItem(USER_ACTIVITY_KEY, JSON.stringify(log));
+        }
+
+        function logActivity(userIdentifier, action) {
+            if (!userIdentifier) userIdentifier = 'ANONIMO';
+            
+            const log = getActivityLog();
+            const newEntry = {
+                user: userIdentifier,
+                action: action,
+                timestamp: new Date().toLocaleString()
+            };
+            log.push(newEntry);
+            saveActivityLog(log);
+        }
+
+        // --- FUNCIONES DE AUTENTICACIÓN Y REGISTRO ---
 
         function registerUser() {
             const name = document.getElementById('regName').value.trim();
@@ -531,49 +606,177 @@
 
             const users = getRegisteredUsers();
             if (users.some(u => u.user === user)) {
-                alert("Error: El correo electrónico ya está registrado.");
+                alert("Error: El correo electrónico ya está registrado o en proceso de autorización.");
                 return;
             }
 
-            const newUser = { name: name, user: user, pass: pass, isAdmin: false }; // Añadir isAdmin para distinguir
+            const newUser = { 
+                name: name, 
+                user: user, 
+                pass: pass, 
+                status: 'pending', // Clave: debe ser autorizado
+                timestamp: new Date().toLocaleString()
+            }; 
             users.push(newUser);
             saveRegisteredUsers(users);
 
-            alert("¡Registro exitoso! Ya puede intentar iniciar sesión.");
-            // Limpiar campos y volver a la pantalla de login
+            // Limpiar campos
             document.getElementById('regName').value = '';
             document.getElementById('regUser').value = '';
             document.getElementById('regPass').value = '';
-            showForm('admin_login');
-        }
-        // END: NUEVA FUNCIÓN
 
-        function authenticateAdmin() {
-            const user = document.getElementById('adminUser').value;
-            const pass = document.getElementById('adminPass').value;
+            logActivity(user, 'REGISTER_REQUESTED');
+            alert("¡Solicitud de registro exitosa! Su cuenta está PENDIENTE de autorización por el administrador. Le avisaremos cuando pueda iniciar sesión.");
+            showForm('auth_splash');
+        }
+
+        function authenticateUser() {
+            const user = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
 
             // 1. Check against hardcoded ADMIN
             if (user === ADMIN_USER && pass === ADMIN_PASS) {
-                alert("¡Bienvenido, Administrador! Accediendo al Panel de Autorización.");
+                currentUser = { user: user, name: 'ADMIN', status: 'authorized', isAdmin: true };
+                logActivity(user, 'ADMIN_LOGIN_SUCCESS');
+                alert("¡Bienvenido, Administrador! Accediendo al Panel de Control.");
                 showForm('admin_dashboard');
-                loadPendingRequests();
                 return;
             }
 
-            // 2. Check against registered standard users (Optional for current scope but better practice)
+            // 2. Check against registered standard users
             const registeredUsers = getRegisteredUsers();
             const foundUser = registeredUsers.find(u => u.user === user && u.pass === pass);
 
             if (foundUser) {
-                // Si es un usuario normal, no enviarlo al dashboard, solo mostrar un mensaje
+                if (foundUser.status === 'pending') {
+                    alert(`Acceso denegado: Su cuenta está pendiente de autorización por el administrador.`);
+                    logActivity(user, 'LOGIN_FAIL:PENDING');
+                    return;
+                }
+                
+                // Usuario autorizado
+                currentUser = foundUser;
+                logActivity(user, 'USER_LOGIN_SUCCESS');
                 alert(`¡Bienvenido, ${foundUser.name}! Acceso completado.`);
-                showForm('menu'); // Redirigir al menú principal
+                showForm('menu');
                 return;
             }
             
             // If neither is found
+            logActivity(user, 'LOGIN_FAIL:INVALID_CREDENTIALS');
             alert("Usuario o Contraseña incorrectos. Si no tiene cuenta, por favor regístrese.");
         }
+        
+        function logOut() {
+            if(currentUser) {
+                logActivity(currentUser.user, 'LOGOUT');
+            }
+            currentUser = null;
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
+            showForm('auth_splash');
+        }
+
+        // --- FUNCIONES DEL ADMINISTRADOR ---
+
+        function loadAdminDashboard() {
+            // Cargar solicitudes pendientes (lógica existente)
+            loadPendingRequests();
+            
+            // Cargar clientes registrados (nueva lógica)
+            loadRegisteredClients();
+            
+            // Limpiar log de actividad al cargar
+            document.getElementById('activity-log-display').innerHTML = '<p>Seleccione un cliente para ver su actividad detallada.</p>';
+        }
+
+        function loadRegisteredClients() {
+            const users = getRegisteredUsers();
+            const listElement = document.getElementById('client-authorization-list');
+            listElement.innerHTML = '';
+
+            if (users.length === 0) {
+                listElement.innerHTML = '<p>No hay clientes registrados.</p>';
+                return;
+            }
+
+            users.forEach(user => {
+                const statusColor = user.status === 'authorized' ? '#27ae60' : '#e67e22';
+                const item = document.createElement('div');
+                item.id = `client-${user.user.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                item.className = 'client-item';
+                item.innerHTML = `
+                    <div class="client-info">
+                        <strong>${user.name}</strong>
+                        <p>Email: ${user.user}</p>
+                        <p style="font-size:0.9em;">Estado: <strong style="color:${statusColor};">${user.status.toUpperCase()}</strong></p>
+                    </div>
+                    <div class="client-actions request-actions">
+                        <button class="btn-authorize" ${user.status === 'authorized' ? 'disabled' : ''} onclick="authorizeUser('${user.user}')">Autorizar</button>
+                        <button class="back-button" onclick="viewUserActivity('${user.user}')">Ver Actividad</button>
+                        <button class="btn-reject" onclick="deleteUser('${user.user}')">Eliminar</button>
+                    </div>
+                `;
+                listElement.appendChild(item);
+            });
+        }
+
+        function authorizeUser(userEmail) {
+            if (!confirm(`¿Está seguro de AUTORIZAR al usuario ${userEmail}?`)) return;
+            
+            const users = getRegisteredUsers();
+            const index = users.findIndex(u => u.user === userEmail);
+            
+            if (index > -1) {
+                users[index].status = 'authorized';
+                saveRegisteredUsers(users);
+                logActivity(ADMIN_USER, `AUTHORIZE_USER:${userEmail}`);
+                alert(`Usuario ${userEmail} autorizado. Ya puede iniciar sesión.`);
+                loadRegisteredClients();
+            } else {
+                alert("Error: Usuario no encontrado.");
+            }
+        }
+        
+        function deleteUser(userEmail) {
+            if (!confirm(`¿Está seguro de ELIMINAR al usuario ${userEmail}? Esto es irreversible.`)) return;
+            
+            let users = getRegisteredUsers();
+            const initialLength = users.length;
+            users = users.filter(u => u.user !== userEmail);
+            
+            if (users.length < initialLength) {
+                saveRegisteredUsers(users);
+                logActivity(ADMIN_USER, `DELETE_USER:${userEmail}`);
+                alert(`Usuario ${userEmail} eliminado.`);
+                loadRegisteredClients();
+            } else {
+                alert("Error: Usuario no encontrado.");
+            }
+        }
+
+        function viewUserActivity(userEmail) {
+            const logElement = document.getElementById('activity-log-display');
+            const fullLog = getActivityLog();
+            const userLog = fullLog.filter(entry => entry.user === userEmail).reverse(); // Mostrar lo más reciente primero
+
+            logElement.innerHTML = `<h4>Actividad de: ${userEmail}</h4>`;
+
+            if (userLog.length === 0) {
+                logElement.innerHTML += '<p>No se encontró actividad registrada para este cliente.</p>';
+                return;
+            }
+
+            userLog.forEach(entry => {
+                const item = document.createElement('div');
+                item.className = 'log-entry';
+                item.innerHTML = `[${entry.timestamp}] <strong>${entry.action}</strong>`;
+                logElement.appendChild(item);
+            });
+            logActivity(ADMIN_USER, `VIEW_ACTIVITY_LOG:${userEmail}`);
+        }
+        
+        // --- FUNCIONES EXISTENTES (MODIFICADAS LIGERAMENTE) ---
 
         function getRequests(key) {
             const data = localStorage.getItem(key);
@@ -584,7 +787,13 @@
         }
 
         async function saveSolicitud(tipoCarta) {
-            let nombreSolicitante = 'Cliente', nombreAsunto = tipoCarta.toUpperCase(), pdfBase64 = null;
+            if (!currentUser) {
+                 alert("Error: Debe iniciar sesión para guardar una solicitud.");
+                 return;
+            }
+            let nombreSolicitante = currentUser.name, 
+                nombreAsunto = tipoCarta.toUpperCase(), 
+                pdfBase64 = null;
 
             if (tipoCarta === 'receta_similares') {
                 nombreSolicitante = document.getElementById('nombrePacienteSimilares').value || 'Paciente';
@@ -606,6 +815,7 @@
             const requestId = Date.now().toString();
             const newRequest = {
                 id: requestId,
+                userEmail: currentUser.user, // Se añade el email del solicitante
                 type: tipoCarta,
                 name: nombreAsunto,
                 requesterName: nombreSolicitante,
@@ -618,12 +828,83 @@
             requests.push(newRequest);
             saveRequests(STORAGE_KEY, requests);
 
+            logActivity(currentUser.user, `SAVE_REQUEST:${tipoCarta}:${requestId}`);
+            
             const url = `${getBaseUrl()}#status?id=${requestId}`;
             const state = { viewId: 'status', requestId: requestId };
             history.pushState(state, '', url);
             checkURL();
         }
 
+        function loadPendingRequests() {
+            const requests = getRequests(STORAGE_KEY).filter(req => req.status === 'pending');
+            const listElement = document.getElementById('pending-requests-list');
+            listElement.innerHTML = '';
+            if (requests.length === 0) {
+                listElement.innerHTML = '<p id="no-requests-msg">No hay solicitudes pendientes en el almacenamiento local de este navegador.</p>';
+                return;
+            }
+            requests.forEach(req => {
+                const typeDisplay = req.type.replace(/_/g, ' ').toUpperCase();
+                const item = document.createElement('div');
+                item.id = `request-${req.id}`;
+                item.className = 'request-item';
+                item.innerHTML = `
+                    <div class="request-info">
+                        <strong>${typeDisplay} - ${req.name}</strong>
+                        <p>Solicitante: ${req.requesterName} (Email: ${req.userEmail || 'N/A'})</p>
+                        <p style="font-size:0.8em;">URL del Cliente: <code style="word-break: break-all;">${getBaseUrl()}#status?id=${req.id}</code></p>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn-authorize" onclick="authorizeRequest('${req.id}')">Autorizar</button>
+                        <button class="btn-reject" onclick="deleteRequest('${req.id}', '${STORAGE_KEY}')">Rechazar</button>
+                    </div>
+                `;
+                listElement.appendChild(item);
+            });
+        }
+        
+        function authorizeRequest(requestId) {
+            let pendingRequests = getRequests(STORAGE_KEY);
+            const index = pendingRequests.findIndex(req => req.id === requestId);
+            if (index === -1) {
+                alert("Error: Solicitud no encontrada.");
+                loadPendingRequests();
+                return;
+            }
+            const request = pendingRequests[index];
+            request.status = 'approved';
+            const approvedRequests = getRequests(APPROVED_KEY);
+            approvedRequests.push(request);
+            saveRequests(APPROVED_KEY, approvedRequests);
+            pendingRequests.splice(index, 1);
+            saveRequests(STORAGE_KEY, pendingRequests);
+            
+            logActivity(ADMIN_USER, `AUTHORIZE_REQUEST:${request.type}:${requestId}`);
+            
+            alert(`¡Solicitud Autorizada! El cliente ahora puede descargar el archivo usando el enlace de su página de estatus.`);
+            loadPendingRequests();
+        }
+        
+        function deleteRequest(requestId, key) {
+            if (!confirm(`¿Está seguro de ELIMINAR esta solicitud (ID: ${requestId})?`)) return;
+
+            let requests = getRequests(key);
+            const index = requests.findIndex(req => req.id === requestId);
+            
+            if (index > -1) {
+                const requestType = requests[index].type;
+                requests.splice(index, 1);
+                saveRequests(key, requests);
+                
+                logActivity(ADMIN_USER, `DELETE_REQUEST:${requestType}:${requestId}`);
+            }
+            loadPendingRequests();
+        }
+        
+        // El resto de funciones (checkURL, checkStatus, triggerDownload, generarPDFRecetaSimilares, etc.) se mantienen igual
+        // ... (las funciones son muy largas para repetir, asumo que se mantienen inalteradas desde el archivo previo para no sobrecargar el código)
+        
         function checkURL() {
             if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
             const hash = window.location.hash.substring(1);
@@ -637,7 +918,12 @@
                 statusCheckInterval = setInterval(() => checkStatus(requestId), 5000);
                 return;
             }
-            showForm('menu', false);
+            // Si no hay hash de estatus y no hay sesión, ir al splash
+            if (!currentUser) {
+                showForm('auth_splash', false);
+            } else {
+                showForm('menu', false);
+            }
         }
 
         function checkStatus(requestId) {
@@ -678,7 +964,7 @@
                 return;
             }
             const pdfBase64 = request.pdfBase64;
-            const name = request.name.toUpperCase().replace(/\s+/g, '_');
+            const name = request.name.toUpperCase().replace(/\s/g, '_');
             const type = request.type.toUpperCase().replace(/_/g, '-');
             const link = document.createElement('a');
             link.href = `data:application/pdf;base64,${pdfBase64}`;
@@ -686,6 +972,8 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            
+            if(currentUser) logActivity(currentUser.user, `DOWNLOAD_DOCUMENT:${request.type}:${requestId}`);
 
             const statusPage = document.getElementById('status-page');
             const disclaimer = statusPage.querySelector('.disclaimer-notice') ? statusPage.querySelector('.disclaimer-notice').outerHTML : '';
@@ -697,64 +985,20 @@
                 </div>
             `;
         }
+        
+        // Funciones de PDF se mantienen sin cambios
 
-        function loadPendingRequests() {
-            const requests = getRequests(STORAGE_KEY).filter(req => req.status === 'pending');
-            const listElement = document.getElementById('pending-requests-list');
-            listElement.innerHTML = '';
-            if (requests.length === 0) {
-                listElement.innerHTML = '<p id="no-requests-msg">No hay solicitudes pendientes en el almacenamiento local de este navegador.</p>';
-                return;
-            }
-            requests.forEach(req => {
-                const typeDisplay = req.type.replace(/_/g, ' ').toUpperCase();
-                const item = document.createElement('div');
-                item.id = `request-${req.id}`;
-                item.className = 'request-item';
-                item.innerHTML = `
-                    <div class="request-info">
-                        <strong>${typeDisplay} - ${req.name}</strong>
-                        <p>Solicitante: ${req.requesterName} (ID: ${req.id})</p>
-                        <p style="font-size:0.8em;">URL del Cliente: <code style="word-break: break-all;">${getBaseUrl()}#status?id=${req.id}</code></p>
-                    </div>
-                    <div class="request-actions">
-                        <button class="btn-authorize" onclick="authorizeRequest('${req.id}')">Autorizar</button>
-                        <button class="btn-reject" onclick="deleteRequest('${req.id}', '${STORAGE_KEY}')">Rechazar</button>
-                    </div>
-                `;
-                listElement.appendChild(item);
-            });
-        }
+        const fileToBase64 = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => resolve(null);
+        });
 
-        function authorizeRequest(requestId) {
-            let pendingRequests = getRequests(STORAGE_KEY);
-            const index = pendingRequests.findIndex(req => req.id === requestId);
-            if (index === -1) {
-                alert("Error: Solicitud no encontrada.");
-                loadPendingRequests();
-                return;
-            }
-            const request = pendingRequests[index];
-            request.status = 'approved';
-            const approvedRequests = getRequests(APPROVED_KEY);
-            approvedRequests.push(request);
-            saveRequests(APPROVED_KEY, approvedRequests);
-            pendingRequests.splice(index, 1);
-            saveRequests(STORAGE_KEY, pendingRequests);
-            alert(`¡Solicitud Autorizada! El cliente ahora puede descargar el archivo usando el enlace de su página de estatus.`);
-            loadPendingRequests();
-        }
-
-        function deleteRequest(requestId, key) {
-            const confirmMsg = key === STORAGE_KEY ? "¿Está seguro de rechazar y eliminar esta solicitud pendiente?" : "¿Está seguro de eliminar esta solicitud APROBADA del historial del administrador?";
-            if (!confirm(confirmMsg)) return;
-            let requests = getRequests(key);
-            const index = requests.findIndex(req => req.id === requestId);
-            if (index > -1) {
-                requests.splice(index, 1);
-                saveRequests(key, requests);
-            }
-            loadPendingRequests();
+        function generarNumeroAleatorio() {
+            let num = '';
+            for (let i=0;i<10;i++) num += Math.floor(Math.random()*10).toString();
+            return num;
         }
 
         function drawJustifiedText(doc, text, x, y, maxWidth, lineHeight) {
@@ -771,27 +1015,13 @@
             return currentY;
         }
 
-        const fileToBase64 = (file) => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => resolve(null);
-        });
-
-        function generarNumeroAleatorio() {
-            let num = '';
-            for (let i=0;i<10;i++) num += Math.floor(Math.random()*10).toString();
-            return num;
-        }
-
         function drawBarcodeStyled(doc, x, y, width, height, code) {
             const digits = code.split('');
             const totalParts = digits.length * 4;
             const unit = width / totalParts;
             let cursor = x;
-            doc.setFillColor(0); // Barras negras
+            doc.setFillColor(0); 
             for (let i = 0; i < digits.length; i++) {
-                // Patrón simplificado de un código de barras de 10 dígitos (para simulación visual)
                 const d = parseInt(digits[i], 10);
                 const pattern = [
                     1 + (d % 3),
@@ -800,8 +1030,8 @@
                     1 + ((d + 1) % 2)
                 ];
                 for (let p = 0; p < pattern.length; p++) {
-                    const w = Math.max(0.5, unit * pattern[p] / 3); // Ajuste para que se vea mejor
-                    if (p % 2 === 0) { // Dibuja la barra (pares)
+                    const w = Math.max(0.5, unit * pattern[p] / 3);
+                    if (p % 2 === 0) { 
                         doc.rect(cursor, y, w, height, 'F');
                     }
                     cursor += w;
@@ -823,7 +1053,6 @@
             </svg>`
         );
 
-        /* FUNCIÓN DE GENERACIÓN DE PDF (Sin cambios, ya que no se solicitó corregir el PDF) */
         async function generarPDFRecetaSimilares(descargar = true) {
             const doc = new jsPDF('p', 'mm', 'a4');
             const pageWidth = doc.internal.pageSize.getWidth();
@@ -887,8 +1116,8 @@
             doc.text('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', pageWidth/2, y + 18, { align: 'center' });
 
             // Código de barras MÁS PEQUEÑO en la esquina superior derecha
-            const barcodeW = 45;  // Reducido de 70 a 45
-            const barcodeH = 12;  // Reducido de 18 a 12
+            const barcodeW = 45;
+            const barcodeH = 12;
             const barcodeX = pageWidth - margin - barcodeW;
             const barcodeY = y + 4;
             drawBarcodeStyled(doc, barcodeX, barcodeY, barcodeW, barcodeH, barcodeNumber);
@@ -1079,6 +1308,7 @@
             }
         }
 
+
         window.addEventListener('load', () => {
             checkURL();
         });
@@ -1086,3 +1316,4 @@
     </script>
 </body>
 </html>
+```<ctrl63>
