@@ -71,16 +71,14 @@
         .download-link-box { background-color:#f0f0f0; border:1px dashed #3498db; padding:10px; margin-top:10px; word-break:break-all; font-size:0.9em; }
         input[type="file"] { padding:6px 10px; }
 
-        /* --- NUEVOS ESTILOS PARA LA CUADRÍCULA DE ICONOS Y ANIMACIÓN --- */
+        /* --- ESTILOS DE CUADRÍCULA Y ANIMACIÓN --- */
         .icon-grid {
             display: grid;
-            /* Crea columnas flexibles, mínimo 150px de ancho */
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-top: 10px;
             margin-bottom: 25px;
         }
-
         .menu-card {
             background-color: #ffffff;
             color: #34495e;
@@ -89,35 +87,29 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             cursor: pointer;
             text-align: center;
-            /* Transición para el efecto suave */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 120px; 
-            border: 1px solid #eee; /* Borde suave */
+            border: 1px solid #eee;
         }
-
-        /* ANIMACIÓN: Efecto al pasar el ratón */
         .menu-card:hover {
-            transform: scale(1.05); /* Escala ligeramente (zoom) */
-            box-shadow: 0 8px 15px rgba(0,0,0,0.25); /* Sombra más pronunciada */
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.25);
         }
-
         .menu-card i {
-            font-size: 2.5em; /* Tamaño grande para el icono */
+            font-size: 2.5em;
             margin-bottom: 8px;
             transition: color 0.3s ease;
         }
-
         .menu-card strong {
             font-size: 0.9em;
             font-weight: bold;
             display: block;
             line-height: 1.3;
         }
-
         /* Colores específicos para las categorías */
         .category-social i { color: #25d366; }
         .category-carta i { color: #e67e22; }
@@ -246,9 +238,9 @@
             <p>Ingrese sus credenciales para autorizar las solicitudes.</p>
             <div class="input-group">
                 <label for="adminUser">Usuario:</label>
-                <input type="text" id="adminUser" placeholder="Ingrese su usuario" value="trollgaga999@gmail.com">
+                <input type="text" id="adminUser" placeholder="Ingrese su usuario" value="">
                 <label for="adminPass">Contraseña:</label>
-                <input type="password" id="adminPass" placeholder="Ingrese su contraseña" value="Johan207">
+                <input type="password" id="adminPass" placeholder="Ingrese su contraseña" value="">
                 <button class="btn-action" style="background-color:#2c3e50;" onclick="authenticateAdmin()">Iniciar Sesión</button>
             </div>
         </div>
@@ -262,6 +254,7 @@
             <div id="pending-requests-list" class="input-group">
                 <p id="no-requests-msg">No hay solicitudes pendientes en el almacenamiento local de este navegador.</p>
             </div>
+            <p style="text-align:center; font-size:0.8em; color:#777;">Actualización automática cada 3 segundos.</p>
         </div>
 
         <div id="form-receta_similares" class="form-section">
@@ -323,11 +316,16 @@
                     </div>
                 </div>
 
-                <label for="fechaNacSimilares">Fecha de Nacimiento (Para la receta):</label>
-                <input type="date" id="fechaNacSimilares" value="2019-07-18">
-
-                <label for="alergiasSimilares">Alergias (Ej: NEGADAS):</label>
-                <input type="text" id="alergiasSimilares" value="NEGADAS">
+                <div class="date-container">
+                    <div>
+                        <label for="fechaNacSimilares">Fecha de Nacimiento (Para la receta):</label>
+                        <input type="date" id="fechaNacSimilares" value="2019-07-18">
+                    </div>
+                    <div>
+                        <label for="alergiasSimilares">Alergias (Ej: NEGADAS):</label>
+                        <input type="text" id="alergiasSimilares" value="NEGADAS">
+                    </div>
+                </div>
             </div>
 
             <div class="input-group">
@@ -436,16 +434,17 @@
         const { jsPDF } = window.jspdf;
         const STORAGE_KEY = 'pending_requests_list';
         const APPROVED_KEY = 'approved_requests_list';
+        // 🔑 CREDENCIALES MOVIDAS A JS (AUN VISIBLES EN INSPECCIÓN, PERO NO EN EL INPUT)
         const ADMIN_USER = 'trollgaga999@gmail.com';
         const ADMIN_PASS = 'Johan207';
 
         let statusCheckInterval = null;
+        let adminUpdateInterval = null; // 💡 NUEVO: Intervalo para el dashboard
 
         function getBaseUrl() {
             return window.location.href.split('#')[0];
         }
 
-        // Mapeo completo de IDs lógicos a IDs de elementos DOM
         const viewIdMap = {
             'menu': 'main-menu',
             'laboral': 'form-laboral',
@@ -467,16 +466,19 @@
             'formato_solicitud_pdf': 'formato_solicitud_pdf'
         };
 
-        // 💡 FUNCIÓN DE NAVEGACIÓN CORREGIDA
         function showForm(viewId, pushHistory = true) {
             const sections = Object.values(viewIdMap);
             
-            // Oculta todas las secciones
+            // 🛑 Limpiar el intervalo del admin si se sale del dashboard
+            if (adminUpdateInterval) {
+                clearInterval(adminUpdateInterval);
+                adminUpdateInterval = null;
+            }
+
             sections.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
-            // Oculta la página de estatus y asegura que el contenedor principal esté visible
             document.getElementById('status-page').style.display = 'none'; 
             document.getElementById('app-container').style.display = 'block'; 
 
@@ -486,12 +488,18 @@
                 window.open('https://chat.whatsapp.com/GbkvIbPwCRX1JacpJJOS9D', '_blank');
                 return;
             }
+            
+            if (viewId === 'admin_dashboard') {
+                // 🚀 Iniciar actualización en tiempo real al entrar al dashboard
+                loadPendingRequests();
+                adminUpdateInterval = setInterval(loadPendingRequests, 3000); // Actualizar cada 3 segundos
+            }
+
 
             if (document.getElementById(targetId)) {
                 document.getElementById(targetId).style.display = 'block';
                 window.scrollTo(0, 0);
 
-                // 💡 CLAVE: Registrar el estado en el historial para que funcione el botón de Atrás
                 if (pushHistory) {
                     let url = getBaseUrl();
                     let state = { viewId: viewId };
@@ -502,42 +510,35 @@
                         url = getBaseUrl(); 
                     }
                     
-                    // Si el estado actual es el mismo, no hagas pushState para evitar duplicados
                     if (window.location.hash !== (viewId === 'menu' ? '' : `#${viewId}`)) {
                          history.pushState(state, '', url);
                     }
                 }
             } else if (viewId.startsWith('status')) {
-                // Si la vista no es un formulario pero es un estado especial (ej: status?id=...)
                 checkURL(viewId); 
             } else {
-                // Si no se encuentra, vuelve al menú (esto es un fallback)
                 showForm('menu', false);
             }
         }
 
-        // 💡 EVENTO POPSTATE CORREGIDO: Captura el botón de Atrás del navegador
         window.addEventListener('popstate', (e) => {
             const state = history.state;
             
             if (!state || !state.viewId) {
-                // Si no hay estado guardado, vamos al menú
                 showForm('menu', false); 
                 return;
             }
 
             if (state.viewId.startsWith('status')) {
-                // Si el estado es 'status', llamamos a checkURL para reevaluar la URL
                 checkURL(state.viewId);
             } else {
-                // Muestra el formulario sin crear un nuevo historial (pushHistory = false)
                 showForm(state.viewId, false);
             }
         });
 
-        // 💡 FUNCIÓN CHECKURL CORREGIDA: Evalúa el hash al cargar o al navegar
         function checkURL(manualHash = null) {
             if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
+            if (adminUpdateInterval) { clearInterval(adminUpdateInterval); adminUpdateInterval = null; } // 🛑 Asegurar que se detiene aquí también
             
             const hash = manualHash || window.location.hash.substring(1);
             const parts = hash.split('?');
@@ -555,22 +556,21 @@
             }
             
             if (viewId && viewIdMap[viewId]) {
-                // Si hay un hash válido para un formulario, lo mostramos.
                 showForm(viewId, false);
                 return;
             }
 
-            // Si no hay hash o es inválido, mostramos el menú principal.
             showForm('menu', false);
         }
 
         function authenticateAdmin() {
             const user = document.getElementById('adminUser').value;
             const pass = document.getElementById('adminPass').value;
+            
+            // 🔑 Las credenciales se comparan con las variables JS
             if (user === ADMIN_USER && pass === ADMIN_PASS) {
                 alert("¡Bienvenido, Administrador! Accediendo al Panel de Autorización.");
                 showForm('admin_dashboard');
-                loadPendingRequests();
             } else {
                 alert("Usuario o Contraseña incorrectos. Inténtalo de nuevo.");
             }
@@ -592,16 +592,16 @@
                 nombreAsunto = nombreSolicitante;
                 pdfBase64 = await generarPDFRecetaSimilares(false);
             } else {
+                // Generar un PDF básico o usar un placeholder
                 pdfBase64 = "BASE64_PLACEHOLDER_FOR_NEW_TYPE";
+                if(pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
+                    console.warn(`AVISO: Se usó un placeholder para ${tipoCarta}.`);
+                }
             }
 
             if (!pdfBase64) {
                 alert(`Error al generar el documento ${tipoCarta}. Por favor, revise los campos.`);
                 return;
-            }
-
-            if (pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
-                alert(`AVISO: Se ha guardado la solicitud ${tipoCarta} con datos de PRUEBA. El administrador procederá a la autorización.`);
             }
 
             const requestId = Date.now().toString();
@@ -619,7 +619,6 @@
             requests.push(newRequest);
             saveRequests(STORAGE_KEY, requests);
 
-            // 💡 Navegación a la página de estatus
             const url = `${getBaseUrl()}#status?id=${requestId}`;
             const state = { viewId: 'status', requestId: requestId };
             history.pushState(state, '', url);
@@ -684,15 +683,28 @@
             `;
         }
 
+        // 💡 FUNCIÓN MODIFICADA PARA DETENER Y REINICIAR EL INTERVALO
         function loadPendingRequests() {
             const requests = getRequests(STORAGE_KEY).filter(req => req.status === 'pending');
             const listElement = document.getElementById('pending-requests-list');
+            
+            // Guardar el mensaje de "no hay solicitudes" para no borrarlo si ya existe
+            const noRequestsMsg = listElement.querySelector('#no-requests-msg');
             listElement.innerHTML = '';
+            
             if (requests.length === 0) {
-                listElement.innerHTML = '<p id="no-requests-msg">No hay solicitudes pendientes en el almacenamiento local de este navegador.</p>';
+                if (!noRequestsMsg) {
+                     listElement.innerHTML = '<p id="no-requests-msg">No hay solicitudes pendientes en el almacenamiento local de este navegador.</p>';
+                } else {
+                    listElement.appendChild(noRequestsMsg);
+                }
                 return;
             }
+
             requests.forEach(req => {
+                // Verificar si el elemento ya existe para evitar parpadeo y recreación
+                if (document.getElementById(`request-${req.id}`)) return;
+
                 const typeDisplay = req.type.replace(/_/g, ' ').toUpperCase();
                 const item = document.createElement('div');
                 item.id = `request-${req.id}`;
@@ -709,6 +721,13 @@
                     </div>
                 `;
                 listElement.appendChild(item);
+            });
+            // Remover las solicitudes que ya no están pendientes
+            const currentRequestIds = requests.map(r => `request-${r.id}`);
+            Array.from(listElement.children).forEach(child => {
+                if (child.id !== 'no-requests-msg' && !currentRequestIds.includes(child.id)) {
+                    listElement.removeChild(child);
+                }
             });
         }
 
@@ -727,8 +746,8 @@
             saveRequests(APPROVED_KEY, approvedRequests);
             pendingRequests.splice(index, 1);
             saveRequests(STORAGE_KEY, pendingRequests);
-            alert(`¡Solicitud Autorizada! El cliente ahora puede descargar el archivo usando el enlace de su página de estatus.`);
-            loadPendingRequests();
+            alert(`¡Solicitud Autorizada! El cliente ahora puede descargar el archivo.`);
+            loadPendingRequests(); // Recarga inmediata para reflejar el cambio
         }
 
         function deleteRequest(requestId, key) {
@@ -740,8 +759,10 @@
                 requests.splice(index, 1);
                 saveRequests(key, requests);
             }
-            loadPendingRequests();
+            loadPendingRequests(); // Recarga inmediata para reflejar el cambio
         }
+
+        // --- Funciones de PDF (Sin Cambios) ---
 
         function drawJustifiedText(doc, text, x, y, maxWidth, lineHeight) {
             let currentY = y;
@@ -775,9 +796,8 @@
             const totalParts = digits.length * 4;
             const unit = width / totalParts;
             let cursor = x;
-            doc.setFillColor(0); // Barras negras
+            doc.setFillColor(0);
             for (let i = 0; i < digits.length; i++) {
-                // Patrón simplificado de un código de barras de 10 dígitos (para simulación visual)
                 const d = parseInt(digits[i], 10);
                 const pattern = [
                     1 + (d % 3),
@@ -786,8 +806,8 @@
                     1 + ((d + 1) % 2)
                 ];
                 for (let p = 0; p < pattern.length; p++) {
-                    const w = Math.max(0.5, unit * pattern[p] / 3); // Ajuste para que se vea mejor
-                    if (p % 2 === 0) { // Dibuja la barra (pares)
+                    const w = Math.max(0.5, unit * pattern[p] / 3);
+                    if (p % 2 === 0) {
                         doc.rect(cursor, y, w, height, 'F');
                     }
                     cursor += w;
@@ -809,7 +829,6 @@
             </svg>`
         );
 
-        // Función de generación de PDF (Sin cambios)
         async function generarPDFRecetaSimilares(descargar = true) {
             const doc = new jsPDF('p', 'mm', 'a4');
             const pageWidth = doc.internal.pageSize.getWidth();
@@ -824,7 +843,6 @@
             const ciudad = (document.getElementById('ciudadSimilares').value || '').toUpperCase();
             const fechaEmisionVal = document.getElementById('fechaEmisionSimilares').value;
             
-            // Formato de fecha mejorado
             const hoy = new Date();
             const fechaHora = `${fechaEmisionVal ? new Date(fechaEmisionVal + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' })} ${String(hoy.getHours()).padStart(2, '0')}:${String(hoy.getMinutes()).padStart(2, '0')}`;
             
@@ -850,20 +868,16 @@
             const indicaciones = document.getElementById('indicacionesGeneralesSimilares').value || '';
             const proxima = document.getElementById('proximaCitaSimilares').value || '';
 
-            // Cargar logo
             const logoFile = document.getElementById('logoInputSimilares').files[0];
             const logoBase64 = logoFile ? await fileToBase64(logoFile) : DEFAULT_LOGO_DATAURL;
 
-            // Generar número de expediente
             const barcodeNumber = generarNumeroAleatorio();
 
             // --- ENCABEZADO ---
-            // Logo a la izquierda
             const logoW = 34;
             const logoH = 20;
             doc.addImage(logoBase64, 'PNG', margin, y, logoW, logoH);
 
-            // Información del médico centrada
             doc.setFontSize(12);
             doc.setFont(undefined, 'bold');
             doc.text(nombreDoc, pageWidth/2, y + 8, { align: 'center' });
@@ -872,16 +886,14 @@
             doc.text(cedula, pageWidth/2, y + 13, { align: 'center' });
             doc.text('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', pageWidth/2, y + 18, { align: 'center' });
 
-            // Código de barras MÁS PEQUEÑO en la esquina superior derecha
-            const barcodeW = 45;  // Reducido de 70 a 45
-            const barcodeH = 12;  // Reducido de 18 a 12
+            const barcodeW = 45;
+            const barcodeH = 12;
             const barcodeX = pageWidth - margin - barcodeW;
             const barcodeY = y + 4;
             drawBarcodeStyled(doc, barcodeX, barcodeY, barcodeW, barcodeH, barcodeNumber);
 
             y += Math.max(logoH, 22) + 2;
 
-            // Línea separadora
             doc.setDrawColor(0);
             doc.setLineWidth(0.4);
             doc.line(margin, y, pageWidth - margin, y);
@@ -894,7 +906,6 @@
             doc.text(`FECHA Y HORA DE ELABORACION: ${fechaHora}`, pageWidth - margin, y, { align: 'right' });
             y += 6;
 
-            // Línea separadora
             doc.setLineWidth(0.3);
             doc.line(margin, y, pageWidth - margin, y);
             y += 6;
@@ -933,7 +944,6 @@
             doc.text(fechaNac, colLeftX + 42, y);
             y += fieldGapY + 2;
 
-            // Línea separadora
             doc.setLineWidth(0.3);
             doc.line(margin, y, pageWidth - margin, y);
             y += 6;
@@ -993,7 +1003,6 @@
             yRight += lineHeight;
             doc.setFont(undefined, 'normal');
             
-            // Formatear tratamiento línea por línea
             const tratamientoLineas = tratamiento.split('\n').filter(l => l.trim());
             tratamientoLineas.forEach(linea => {
                 const wrapped = doc.splitTextToSize(linea, rightColW - 5);
@@ -1006,7 +1015,6 @@
             // Determinar y máximo
             y = Math.max(yLeft, yRight) + 4;
 
-            // Línea separadora
             doc.setLineWidth(0.3);
             doc.line(margin, y, pageWidth - margin, y);
             y += 6;
@@ -1065,9 +1073,8 @@
             }
         }
 
-        // 💡 CLAVE: Ejecuta checkURL en la carga para manejar el estado inicial y el enlace del botón de Atrás
+        // CLAVE: Ejecuta checkURL en la carga para manejar el estado inicial y el enlace del botón de Atrás
         window.addEventListener('load', () => {
-            // Reemplaza el estado inicial para que el botón de Atrás sepa que el inicio es el menú
             if (!window.location.hash || window.location.hash === '#menu') {
                  history.replaceState({ viewId: 'menu' }, '', getBaseUrl());
             }
