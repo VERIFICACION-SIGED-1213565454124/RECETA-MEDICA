@@ -191,7 +191,7 @@
             </div>
         </div>
         
-        <div id="main-menu">
+        <div id="main-menu" class="form-section">
             <h2 onclick="showForm('landing')" style="cursor: pointer; background-color: #2c3e50; color: white; padding: 10px; border-radius: 4px; text-align: center; border: none;">← Cerrar Sesión y Volver al Inicio</h2>
 
             <h2>🌐 Acceso a Grupo y Soporte</h2>
@@ -359,11 +359,16 @@
                     </div>
                 </div>
 
-                <label for="fechaNacSimilares">Fecha de Nacimiento (Para la receta):</label>
-                <input type="date" id="fechaNacSimilares" value="2019-07-18">
-
-                <label for="alergiasSimilares">Alergias (Ej: NEGADAS):</label>
-                <input type="text" id="alergiasSimilares" value="NEGADAS">
+                <div class="date-container">
+                    <div>
+                        <label for="fechaNacSimilares">Fecha de Nacimiento (Para la receta):</label>
+                        <input type="date" id="fechaNacSimilares" value="2019-07-18">
+                    </div>
+                    <div>
+                        <label for="alergiasSimilares">Alergias (Ej: NEGADAS):</label>
+                        <input type="text" id="alergiasSimilares" value="NEGADAS">
+                    </div>
+                </div>
             </div>
 
             <div class="input-group">
@@ -479,7 +484,7 @@
         const ADMIN_USER = 'trollgaga999@gmail.com';
         const ADMIN_PASS = 'Johan207';
 
-        let statusCheckInterval = null;
+        let statusCheckInterval = null; // Variable global para controlar el intervalo de chequeo de estatus
 
         function getBaseUrl() {
             return window.location.href.split('#')[0];
@@ -487,11 +492,11 @@
 
         // Mapeo de IDs lógicos a IDs de elementos DOM
         const viewIdMap = {
-            'landing': 'landing-page', // NUEVA PÁGINA DE INICIO/LOGIN
+            'landing': 'landing-page', 
             'menu': 'main-menu',
             'laboral': 'form-laboral',
             'personal': 'form-personal',
-            'admin_login': 'admin-login', // Login de Admin separado
+            'admin_login': 'admin-login', 
             'admin_dashboard': 'admin-dashboard',
             'incapacidad_imss': 'form-incapacidad_imss',
             'receta_similares': 'form-receta_similares',
@@ -511,6 +516,9 @@
 
         // FUNCIÓN DE NAVEGACIÓN
         function showForm(viewId, pushHistory = true) {
+            // Detiene el chequeo de estatus si se navega fuera de la página de estatus
+            if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
+
             const sections = Object.values(viewIdMap);
             
             // Oculta todas las secciones
@@ -532,6 +540,11 @@
             if (document.getElementById(targetId)) {
                 document.getElementById(targetId).style.display = 'block';
                 window.scrollTo(0, 0);
+
+                // Si se navega al dashboard de administrador, se cargan las solicitudes pendientes
+                if (viewId === 'admin_dashboard') {
+                    loadPendingRequests();
+                }
 
                 if (pushHistory) {
                     let url = getBaseUrl();
@@ -572,6 +585,7 @@
 
         // FUNCIÓN CHECKURL: Evalúa el hash al cargar o al navegar
         function checkURL(manualHash = null) {
+            // Asegura que el intervalo anterior se detenga al iniciar un nuevo chequeo
             if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
             
             const hash = manualHash || window.location.hash.substring(1);
@@ -588,10 +602,12 @@
                 
                 if (type === 'user') {
                     checkUserStatus(requestId);
-                    statusCheckInterval = setInterval(() => checkUserStatus(requestId), 5000);
+                    // Comienza el chequeo automático para el cliente
+                    statusCheckInterval = setInterval(() => checkUserStatus(requestId), 5000); 
                 } else {
                     checkDocStatus(requestId); 
-                    statusCheckInterval = setInterval(() => checkDocStatus(requestId), 5000);
+                    // Comienza el chequeo automático para el cliente
+                    statusCheckInterval = setInterval(() => checkDocStatus(requestId), 5000); 
                 }
                 return;
             }
@@ -613,7 +629,7 @@
             localStorage.setItem(key, JSON.stringify(requests));
         }
 
-        // NUEVA FUNCIÓN DE LOGIN DE USUARIO (CLIENTE)
+        // FUNCIÓN DE LOGIN DE USUARIO (CLIENTE)
         function performUserLogin() {
             const user = document.getElementById('userEmail').value;
             const pass = document.getElementById('userPass').value;
@@ -632,7 +648,7 @@
             alert("Usuario o Contraseña incorrectos, o su cuenta aún no ha sido aprobada.");
         }
 
-        // NUEVA FUNCIÓN DE LOGIN DE ADMINISTRADOR (SEPARADO)
+        // FUNCIÓN DE LOGIN DE ADMINISTRADOR (SEPARADO)
         function performAdminLogin() {
             const user = document.getElementById('adminUser').value;
             const pass = document.getElementById('adminPass').value;
@@ -642,7 +658,7 @@
                 document.getElementById('adminUser').value = '';
                 document.getElementById('adminPass').value = '';
                 showForm('admin_dashboard');
-                loadPendingRequests();
+                // loadPendingRequests() se llama dentro de showForm('admin_dashboard')
                 return;
             }
             
@@ -717,7 +733,8 @@
             }
 
             if (pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
-                alert(`AVISO: Se ha guardado la solicitud ${tipoCarta} con datos de PRUEBA. El administrador procederá a la autorización.`);
+                // Esto es solo para propósitos de prueba de la lógica
+                // alert(`AVISO: Se ha guardado la solicitud ${tipoCarta} con datos de PRUEBA. El administrador procederá a la autorización.`);
             }
 
             const requestId = Date.now().toString();
@@ -743,7 +760,7 @@
         }
 
 
-        // FUNCIÓN DE VERIFICACIÓN DE ESTATUS DE DOCUMENTO
+        // FUNCIÓN DE VERIFICACIÓN DE ESTATUS DE DOCUMENTO (CLIENTE)
         function checkDocStatus(requestId) {
             const approvedRequests = getRequests(DOC_APPROVED_KEY);
             const request = approvedRequests.find(req => req.id === requestId);
@@ -783,7 +800,7 @@
             }
         }
 
-        // FUNCIÓN DE VERIFICACIÓN DE ESTATUS DE REGISTRO
+        // FUNCIÓN DE VERIFICACIÓN DE ESTATUS DE REGISTRO (CLIENTE)
         function checkUserStatus(registrationId) {
             const approvedUsers = getRequests(APPROVED_USERS_KEY);
             const isApproved = approvedUsers.find(u => u.id === registrationId);
@@ -857,11 +874,11 @@
             `;
         }
 
-        // FUNCIÓN MODIFICADA PARA CARGAR AMBOS TIPOS DE SOLICITUDES
+        // FUNCIÓN MODIFICADA PARA CARGAR AMBOS TIPOS DE SOLICITUDES (ADMIN)
         function loadPendingRequests() {
             const docRequests = getRequests(DOC_PENDING_KEY).filter(req => req.status === 'pending');
             const userRequests = getRequests(USER_REG_PENDING_KEY).filter(req => req.status === 'pending');
-            const allRequests = [...docRequests, ...userRequests]; // Combinar ambas listas
+            const allRequests = [...docRequests, ...userRequests].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Más recientes primero
 
             const listElement = document.getElementById('pending-requests-list');
             listElement.innerHTML = '';
@@ -885,6 +902,7 @@
                     <div class="request-info">
                         <strong>${typeDisplay} - ${nameDisplay}</strong>
                         <p>${isUserReg ? 'Correo' : 'Solicitante'}: ${requesterDisplay} (ID: ${req.id})</p>
+                        <p style="font-size:0.8em;">Fecha: ${new Date(req.timestamp).toLocaleString()}</p>
                         <p style="font-size:0.8em;">URL del Cliente: <code style="word-break: break-all;">${statusURL}</code></p>
                     </div>
                     <div class="request-actions">
@@ -920,7 +938,7 @@
                 pendingUsers.splice(index, 1);
                 saveRequests(USER_REG_PENDING_KEY, pendingUsers);
                 alert(`¡Registro de usuario Autorizado! El cliente ya puede iniciar sesión.`);
-                loadPendingRequests();
+                loadPendingRequests(); // *** CLAVE: Refrescar la lista inmediatamente ***
             } else {
                 // Lógica para APROBAR SOLICITUD DE DOCUMENTO
                 let pendingRequests = getRequests(DOC_PENDING_KEY);
@@ -938,7 +956,7 @@
                 pendingRequests.splice(index, 1);
                 saveRequests(DOC_PENDING_KEY, pendingRequests);
                 alert(`¡Solicitud de Documento Autorizada! El cliente ahora puede descargar el archivo.`);
-                loadPendingRequests();
+                loadPendingRequests(); // *** CLAVE: Refrescar la lista inmediatamente ***
             }
         }
 
@@ -952,7 +970,7 @@
                 requests.splice(index, 1);
                 saveRequests(key, requests);
             }
-            loadPendingRequests();
+            loadPendingRequests(); // *** CLAVE: Refrescar la lista inmediatamente ***
         }
 
         function drawJustifiedText(doc, text, x, y, maxWidth, lineHeight) {
