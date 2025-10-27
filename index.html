@@ -50,7 +50,6 @@
         .btn-action:hover { background-color: #d35400; }
         .back-button { background-color: #95a5a6; width:auto; padding:10px 15px; font-size:1em; }
         
-        /* ⚠️ Estilos originales de botones eliminados/reemplazados por menu-card */
         .form-section { display:none; }
         #btn-go-admin { width:100%; background-color:#2c3e50; color:white; padding:10px; margin-top:20px; border:none; border-radius:5px; cursor:pointer; font-size:1em; transition: background-color 0.3s; }
         #btn-go-admin:hover { background-color:#1f2a36; }
@@ -90,7 +89,7 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             cursor: pointer;
             text-align: center;
-            /* 💡 Añade la transición para el efecto suave */
+            /* Transición para el efecto suave */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
@@ -100,7 +99,7 @@
             border: 1px solid #eee; /* Borde suave */
         }
 
-        /* 💡 ANIMACIÓN: Efecto al pasar el ratón */
+        /* ANIMACIÓN: Efecto al pasar el ratón */
         .menu-card:hover {
             transform: scale(1.05); /* Escala ligeramente (zoom) */
             box-shadow: 0 8px 15px rgba(0,0,0,0.25); /* Sombra más pronunciada */
@@ -282,7 +281,7 @@
                 <input type="text" id="doctorNombreSimilares" value="DR. ROGER GUITIERREZ SALAZAR">
 
                 <label for="cedulaSimilares">Cédula Profesional / Prof. / Especialidad:</label>
-                <input type="text" id="cedulaSimilares" value="MEDICO CIRUJANO  CED. PROF. 98569946">
+                <input type="text" id="cedulaSimilares" value="MEDICO CIRUJANO CED. PROF. 98569946">
 
                 <label for="direccionSimilares">Dirección del Consultorio (Ej: AV. PDTE...):</label>
                 <input type="text" id="direccionSimilares" value="#30 av. Luis Donaldo Colosio">
@@ -403,6 +402,21 @@
             </div>
             <button class="btn-action" onclick="saveSolicitud('incapacidad_imss')">💾 Guardar Solicitud</button>
         </div>
+        
+        <div id="form-laboral" class="form-section"><button class="back-button" onclick="showForm('menu')">← Volver al Menú</button><h2>Carta Laboral</h2><p>Formulario de Carta Laboral (PENDIENTE)</p></div>
+        <div id="form-personal" class="form-section"><button class="back-button" onclick="showForm('menu')">← Volver al Menú</button><h2>Carta Personal</h2><p>Formulario de Carta Personal (PENDIENTE)</p></div>
+        <div id="form-receta_ahorro" class="form-section"><button class="back-button" onclick="showForm('menu')">← Volver al Menú</button><h2>Receta Del Ahorro</h2><p>Formulario de Receta Del Ahorro (PENDIENTE)</p></div>
+        <div id="form-certificado_medico_imss" class="form-section"><button class="back-button" onclick="showForm('menu')">← Volver al Menú</button><h2>Certificado Médico IMSS</h2><p>Formulario de Certificado Médico IMSS (PENDIENTE)</p></div>
+        <div id="form-cert_primaria" class="form-section"><button class="back-button" onclick="showForm('menu')">← Volver al Menú</button><h2>Certificado Primaria</h2><p>Formulario de Certificado Primaria (PENDIENTE)</p></div>
+        <div id="form-cert_secundaria" class="form-section"><button class="back-button" onclick="showForm('menu')">← Volver al Menú</button><h2>Certificado Secundaria</h2><p>Formulario de Certificado Secundaria (PENDIENTE)</p></div>
+        <div id="form-cert_prepa" class="form-section"><button class="back-button" onclick="showForm('menu')">← Volver al Menú</button><h2>Certificado Preparatoria</h2><p>Formulario de Certificado Preparatoria (PENDIENTE)</p></div>
+        <div id="form-metodo_shein" class="form-section"><button class="back-button" onclick="showForm('menu')">← Volver al Menú</button><h2>Método Shein</h2><p>Formulario de Método Shein (PENDIENTE)</p></div>
+        <div id="form-metodo_cinepolis" class="form-section"><button class="back-button" onclick="showForm('menu')">← Volver al Menú</button><h2>Método Cinépolis</h2><p>Formulario de Método Cinépolis (PENDIENTE)</p></div>
+        <div id="form-metodo_temu" class="form-section"><button class="back-button" onclick="showForm('menu')">← Volver al Menú</button><h2>Método TEMU</h2><p>Formulario de Método TEMU (PENDIENTE)</p></div>
+        <div id="form-cv_desde_cero" class="form-section"><button class="back-button" onclick="showForm('menu')">← Volver al Menú</button><h2>CV DESDE CERO</h2><p>Formulario de CV DESDE CERO (PENDIENTE)</p></div>
+        <div id="form-sellos_personales" class="form-section"><button class="back-button" onclick="showForm('menu')">← Volver al Menú</button><h2>Sellos Personales</h2><p>Formulario de Sellos Personales (PENDIENTE)</p></div>
+        <div id="formato_solicitud_pdf" class="form-section"><button class="back-button" onclick="showForm('menu')">← Volver al Menú</button><h2>Formato de Solicitud PDF</h2><p>Formulario de Formato de Solicitud PDF (PENDIENTE)</p></div>
+
     </div>
 
     <div id="status-page" class="status-page" style="display:none;">
@@ -431,6 +445,7 @@
             return window.location.href.split('#')[0];
         }
 
+        // Mapeo completo de IDs lógicos a IDs de elementos DOM
         const viewIdMap = {
             'menu': 'main-menu',
             'laboral': 'form-laboral',
@@ -440,7 +455,7 @@
             'incapacidad_imss': 'form-incapacidad_imss',
             'receta_similares': 'form-receta_similares',
             'receta_ahorro': 'form-receta_ahorro',
-            'receta_imss': 'form-receta_imss',
+            'certificado_medico_imss': 'form-certificado_medico_imss',
             'cert_primaria': 'form-cert_primaria',
             'cert_secundaria': 'form-cert_secundaria',
             'cert_prepa': 'form-cert_prepa',
@@ -452,37 +467,102 @@
             'formato_solicitud_pdf': 'formato_solicitud_pdf'
         };
 
+        // 💡 FUNCIÓN DE NAVEGACIÓN CORREGIDA
         function showForm(viewId, pushHistory = true) {
             const sections = Object.values(viewIdMap);
+            
+            // Oculta todas las secciones
             sections.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
-            const targetId = viewIdMap[viewId] || viewId;
-            const viewElement = document.getElementById(targetId);
+            // Oculta la página de estatus y asegura que el contenedor principal esté visible
+            document.getElementById('status-page').style.display = 'none'; 
+            document.getElementById('app-container').style.display = 'block'; 
+
+            const targetId = viewIdMap[viewId];
 
             if (viewId === 'whatsapp_group') {
                 window.open('https://chat.whatsapp.com/GbkvIbPwCRX1JacpJJOS9D', '_blank');
                 return;
             }
 
-            if (viewElement) {
-                viewElement.style.display = 'block';
+            if (document.getElementById(targetId)) {
+                document.getElementById(targetId).style.display = 'block';
                 window.scrollTo(0, 0);
+
+                // 💡 CLAVE: Registrar el estado en el historial para que funcione el botón de Atrás
                 if (pushHistory) {
                     let url = getBaseUrl();
                     let state = { viewId: viewId };
-                    if (viewId !== 'menu') { url += `#${viewId}`; } else { url = getBaseUrl(); }
-                    history.pushState(state, '', url);
+                    
+                    if (viewId !== 'menu') { 
+                        url += `#${viewId}`; 
+                    } else {
+                        url = getBaseUrl(); 
+                    }
+                    
+                    // Si el estado actual es el mismo, no hagas pushState para evitar duplicados
+                    if (window.location.hash !== (viewId === 'menu' ? '' : `#${viewId}`)) {
+                         history.pushState(state, '', url);
+                    }
                 }
+            } else if (viewId.startsWith('status')) {
+                // Si la vista no es un formulario pero es un estado especial (ej: status?id=...)
+                checkURL(viewId); 
+            } else {
+                // Si no se encuentra, vuelve al menú (esto es un fallback)
+                showForm('menu', false);
             }
         }
 
+        // 💡 EVENTO POPSTATE CORREGIDO: Captura el botón de Atrás del navegador
         window.addEventListener('popstate', (e) => {
             const state = history.state;
-            if (!state) { showForm('menu', false); return; }
-            showForm(state.viewId || 'menu', false);
+            
+            if (!state || !state.viewId) {
+                // Si no hay estado guardado, vamos al menú
+                showForm('menu', false); 
+                return;
+            }
+
+            if (state.viewId.startsWith('status')) {
+                // Si el estado es 'status', llamamos a checkURL para reevaluar la URL
+                checkURL(state.viewId);
+            } else {
+                // Muestra el formulario sin crear un nuevo historial (pushHistory = false)
+                showForm(state.viewId, false);
+            }
         });
+
+        // 💡 FUNCIÓN CHECKURL CORREGIDA: Evalúa el hash al cargar o al navegar
+        function checkURL(manualHash = null) {
+            if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
+            
+            const hash = manualHash || window.location.hash.substring(1);
+            const parts = hash.split('?');
+            const viewId = parts[0];
+            const params = new URLSearchParams(parts[1] || '');
+            const requestId = params.get('id');
+
+            if (viewId === 'status' && requestId) {
+                document.getElementById('app-container').style.display = 'none';
+                document.getElementById('status-page').style.display = 'flex';
+                document.getElementById('status-page').innerHTML = '<div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>';
+                checkStatus(requestId);
+                statusCheckInterval = setInterval(() => checkStatus(requestId), 5000);
+                return;
+            }
+            
+            if (viewId && viewIdMap[viewId]) {
+                // Si hay un hash válido para un formulario, lo mostramos.
+                showForm(viewId, false);
+                return;
+            }
+
+            // Si no hay hash o es inválido, mostramos el menú principal.
+            showForm('menu', false);
+        }
 
         function authenticateAdmin() {
             const user = document.getElementById('adminUser').value;
@@ -539,26 +619,11 @@
             requests.push(newRequest);
             saveRequests(STORAGE_KEY, requests);
 
+            // 💡 Navegación a la página de estatus
             const url = `${getBaseUrl()}#status?id=${requestId}`;
             const state = { viewId: 'status', requestId: requestId };
             history.pushState(state, '', url);
             checkURL();
-        }
-
-        function checkURL() {
-            if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash.split('?')[1] || '');
-            const requestId = params.get('id');
-            if (hash.startsWith('status') && requestId) {
-                document.getElementById('app-container').style.display = 'none';
-                document.getElementById('status-page').style.display = 'flex';
-                document.getElementById('status-page').innerHTML = '<div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>';
-                checkStatus(requestId);
-                statusCheckInterval = setInterval(() => checkStatus(requestId), 5000);
-                return;
-            }
-            showForm('menu', false);
         }
 
         function checkStatus(requestId) {
@@ -744,7 +809,7 @@
             </svg>`
         );
 
-        /* FUNCIÓN DE GENERACIÓN DE PDF (Sin cambios, ya que no se solicitó corregir el PDF) */
+        // Función de generación de PDF (Sin cambios)
         async function generarPDFRecetaSimilares(descargar = true) {
             const doc = new jsPDF('p', 'mm', 'a4');
             const pageWidth = doc.internal.pageSize.getWidth();
@@ -1000,7 +1065,12 @@
             }
         }
 
+        // 💡 CLAVE: Ejecuta checkURL en la carga para manejar el estado inicial y el enlace del botón de Atrás
         window.addEventListener('load', () => {
+            // Reemplaza el estado inicial para que el botón de Atrás sepa que el inicio es el menú
+            if (!window.location.hash || window.location.hash === '#menu') {
+                 history.replaceState({ viewId: 'menu' }, '', getBaseUrl());
+            }
             checkURL();
         });
 
