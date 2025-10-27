@@ -162,9 +162,9 @@
             <div id="login-form" class="input-group">
                 <h3>Iniciar Sesión</h3>
                 <label for="loginUser">Correo Electrónico:</label>
-                <input type="email" id="loginUser" placeholder="trollgaga999@gmail.com" value="trollgaga999@gmail.com">
+                <input type="email" id="loginUser" placeholder="trollgaga999@gmail.com">
                 <label for="loginPass">Contraseña:</label>
-                <input type="password" id="loginPass" placeholder="Ingrese su contraseña" value="Johan207">
+                <input type="password" id="loginPass" placeholder="Ingrese su contraseña">
                 <button class="btn-action" style="background-color:#2c3e50;" onclick="authenticateUser()">Iniciar Sesión</button>
             </div>
             
@@ -366,11 +366,16 @@
                     </div>
                 </div>
 
-                <label for="fechaNacSimilares">Fecha de Nacimiento (Para la receta):</label>
-                <input type="date" id="fechaNacSimilares" value="2019-07-18">
-
-                <label for="alergiasSimilares">Alergias (Ej: NEGADAS):</label>
-                <input type="text" id="alergiasSimilares" value="NEGADAS">
+                <div class="date-container">
+                    <div>
+                        <label for="fechaNacSimilares">Fecha de Nacimiento (Para la receta):</label>
+                        <input type="date" id="fechaNacSimilares" value="2019-07-18">
+                    </div>
+                    <div>
+                        <label for="alergiasSimilares">Alergias (Ej: NEGADAS):</label>
+                        <input type="text" id="alergiasSimilares" value="NEGADAS">
+                    </div>
+                </div>
             </div>
 
             <div class="input-group">
@@ -903,7 +908,6 @@
         }
         
         // El resto de funciones (checkURL, checkStatus, triggerDownload, generarPDFRecetaSimilares, etc.) se mantienen igual
-        // ... (las funciones son muy largas para repetir, asumo que se mantienen inalteradas desde el archivo previo para no sobrecargar el código)
         
         function checkURL() {
             if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
@@ -1316,4 +1320,3 @@
     </script>
 </body>
 </html>
-```<ctrl63>
