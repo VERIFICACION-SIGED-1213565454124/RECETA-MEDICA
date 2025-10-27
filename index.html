@@ -318,6 +318,13 @@
             <h2>🏥 Certificado Médico IMSS</h2>
             
             <div class="input-group">
+                <h2>🖼️ Logo / Membrete (Opcional)</h2>
+                <label for="certImssLogoInput">Seleccionar Imagen para Logo/Membrete (PNG/JPG):</label>
+                <input type="file" id="certImssLogoInput" accept="image/*">
+                <p style="font-size:0.8em; color:gray;">Si no selecciona una imagen, se usará el logo predeterminado del IMSS.</p>
+            </div>
+
+            <div class="input-group">
                 <h2>👨‍⚕️ Datos del Médico</h2>
                 <label for="certImssDoctorNombre">Nombre del Médico (Ej: DRA. YESSICA MEJÍA CARRANZA):</label>
                 <input type="text" id="certImssDoctorNombre" value="DRA. YESSICA MEJÍA CARRANZA" required>
@@ -369,7 +376,7 @@
                 <div class="date-container">
                     <div>
                         <label for="certImssFechaNac">Fecha de Nacimiento:</label>
-                        <input type="date" id="certImssFechaNac" required>
+                        <input type="date" id="certImssFechaNac" value="1995-01-01" required>
                     </div>
                     <div>
                         <label for="certImssTipoSangre">Tipo de Sangre (Ej: O+):</label>
@@ -385,11 +392,11 @@
                 <h2>📈 Examen Físico y Conclusión</h2>
                 <div class="date-container">
                     <div>
-                        <label for="certImssPeso">Peso (kg):</label>
+                        <label for="certImssPeso">Peso (Ej: 90.00kg):</label>
                         <input type="text" id="certImssPeso" value="90.00kg" required>
                     </div>
                     <div>
-                        <label for="certImssTalla">Talla (mts):</label>
+                        <label for="certImssTalla">Talla (Ej: 1.65 mts):</label>
                         <input type="text" id="certImssTalla" value="1.65 mts" required>
                     </div>
                 </div>
@@ -421,9 +428,8 @@
                 <input type="date" id="certImssFechaEmision" value="2025-10-06" required>
             </div>
 
-            <button class="btn-action" style="background-color:#2980b9;" onclick="saveSolicitud('certificado_medico_imss')">💾 Guardar Solicitud (Esperar Aprobación)</button>
-            <button class="btn-action" style="background-color:#27ae60; margin-top:5px;" onclick="generarPDFCertificadoIMSS(true)">Descargar Vista Previa (Sólo PDF)</button>
-        </div>
+            <button class="btn-action" style="background-color:#2980b9;" onclick="saveSolicitud('certificado_medico_imss')">💾 Guardar Solicitud (Generar PDF y Esperar Aprobación)</button>
+            </div>
         <div id="form-receta_similares" class="form-section">
             <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
 
@@ -943,10 +949,10 @@
                 nombreSolicitante = document.getElementById('nombrePacienteSimilares').value || 'Paciente';
                 nombreAsunto = nombreSolicitante;
                 pdfBase64 = await generarPDFRecetaSimilares(false);
-            } else if (tipoCarta === 'certificado_medico_imss') { // <-- NUEVO
+            } else if (tipoCarta === 'certificado_medico_imss') { // <-- Llama a la función
                 nombreSolicitante = document.getElementById('certImssNombre').value || 'Paciente IMSS';
                 nombreAsunto = nombreSolicitante;
-                pdfBase64 = await generarPDFCertificadoIMSS(false);
+                pdfBase64 = await generarPDFCertificadoIMSS(false); // Obtener Base64 para guardar
             } else {
                 pdfBase64 = "BASE64_PLACEHOLDER_FOR_NEW_TYPE";
             }
@@ -1200,7 +1206,7 @@
             </svg>`
         );
         
-        // --- FUNCIÓN PARA GENERAR EL PDF DEL CERTIFICADO IMSS (NUEVA) ---
+        // --- FUNCIÓN PARA GENERAR EL PDF DEL CERTIFICADO IMSS (CORREGIDA) ---
         const IMSS_LOGO_SVG = `
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
                 <rect width="100" height="100" fill="white"/>
@@ -1220,6 +1226,10 @@
             const margin = 15;
             let y = 10;
             const lineHeight = 5;
+
+            // Cargar Logo del Formulario
+            const logoFile = document.getElementById('certImssLogoInput').files[0];
+            const logoBase64 = logoFile ? await fileToBase64(logoFile) : IMSS_LOGO_DATAURL; // Usa el subido o el de IMSS
 
             // Datos del Formulario
             const doctorNombre = (document.getElementById('certImssDoctorNombre').value || 'MÉDICO EN TURNO').toUpperCase();
@@ -1247,10 +1257,25 @@
             const conclusion = document.getElementById('certImssConclusion').value || '';
 
             const fechaEmisionVal = document.getElementById('certImssFechaEmision').value;
+            if (!fechaEmisionVal) {
+                alert("Por favor, ingrese la fecha de emisión.");
+                return null;
+            }
 
-            // 1. Encabezado IMSS
-            doc.addImage(IMSS_LOGO_DATAURL, 'SVG', margin, y, 15, 15);
+            // 1. Encabezado IMSS / Logo Personalizado
+            // Si es SVG (el default IMSS), lo dibuja como SVG. Si es dataURL (de fileToBase64), lo dibuja como imagen.
             
+            const logoW = 20; // Ancho del logo/membrete
+            const logoH = 20; // Alto del logo/membrete
+            const logoX = margin;
+            const logoY = y;
+
+            if (logoBase64.startsWith('data:image/svg')) {
+                doc.addImage(logoBase64, 'SVG', logoX, logoY, logoW, logoH);
+            } else {
+                doc.addImage(logoBase64, 'JPEG', logoX, logoY, logoW, logoH, '', 'FAST'); // Usar JPEG o PNG
+            }
+
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(14);
             doc.text('INSTITUTO MEXICANO DEL SEGURO SOCIAL', pageWidth / 2, y + 2, { align: 'center' });
@@ -1357,14 +1382,13 @@
             y = drawJustifiedText(doc, conclusionText, margin, y, pageWidth - 2 * margin, lineHeight);
             y += 15;
             
-            // 7. Fecha y Firma (Formato DOCX)
+            // 7. Fecha y Firma 
             
             const fecha = new Date(fechaEmisionVal + 'T12:00:00');
             const day = fecha.getDate();
             const month = fecha.toLocaleDateString('es-MX', { month: 'long' });
             const year = fecha.getFullYear();
-            // CORRECCIÓN: Se elimina el reemplazo de string defectuoso que causaba el fallo.
-            const yearText = year.toString(); 
+            const yearText = year.toString(); // Solo el año numérico.
             
             doc.setFont('helvetica', 'normal');
             doc.text('A', pageWidth / 2 - 30, y, { align: 'center' });
@@ -1386,12 +1410,13 @@
             y += 4;
             doc.text(doctorCedula, firmaX, y, { align: 'center' });
             
-            // 8. Descarga
+            // 8. Descarga (Solo si se pide)
             if (descargar) {
                 const safeName = (nombreP || 'PACIENTE').replace(/\s+/g, '_');
                 doc.save(`Certificado_IMSS_${safeName}.pdf`);
                 return true;
             } else {
+                // Devolver Base64 para guardarlo en la solicitud
                 return doc.output('datauristring').split(',')[1];
             }
         }
@@ -1447,8 +1472,11 @@
             // Logo a la izquierda
             const logoW = 34;
             const logoH = 20;
-            doc.addImage(logoBase64, 'PNG', margin, y, logoW, logoH);
-
+            if (logoBase64.startsWith('data:image/svg')) {
+                doc.addImage(logoBase64, 'SVG', margin, y, logoW, logoH);
+            } else {
+                doc.addImage(logoBase64, 'JPEG', margin, y, logoW, logoH, '', 'FAST');
+            }
             // Información del médico centrada
             doc.setFontSize(12);
             doc.setFont(undefined, 'bold');
