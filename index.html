@@ -120,12 +120,14 @@
 
         /* Colores específicos para las categorías */
         .category-social i { color: #25d366; }
+        .category-account i { color: #8e44ad; } /* Nuevo color para registro */
         .category-carta i { color: #e67e22; }
         .category-receta i { color: #27ae60; }
         .category-certificado i { color: #3498db; }
         .category-especializado i { color: #9b59b6; }
         
         .category-social:hover i { color: #128c7e; }
+        .category-account:hover i { color: #7c359d; } /* Hover para registro */
         .category-carta:hover i { color: #d35400; }
         .category-receta:hover i { color: #1e8449; }
         .category-certificado:hover i { color: #2980b9; }
@@ -148,6 +150,10 @@
                 <div class="menu-card category-social" onclick="showForm('whatsapp_group')">
                     <i class="fab fa-whatsapp"></i>
                     <strong>Unirse a nuestro Grupo de WhatsApp</strong>
+                </div>
+                <div class="menu-card category-account" onclick="showForm('registro')">
+                    <i class="fas fa-user-plus"></i>
+                    <strong>Registro de Usuario (Acceso a Servicios)</strong>
                 </div>
             </div>
             
@@ -237,26 +243,46 @@
             
             <hr/>
 
-            <button id="btn-go-admin" onclick="showForm('admin_login')">Acceso de Administrador</button>
+            <button id="btn-go-admin" onclick="showForm('login')">Iniciar Sesión / Acceso Admin</button>
         </div>
 
         <div id="admin-login" class="form-section">
             <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
-            <h2>🔒 Acceso del Administrador</h2>
-            <p>Ingrese sus credenciales para autorizar las solicitudes.</p>
+            <h2>🔑 Iniciar Sesión</h2>
+            <p>Ingrese sus credenciales (o credenciales de administrador).</p>
             <div class="input-group">
-                <label for="adminUser">Usuario:</label>
-                <input type="text" id="adminUser" placeholder="Ingrese su usuario" value="trollgaga999@gmail.com">
+                <label for="adminUser">Usuario (Correo):</label>
+                <input type="text" id="adminUser" placeholder="Ingrese su correo">
                 <label for="adminPass">Contraseña:</label>
-                <input type="password" id="adminPass" placeholder="Ingrese su contraseña" value="Johan207">
-                <button class="btn-action" style="background-color:#2c3e50;" onclick="authenticateAdmin()">Iniciar Sesión</button>
+                <input type="password" id="adminPass" placeholder="Ingrese su contraseña">
+                <button class="btn-action" style="background-color:#2c3e50;" onclick="userLogin()">Ingresar</button>
             </div>
+            <p style="margin-top: 15px; text-align: center;">¿No tiene cuenta? <a href="#" onclick="showForm('registro')">Regístrese aquí</a></p>
         </div>
+
+        <div id="form-registro" class="form-section">
+            <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
+            <div class="disclaimer-notice">*NO SE GARANTIZA LA APROBACIÓN INMEDIATA DEL REGISTRO*</div>
+            <h2>✍️ Registro de Nuevo Usuario</h2>
+            <p>Complete el formulario para solicitar el acceso a los servicios.</p>
+            <div class="input-group">
+                <label for="regEmail">Correo Electrónico:</label>
+                <input type="text" id="regEmail" placeholder="ejemplo@correo.com">
+
+                <label for="regFullName">Nombre Completo:</label>
+                <input type="text" id="regFullName" placeholder="Juan Pérez López">
+
+                <label for="regPassword">Contraseña:</label>
+                <input type="password" id="regPassword" placeholder="Cree una contraseña para ingresar">
+            </div>
+            <button class="btn-action" style="background-color:#9b59b6;" onclick="saveRegistro()">📝 Solicitar Registro</button>
+        </div>
+
 
         <div id="admin-dashboard" class="form-section">
             <button class="back-button" onclick="showForm('menu')">← Cerrar Sesión</button>
             <h2>⚙️ Panel de Autorización de Solicitudes</h2>
-            <p>Al autorizar, el cliente verá automáticamente el botón de descarga en su página de espera.</p>
+            <p>Al autorizar una solicitud (documento o registro), el cliente verá el cambio de estatus en tiempo real.</p>
 
             <h3>Solicitudes Pendientes:</h3>
             <div id="pending-requests-list" class="input-group">
@@ -323,16 +349,11 @@
                     </div>
                 </div>
 
-                <div class="date-container">
-                    <div>
-                        <label for="fechaNacSimilares">Fecha de Nacimiento (Para la receta):</label>
-                        <input type="date" id="fechaNacSimilares" value="2019-07-18">
-                    </div>
-                    <div>
-                        <label for="alergiasSimilares">Alergias (Ej: NEGADAS):</label>
-                        <input type="text" id="alergiasSimilares" value="NEGADAS">
-                    </div>
-                </div>
+                <label for="fechaNacSimilares">Fecha de Nacimiento (Para la receta):</label>
+                <input type="date" id="fechaNacSimilares" value="2019-07-18">
+
+                <label for="alergiasSimilares">Alergias (Ej: NEGADAS):</label>
+                <input type="text" id="alergiasSimilares" value="NEGADAS">
             </div>
 
             <div class="input-group">
@@ -439,8 +460,12 @@
 
     <script>
         const { jsPDF } = window.jspdf;
-        const STORAGE_KEY = 'pending_requests_list';
-        const APPROVED_KEY = 'approved_requests_list';
+        // --- CLAVES DE ALMACENAMIENTO ACTUALIZADAS ---
+        const DOC_PENDING_KEY = 'document_pending_requests';
+        const DOC_APPROVED_KEY = 'document_approved_requests';
+        const USER_REG_PENDING_KEY = 'user_registration_pending'; // Solicitudes de registro de usuario
+        const APPROVED_USERS_KEY = 'approved_users_list'; // Usuarios con cuenta aprobada
+        // ----------------------------------------------
         const ADMIN_USER = 'trollgaga999@gmail.com';
         const ADMIN_PASS = 'Johan207';
 
@@ -455,7 +480,7 @@
             'menu': 'main-menu',
             'laboral': 'form-laboral',
             'personal': 'form-personal',
-            'admin_login': 'admin-login',
+            'login': 'admin-login', // Renombrado de 'admin_login' a 'login'
             'admin_dashboard': 'admin-dashboard',
             'incapacidad_imss': 'form-incapacidad_imss',
             'receta_similares': 'form-receta_similares',
@@ -469,7 +494,8 @@
             'metodo_temu': 'form-metodo_temu',
             'cv_desde_cero': 'form-cv_desde_cero',
             'sellos_personales': 'form-sellos_personales',
-            'formato_solicitud_pdf': 'formato_solicitud_pdf'
+            'formato_solicitud_pdf': 'formato_solicitud_pdf',
+            'registro': 'form-registro' // Nuevo formulario de registro
         };
 
         // 💡 FUNCIÓN DE NAVEGACIÓN CORREGIDA
@@ -496,7 +522,6 @@
                 document.getElementById(targetId).style.display = 'block';
                 window.scrollTo(0, 0);
 
-                // 💡 CLAVE: Registrar el estado en el historial para que funcione el botón de Atrás
                 if (pushHistory) {
                     let url = getBaseUrl();
                     let state = { viewId: viewId };
@@ -507,7 +532,6 @@
                         url = getBaseUrl(); 
                     }
                     
-                    // Si el estado actual es el mismo, no hagas pushState para evitar duplicados
                     if (window.location.hash !== (viewId === 'menu' ? '' : `#${viewId}`)) {
                          history.pushState(state, '', url);
                     }
@@ -516,7 +540,6 @@
                 // Si la vista no es un formulario pero es un estado especial (ej: status?id=...)
                 checkURL(viewId); 
             } else {
-                // Si no se encuentra, vuelve al menú (esto es un fallback)
                 showForm('menu', false);
             }
         }
@@ -526,7 +549,6 @@
             const state = history.state;
             
             if (!state || !state.viewId) {
-                // Si no hay estado guardado, vamos al menú
                 showForm('menu', false); 
                 return;
             }
@@ -535,7 +557,6 @@
                 // Si el estado es 'status', llamamos a checkURL para reevaluar la URL
                 checkURL(state.viewId);
             } else {
-                // Muestra el formulario sin crear un nuevo historial (pushHistory = false)
                 showForm(state.viewId, false);
             }
         });
@@ -549,41 +570,56 @@
             const viewId = parts[0];
             const params = new URLSearchParams(parts[1] || '');
             const requestId = params.get('id');
+            const type = params.get('type'); // NUEVO: Para diferenciar Documento de Registro
 
             if (viewId === 'status' && requestId) {
                 document.getElementById('app-container').style.display = 'none';
                 document.getElementById('status-page').style.display = 'flex';
                 document.getElementById('status-page').innerHTML = '<div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>';
-                checkStatus(requestId);
-                statusCheckInterval = setInterval(() => checkStatus(requestId), 5000);
+                
+                if (type === 'user') {
+                    checkUserStatus(requestId);
+                    statusCheckInterval = setInterval(() => checkUserStatus(requestId), 5000);
+                } else {
+                    checkDocStatus(requestId); // Lógica de documentos (anterior checkStatus)
+                    statusCheckInterval = setInterval(() => checkDocStatus(requestId), 5000);
+                }
                 return;
             }
             
             if (viewId && viewIdMap[viewId]) {
-                // Si hay un hash válido para un formulario, lo mostramos.
                 showForm(viewId, false);
                 return;
             }
 
-            // Si no hay hash o es inválido, mostramos el menú principal.
             showForm('menu', false);
         }
 
-        // --- CORRECCIÓN DEL INICIO DE SESIÓN DEL ADMINISTRADOR ---
-        function authenticateAdmin() {
-            // Se añade .trim() para evitar que espacios en blanco accidentales fallen la comparación
-            const user = document.getElementById('adminUser').value.trim();
-            const pass = document.getElementById('adminPass').value.trim();
+        // 💡 FUNCIÓN DE LOGIN UNIFICADA
+        function userLogin() {
+            const user = document.getElementById('adminUser').value;
+            const pass = document.getElementById('adminPass').value;
 
+            // 1. Check Admin Credentials
             if (user === ADMIN_USER && pass === ADMIN_PASS) {
                 alert("¡Bienvenido, Administrador! Accediendo al Panel de Autorización.");
                 showForm('admin_dashboard');
                 loadPendingRequests();
-            } else {
-                alert("Usuario o Contraseña incorrectos. Inténtalo de nuevo.");
+                return;
+            } 
+
+            // 2. Check Approved User Credentials
+            const approvedUsers = getRequests(APPROVED_USERS_KEY);
+            const approvedUser = approvedUsers.find(u => u.email === user && u.password === pass);
+
+            if (approvedUser) {
+                alert(`¡Bienvenido, ${approvedUser.fullName}! Acceso Exitoso a Servicios.`);
+                showForm('menu');
+                return;
             }
+            
+            alert("Usuario o Contraseña incorrectos. Por favor, regístrese o espere la aprobación.");
         }
-        // --------------------------------------------------------
 
         function getRequests(key) {
             const data = localStorage.getItem(key);
@@ -593,6 +629,51 @@
             localStorage.setItem(key, JSON.stringify(requests));
         }
 
+        // 💡 NUEVA FUNCIÓN PARA GUARDAR SOLICITUD DE REGISTRO
+        function saveRegistro() {
+            const email = document.getElementById('regEmail').value.trim();
+            const fullName = document.getElementById('regFullName').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+
+            if (!email || !fullName || !password) {
+                alert("Por favor, complete todos los campos para el registro.");
+                return;
+            }
+
+            // Comprobar si ya existe un usuario pendiente o aprobado con este correo
+            const pendingUsers = getRequests(USER_REG_PENDING_KEY);
+            const approvedUsers = getRequests(APPROVED_USERS_KEY);
+
+            if (pendingUsers.some(u => u.email === email) || approvedUsers.some(u => u.email === email)) {
+                alert("Este correo ya tiene una solicitud de registro pendiente o ya está registrado.");
+                return;
+            }
+
+            const registrationId = Date.now().toString();
+            const newRequest = {
+                id: registrationId,
+                type: 'user_registration',
+                email: email,
+                fullName: fullName,
+                password: password,
+                status: 'pending',
+                timestamp: new Date().toLocaleString()
+            };
+
+            pendingUsers.push(newRequest);
+            saveRequests(USER_REG_PENDING_KEY, pendingUsers);
+
+            alert("¡Registro enviado! Por favor, espere la aprobación del administrador.");
+
+            // Navegación a la página de estatus de registro
+            const url = `${getBaseUrl()}#status?id=${registrationId}&type=user`;
+            const state = { viewId: 'status', requestId: registrationId, type: 'user' };
+            history.pushState(state, '', url);
+            checkURL();
+        }
+
+
+        // 💡 FUNCIÓN MODIFICADA/RENOMBRADA PARA SOLICITUDES DE DOCUMENTOS
         async function saveSolicitud(tipoCarta) {
             let nombreSolicitante = 'Cliente', nombreAsunto = tipoCarta.toUpperCase(), pdfBase64 = null;
 
@@ -624,32 +705,40 @@
                 timestamp: new Date().toLocaleString()
             };
 
-            const requests = getRequests(STORAGE_KEY);
+            const requests = getRequests(DOC_PENDING_KEY);
             requests.push(newRequest);
-            saveRequests(STORAGE_KEY, requests);
+            saveRequests(DOC_PENDING_KEY, requests);
 
-            // 💡 Navegación a la página de estatus
-            const url = `${getBaseUrl()}#status?id=${requestId}`;
-            const state = { viewId: 'status', requestId: requestId };
+            // 💡 Navegación a la página de estatus de documento
+            const url = `${getBaseUrl()}#status?id=${requestId}&type=doc`;
+            const state = { viewId: 'status', requestId: requestId, type: 'doc' };
             history.pushState(state, '', url);
             checkURL();
         }
 
-        function checkStatus(requestId) {
-            const approvedRequests = getRequests(APPROVED_KEY);
+
+        // 💡 FUNCIÓN DE VERIFICACIÓN DE ESTATUS DE DOCUMENTO
+        function checkDocStatus(requestId) {
+            const approvedRequests = getRequests(DOC_APPROVED_KEY);
             const request = approvedRequests.find(req => req.id === requestId);
             const statusPage = document.getElementById('status-page');
             const disclaimer = statusPage.querySelector('.disclaimer-notice') ? statusPage.querySelector('.disclaimer-notice').outerHTML : '';
-            if (!request) {
+            
+            const pendingRequests = getRequests(DOC_PENDING_KEY); // Check if it still exists in pending
+            const pendingReq = pendingRequests.find(req => req.id === requestId);
+
+            if (!request && pendingReq) {
+                // PENDIENTE
                 statusPage.innerHTML = disclaimer + `
                     <h2>⏳ Solicitud Enviada - Esperando Autorización</h2>
                     <div class="spinner"></div>
-                    <p>Su solicitud de <strong>${requestId}</strong> ha sido recibida.</p>
+                    <p>Su solicitud de <strong>${pendingReq.name} (ID: ${requestId})</strong> ha sido recibida.</p>
                     <p>Estamos esperando que el administrador la apruebe una vez realizado el pago.</p>
                     <p style="font-size:0.8em;color:#555;">(Esta página se actualizará automáticamente cada 5 segundos)</p>
-                    <p style="margin-top:20px;">Puede guardar este enlace: <code>${getBaseUrl()}#status?id=${requestId}</code></p>
+                    <p style="margin-top:20px;">Puede guardar este enlace: <code>${getBaseUrl()}#status?id=${requestId}&type=doc</code></p>
                 `;
-            } else {
+            } else if (request) {
+                // APROBADA
                 if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
                 statusPage.innerHTML = disclaimer + `
                     <h2>✅ ¡Solicitud Aprobada!</h2>
@@ -657,11 +746,60 @@
                     <button class="btn-action btn-download-now" onclick="triggerDownload('${request.id}')"> Descargar Documento Ahora </button>
                     <p style="margin-top:30px;"><a href="#" onclick="showForm('menu')">← Volver al Menú Principal</a></p>
                 `;
+            } else {
+                 // NO ENCONTRADA (Pudo ser rechazada o eliminada)
+                if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
+                statusPage.innerHTML = disclaimer + `
+                    <h2>❌ Solicitud No Encontrada</h2>
+                    <p>La solicitud de documento con ID: <strong>${requestId}</strong> no se encuentra. Pudo haber sido rechazada o eliminada.</p>
+                    <p style="margin-top:30px;"><a href="#" onclick="showForm('menu')">← Volver al Menú Principal</a></p>
+                `;
+            }
+        }
+
+        // 💡 FUNCIÓN DE VERIFICACIÓN DE ESTATUS DE REGISTRO
+        function checkUserStatus(registrationId) {
+            const approvedUsers = getRequests(APPROVED_USERS_KEY);
+            const isApproved = approvedUsers.find(u => u.id === registrationId);
+            const statusPage = document.getElementById('status-page');
+            const disclaimer = statusPage.querySelector('.disclaimer-notice') ? statusPage.querySelector('.disclaimer-notice').outerHTML : '';
+
+            const pendingUsers = getRequests(USER_REG_PENDING_KEY);
+            const pendingReq = pendingUsers.find(u => u.id === registrationId);
+
+            if (isApproved) {
+                // APROBADO
+                if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
+                statusPage.innerHTML = disclaimer + `
+                    <h2>🎉 ¡Registro Aprobado!</h2>
+                    <p>El administrador ha autorizado su cuenta.</p>
+                    <p>Ya puede iniciar sesión con su correo y contraseña.</p>
+                    <button class="btn-action" style="background-color:#3498db;" onclick="showForm('login')"> Ir a Iniciar Sesión </button>
+                    <p style="margin-top:30px;"><a href="#" onclick="showForm('menu')">← Volver al Menú Principal</a></p>
+                `;
+            } else if (pendingReq) {
+                 // PENDIENTE
+                statusPage.innerHTML = disclaimer + `
+                    <h2>⏳ Solicitud de Registro Enviada</h2>
+                    <div class="spinner"></div>
+                    <p>Su solicitud de registro para el correo <strong>${pendingReq.email}</strong> ha sido recibida.</p>
+                    <p>Estamos esperando que el administrador la apruebe.</p>
+                    <p style="font-size:0.8em;color:#555;">(Esta página se actualizará automáticamente cada 5 segundos)</p>
+                    <p style="margin-top:20px;">Puede guardar este enlace: <code>${getBaseUrl()}#status?id=${registrationId}&type=user</code></p>
+                `;
+            } else {
+                 // NO ENCONTRADO
+                if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
+                statusPage.innerHTML = disclaimer + `
+                    <h2>❌ Solicitud No Encontrada</h2>
+                    <p>La solicitud de registro con ID: <strong>${registrationId}</strong> no se encuentra. Pudo haber sido rechazada o eliminada.</p>
+                    <p style="margin-top:30px;"><a href="#" onclick="showForm('menu')">← Volver al Menú Principal</a></p>
+                `;
             }
         }
 
         function triggerDownload(requestId) {
-            const approvedRequests = getRequests(APPROVED_KEY);
+            const approvedRequests = getRequests(DOC_APPROVED_KEY);
             const request = approvedRequests.find(req => req.id === requestId);
             if (!request) {
                 alert("Error: Archivo no encontrado.");
@@ -693,55 +831,94 @@
             `;
         }
 
+        // 💡 FUNCIÓN MODIFICADA PARA CARGAR AMBOS TIPOS DE SOLICITUDES
         function loadPendingRequests() {
-            const requests = getRequests(STORAGE_KEY).filter(req => req.status === 'pending');
+            const docRequests = getRequests(DOC_PENDING_KEY).filter(req => req.status === 'pending');
+            const userRequests = getRequests(USER_REG_PENDING_KEY).filter(req => req.status === 'pending');
+            const allRequests = [...docRequests, ...userRequests]; // Combinar ambas listas
+
             const listElement = document.getElementById('pending-requests-list');
             listElement.innerHTML = '';
-            if (requests.length === 0) {
+            
+            if (allRequests.length === 0) {
                 listElement.innerHTML = '<p id="no-requests-msg">No hay solicitudes pendientes en el almacenamiento local de este navegador.</p>';
                 return;
             }
-            requests.forEach(req => {
-                const typeDisplay = req.type.replace(/_/g, ' ').toUpperCase();
+            
+            allRequests.forEach(req => {
+                const isUserReg = req.type === 'user_registration';
+                const typeDisplay = isUserReg ? 'REGISTRO DE USUARIO' : req.type.replace(/_/g, ' ').toUpperCase();
+                const nameDisplay = isUserReg ? req.fullName : req.name;
+                const requesterDisplay = isUserReg ? req.email : req.requesterName;
+                const statusURL = isUserReg ? `${getBaseUrl()}#status?id=${req.id}&type=user` : `${getBaseUrl()}#status?id=${req.id}&type=doc`;
+
                 const item = document.createElement('div');
                 item.id = `request-${req.id}`;
                 item.className = 'request-item';
                 item.innerHTML = `
                     <div class="request-info">
-                        <strong>${typeDisplay} - ${req.name}</strong>
-                        <p>Solicitante: ${req.requesterName} (ID: ${req.id})</p>
-                        <p style="font-size:0.8em;">URL del Cliente: <code style="word-break: break-all;">${getBaseUrl()}#status?id=${req.id}</code></p>
+                        <strong>${typeDisplay} - ${nameDisplay}</strong>
+                        <p>${isUserReg ? 'Correo' : 'Solicitante'}: ${requesterDisplay} (ID: ${req.id})</p>
+                        <p style="font-size:0.8em;">URL del Cliente: <code style="word-break: break-all;">${statusURL}</code></p>
                     </div>
                     <div class="request-actions">
-                        <button class="btn-authorize" onclick="authorizeRequest('${req.id}')">Autorizar</button>
-                        <button class="btn-reject" onclick="deleteRequest('${req.id}', '${STORAGE_KEY}')">Rechazar</button>
+                        <button class="btn-authorize" onclick="authorizeRequest('${req.id}', '${req.type}')">Autorizar</button>
+                        <button class="btn-reject" onclick="deleteRequest('${req.id}', '${isUserReg ? USER_REG_PENDING_KEY : DOC_PENDING_KEY}', '${isUserReg ? 'user' : 'doc'}')">Rechazar</button>
                     </div>
                 `;
                 listElement.appendChild(item);
             });
         }
 
-        function authorizeRequest(requestId) {
-            let pendingRequests = getRequests(STORAGE_KEY);
-            const index = pendingRequests.findIndex(req => req.id === requestId);
-            if (index === -1) {
-                alert("Error: Solicitud no encontrada.");
+        // 💡 FUNCIÓN DE AUTORIZACIÓN UNIFICADA
+        function authorizeRequest(requestId, requestType) {
+            if (requestType === 'user_registration') {
+                // Lógica para APROBAR REGISTRO DE USUARIO
+                let pendingUsers = getRequests(USER_REG_PENDING_KEY);
+                const index = pendingUsers.findIndex(req => req.id === requestId);
+                if (index === -1) {
+                    alert("Error: Solicitud de registro no encontrada.");
+                    loadPendingRequests();
+                    return;
+                }
+                const userReq = pendingUsers[index];
+                userReq.status = 'approved';
+                const approvedUsers = getRequests(APPROVED_USERS_KEY);
+                approvedUsers.push({
+                    id: userReq.id,
+                    email: userReq.email,
+                    password: userReq.password,
+                    fullName: userReq.fullName
+                });
+                saveRequests(APPROVED_USERS_KEY, approvedUsers);
+                pendingUsers.splice(index, 1);
+                saveRequests(USER_REG_PENDING_KEY, pendingUsers);
+                alert(`¡Registro de usuario Autorizado! El cliente ya puede iniciar sesión.`);
                 loadPendingRequests();
-                return;
+            } else {
+                // Lógica para APROBAR SOLICITUD DE DOCUMENTO
+                let pendingRequests = getRequests(DOC_PENDING_KEY);
+                const index = pendingRequests.findIndex(req => req.id === requestId);
+                if (index === -1) {
+                    alert("Error: Solicitud de documento no encontrada.");
+                    loadPendingRequests();
+                    return;
+                }
+                const request = pendingRequests[index];
+                request.status = 'approved';
+                const approvedRequests = getRequests(DOC_APPROVED_KEY);
+                approvedRequests.push(request);
+                saveRequests(DOC_APPROVED_KEY, approvedRequests);
+                pendingRequests.splice(index, 1);
+                saveRequests(DOC_PENDING_KEY, pendingRequests);
+                alert(`¡Solicitud de Documento Autorizada! El cliente ahora puede descargar el archivo.`);
+                loadPendingRequests();
             }
-            const request = pendingRequests[index];
-            request.status = 'approved';
-            const approvedRequests = getRequests(APPROVED_KEY);
-            approvedRequests.push(request);
-            saveRequests(APPROVED_KEY, approvedRequests);
-            pendingRequests.splice(index, 1);
-            saveRequests(STORAGE_KEY, pendingRequests);
-            alert(`¡Solicitud Autorizada! El cliente ahora puede descargar el archivo usando el enlace de su página de estatus.`);
-            loadPendingRequests();
         }
 
-        function deleteRequest(requestId, key) {
-            const confirmMsg = key === STORAGE_KEY ? "¿Está seguro de rechazar y eliminar esta solicitud pendiente?" : "¿Está seguro de eliminar esta solicitud APROBADA del historial del administrador?";
+        // 💡 FUNCIÓN DE ELIMINACIÓN UNIFICADA
+        function deleteRequest(requestId, key, type) {
+            const confirmMsg = type === 'user' ? "¿Está seguro de rechazar y eliminar esta solicitud de REGISTRO pendiente?" : "¿Está seguro de rechazar y eliminar esta solicitud de DOCUMENTO pendiente?";
             if (!confirm(confirmMsg)) return;
             let requests = getRequests(key);
             const index = requests.findIndex(req => req.id === requestId);
