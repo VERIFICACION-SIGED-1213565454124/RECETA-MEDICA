@@ -23,7 +23,7 @@
         .input-group, .form-section { background-color: #ffffff; padding: 20px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         h2 { color: #34495e; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-bottom: 15px; }
         label { display: block; margin-top: 10px; font-weight: bold; color: #555; }
-        input[type="text"], input[type="date"], textarea, input[type="file"], input[type="password"], input[type="email"] {
+        input[type="text"], input[type="date"], textarea, input[type="file"], input[type="password"], input[type="email"], select {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -33,7 +33,7 @@
             box-sizing: border-box;
         }
         .date-container { display:flex; justify-content:space-between; gap:10px; }
-        .date-container input { width:100%; }
+        .date-container input, .date-container select { width:100%; }
         textarea { height:120px; resize:vertical; }
         .btn-action {
             background-color: #e67e22;
@@ -306,6 +306,124 @@
                 <p id="no-requests-msg">No hay solicitudes pendientes.</p>
             </div>
         </div>
+        
+        <div id="form-certificado_medico_imss" class="form-section">
+            <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
+            <div class="disclaimer-notice">
+                *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
+            </div>
+            <div class="payment-notice">
+                *PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*
+            </div>
+            <h2>🏥 Certificado Médico IMSS</h2>
+            
+            <div class="input-group">
+                <h2>👨‍⚕️ Datos del Médico</h2>
+                <label for="certImssDoctorNombre">Nombre del Médico (Ej: DRA. YESSICA MEJÍA CARRANZA):</label>
+                <input type="text" id="certImssDoctorNombre" value="DRA. YESSICA MEJÍA CARRANZA" required>
+                
+                <label for="certImssDoctorCedula">Cédula Profesional (Ej: C.P. 5866652):</label>
+                <input type="text" id="certImssDoctorCedula" value="C.P. 5866652" required>
+
+                <label for="certImssDoctorEspecialidad">Especialidad (Ej: Medicina Familiar):</label>
+                <input type="text" id="certImssDoctorEspecialidad" value="Medicina Familiar" required>
+
+                <div class="date-container">
+                    <div>
+                        <label for="certImssUmf">UMF No. (Ej: 67):</label>
+                        <input type="text" id="certImssUmf" value="UMF 67" required>
+                    </div>
+                    <div>
+                        <label for="certImssDoctorConsultorio">Consultorio (Ej: 5):</label>
+                        <input type="text" id="certImssDoctorConsultorio" value="5" required>
+                    </div>
+                    <div>
+                        <label for="certImssDoctorTurno">Turno (Ej: Vespertino):</label>
+                        <input type="text" id="certImssDoctorTurno" value="Vespertino" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <h2>👤 Datos del Paciente</h2>
+                <label for="certImssNombre">Nombre Completo del Paciente:</label>
+                <input type="text" id="certImssNombre" value="CARMEN MORELOS HERNÁNDEZ" required>
+
+                <label for="certImssNss">Número de Seguridad Social (NSS):</label>
+                <input type="text" id="certImssNss" value="1715950626-4" required>
+
+                <div class="date-container">
+                    <div>
+                        <label for="certImssEdad">Edad (Años):</label>
+                        <input type="number" id="certImssEdad" value="30" required>
+                    </div>
+                    <div>
+                        <label for="certImssSexo">Sexo:</label>
+                        <select id="certImssSexo" required>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Masculino">Masculino</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="date-container">
+                    <div>
+                        <label for="certImssFechaNac">Fecha de Nacimiento:</label>
+                        <input type="date" id="certImssFechaNac" required>
+                    </div>
+                    <div>
+                        <label for="certImssTipoSangre">Tipo de Sangre (Ej: O+):</label>
+                        <input type="text" id="certImssTipoSangre" value="O+" required>
+                    </div>
+                </div>
+                
+                <label for="certImssDireccion">Dirección/Localidad (Ej: SANTA CLARA ECATEPEC ESTADO DE MÉXICO):</label>
+                <input type="text" id="certImssDireccion" value="SANTA CLARA ECATEPEC ESTADO DE MÉXICO" required>
+            </div>
+
+            <div class="input-group">
+                <h2>📈 Examen Físico y Conclusión</h2>
+                <div class="date-container">
+                    <div>
+                        <label for="certImssPeso">Peso (kg):</label>
+                        <input type="text" id="certImssPeso" value="90.00kg" required>
+                    </div>
+                    <div>
+                        <label for="certImssTalla">Talla (mts):</label>
+                        <input type="text" id="certImssTalla" value="1.65 mts" required>
+                    </div>
+                </div>
+                <div class="date-container">
+                    <div>
+                        <label for="certImssPA">Presión Arterial (Ej: 110/76 mmHg):</label>
+                        <input type="text" id="certImssPA" value="110/76 mmHg" required>
+                    </div>
+                    <div>
+                        <label for="certImssFC">Frecuencia Cardíaca (Ej: 78 lpm):</label>
+                        <input type="text" id="certImssFC" value="78 lpm" required>
+                    </div>
+                </div>
+                <div class="date-container">
+                    <div>
+                        <label for="certImssFR">Frecuencia Respiratoria (Ej: 16 rpm):</label>
+                        <input type="text" id="certImssFR" value="16 rpm" required>
+                    </div>
+                    <div>
+                        <label for="certImssTemp">Temperatura Corporal (Ej: 36.7°C):</label>
+                        <input type="text" id="certImssTemp" value="36.7°C" required>
+                    </div>
+                </div>
+
+                <label for="certImssConclusion">Conclusión (Recomendación de Aptitud):</label>
+                <textarea id="certImssConclusion" required>Es apto/apta para realizar actividades físicas sin restricciones.</textarea>
+
+                <label for="certImssFechaEmision">Fecha de Emisión del Certificado:</label>
+                <input type="date" id="certImssFechaEmision" value="2025-10-06" required>
+            </div>
+
+            <button class="btn-action" style="background-color:#2980b9;" onclick="saveSolicitud('certificado_medico_imss')">💾 Guardar Solicitud (Esperar Aprobación)</button>
+            <button class="btn-action" style="background-color:#27ae60; margin-top:5px;" onclick="generarPDFCertificadoIMSS(true)">Descargar Vista Previa (Sólo PDF)</button>
+        </div>
         <div id="form-receta_similares" class="form-section">
             <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
 
@@ -488,12 +606,12 @@
             'menu': 'main-menu',
             'laboral': 'form-laboral',
             'personal': 'form-personal',
-            // 'admin_login': 'admin-login', // Reemplazado por 'auth-splash' para simplificar
             'admin_dashboard': 'admin-dashboard',
             'incapacidad_imss': 'form-incapacidad_imss',
             'receta_similares': 'form-receta_similares',
             'receta_ahorro': 'form-receta_ahorro',
             'receta_imss': 'form-receta_imss',
+            'certificado_medico_imss': 'form-certificado_medico_imss', // <-- NUEVO Mapeo
             'cert_primaria': 'form-cert_primaria',
             'cert_secundaria': 'form-cert_secundaria',
             'cert_prepa': 'form-cert_prepa',
@@ -592,11 +710,11 @@
         }
         
         function getActivityLog() {
-            const data = localStorage.getItem(USER_ACTIVITY_KEY);
+            const data = localStorage.getItem(USER_ACTIVITY_LOG);
             return data ? JSON.parse(data) : [];
         }
         function saveActivityLog(log) {
-            localStorage.setItem(USER_ACTIVITY_KEY, JSON.stringify(log));
+            localStorage.setItem(USER_ACTIVITY_LOG, JSON.stringify(log));
         }
 
         function logActivity(userIdentifier, action) {
@@ -823,6 +941,10 @@
                 nombreSolicitante = document.getElementById('nombrePacienteSimilares').value || 'Paciente';
                 nombreAsunto = nombreSolicitante;
                 pdfBase64 = await generarPDFRecetaSimilares(false);
+            } else if (tipoCarta === 'certificado_medico_imss') { // <-- NUEVO
+                nombreSolicitante = document.getElementById('certImssNombre').value || 'Paciente IMSS';
+                nombreAsunto = nombreSolicitante;
+                pdfBase64 = await generarPDFCertificadoIMSS(false);
             } else {
                 pdfBase64 = "BASE64_PLACEHOLDER_FOR_NEW_TYPE";
             }
@@ -1075,6 +1197,201 @@
                 </g>
             </svg>`
         );
+        
+        // --- FUNCIÓN PARA GENERAR EL PDF DEL CERTIFICADO IMSS (NUEVA) ---
+        const IMSS_LOGO_SVG = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                <rect width="100" height="100" fill="white"/>
+                <path d="M50 0 C75 0 95 20 95 45 C95 70 50 100 50 100 C50 100 5 70 5 45 C5 20 25 0 50 0 Z" fill="#006c59"/>
+                <path d="M50 6 L88 45 C88 64 50 90 50 90 C50 90 12 64 12 45 L50 6 Z" fill="#008c7c"/>
+                <path d="M50 15 C69 15 84 30 84 49 C84 64 50 82 50 82 C50 82 16 64 16 49 C16 30 31 15 50 15 Z" fill="#ffffff"/>
+                <path d="M50 25 C60 25 70 30 70 40 C70 50 50 65 50 65 C50 65 30 50 30 40 C30 30 40 25 50 25 Z" fill="#006c59"/>
+                <text x="50" y="98" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#006c59" text-anchor="middle">IMSS</text>
+            </svg>
+        `;
+        const IMSS_LOGO_DATAURL = 'data:image/svg+xml;base64,' + btoa(IMSS_LOGO_SVG);
+
+
+        async function generarPDFCertificadoIMSS(descargar = true) {
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const margin = 15;
+            let y = 10;
+            const lineHeight = 5;
+
+            // Datos del Formulario
+            const doctorNombre = (document.getElementById('certImssDoctorNombre').value || 'MÉDICO EN TURNO').toUpperCase();
+            const doctorCedula = (document.getElementById('certImssDoctorCedula').value || 'C.P. XXXXXXX').toUpperCase();
+            const doctorEspecialidad = (document.getElementById('certImssDoctorEspecialidad').value || 'MEDICINA GENERAL').toUpperCase();
+            const doctorConsultorio = document.getElementById('certImssDoctorConsultorio').value || 'N/A';
+            const doctorTurno = document.getElementById('certImssDoctorTurno').value || 'N/A';
+            const umf = (document.getElementById('certImssUmf').value || 'UMF N/A').toUpperCase();
+
+            const nombreP = (document.getElementById('certImssNombre').value || 'PACIENTE').toUpperCase();
+            const nss = document.getElementById('certImssNss').value || 'N/A';
+            const edad = document.getElementById('certImssEdad').value || 'N/A';
+            const sexo = document.getElementById('certImssSexo').value || 'N/A';
+            const fechaNacVal = document.getElementById('certImssFechaNac').value;
+            const fechaNac = fechaNacVal ? new Date(fechaNacVal + 'T12:00:00').toLocaleDateString('es-MX') : 'N/A';
+            const tipoSangre = document.getElementById('certImssTipoSangre').value || 'N/A';
+            const direccion = (document.getElementById('certImssDireccion').value || 'ESTADO DE MÉXICO').toUpperCase();
+
+            const peso = document.getElementById('certImssPeso').value || 'N/A';
+            const talla = document.getElementById('certImssTalla').value || 'N/A';
+            const pa = document.getElementById('certImssPA').value || 'N/A';
+            const fc = document.getElementById('certImssFC').value || 'N/A';
+            const fr = document.getElementById('certImssFR').value || 'N/A';
+            const temp = document.getElementById('certImssTemp').value || 'N/A';
+            const conclusion = document.getElementById('certImssConclusion').value || '';
+
+            const fechaEmisionVal = document.getElementById('certImssFechaEmision').value;
+
+            // 1. Encabezado IMSS
+            doc.addImage(IMSS_LOGO_DATAURL, 'SVG', margin, y, 15, 15);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+            doc.text('INSTITUTO MEXICANO DEL SEGURO SOCIAL', pageWidth / 2, y + 2, { align: 'center' });
+            y += 7;
+            doc.setFontSize(12);
+            doc.text('DIRECCIÓN DE PRESTACIONES MÉDICAS', pageWidth / 2, y, { align: 'center' });
+            y += 6;
+            doc.setFontSize(11);
+            doc.text(`${umf}, ${direccion}`, pageWidth / 2, y, { align: 'center' });
+            y += 10;
+            
+            // Título Principal
+            doc.setFontSize(16);
+            doc.text('CERTIFICADO MÉDICO', pageWidth / 2, y, { align: 'center' });
+            y += 5;
+            doc.setLineWidth(0.5);
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 8;
+
+            // 2. Datos del Paciente
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.text('DATOS DE IDENTIFICACIÓN DEL PACIENTE', margin, y);
+            y += 6;
+            
+            doc.setFont('helvetica', 'normal');
+            doc.text('Paciente:', margin, y);
+            doc.setFont('helvetica', 'bold');
+            doc.text(nombreP, margin + 20, y);
+            
+            doc.setFont('helvetica', 'normal');
+            doc.text('NSS:', margin + 110, y);
+            doc.setFont('helvetica', 'bold');
+            doc.text(nss, margin + 125, y);
+            y += 5;
+
+            doc.setFont('helvetica', 'normal');
+            doc.text('Sexo:', margin, y);
+            doc.setFont('helvetica', 'bold');
+            doc.text(sexo, margin + 15, y);
+            
+            doc.setFont('helvetica', 'normal');
+            doc.text('Edad:', margin + 60, y);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`${edad} años`, margin + 75, y);
+
+            doc.setFont('helvetica', 'normal');
+            doc.text('Tipo de Sangre:', margin + 110, y);
+            doc.setFont('helvetica', 'bold');
+            doc.text(tipoSangre, margin + 140, y);
+            y += 5;
+            
+            doc.setFont('helvetica', 'normal');
+            doc.text('Fecha de Nacimiento:', margin, y);
+            doc.setFont('helvetica', 'bold');
+            doc.text(fechaNac, margin + 40, y);
+            y += 8;
+
+            // 3. Antecedentes Médicos (Basado en el DOCX)
+            doc.setFont('helvetica', 'bold');
+            doc.text('ANTECEDENTES MÉDICOS', margin, y);
+            y += 6;
+            doc.setFont('helvetica', 'normal');
+            doc.text('Alergias: No presenta alergias de ningún tipo.', margin, y); y += 5;
+            doc.text('Cirugías: No ha sido sometida a intervenciones quirúrgicas.', margin, y); y += 5;
+            doc.text('Enfermedades Crónicas: Ninguna.', margin, y); y += 5;
+            doc.text('Vacunas: Esquema de vacunación al día conforme a las normativas vigentes.', margin, y); y += 8;
+
+            // 4. Examen Físico
+            doc.setFont('helvetica', 'bold');
+            doc.text('EXAMEN FÍSICO GENERAL', margin, y);
+            y += 6;
+
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Peso: ${peso}`, margin, y);
+            doc.text(`Talla: ${talla}`, margin + 35, y);
+            doc.text(`Presión Arterial: ${pa}`, margin + 70, y);
+            doc.text(`Frecuencia Cardiaca: ${fc}`, margin + 125, y);
+            y += 5;
+            
+            doc.text(`Frecuencia Respiratoria: ${fr}`, margin, y);
+            doc.text(`Temperatura Corporal: ${temp}`, margin + 70, y);
+            y += 8;
+
+            // 5. Sistemas Revisados (Placeholder basado en el DOCX)
+            doc.setFont('helvetica', 'bold');
+            doc.text('VALORACIÓN POR SISTEMAS:', margin, y);
+            y += 6;
+            doc.setFont('helvetica', 'normal');
+            doc.text('Sistema Respiratorio: Pulmones: Sin murmullo vesicular presente, sin ruidos agregados.', margin, y); y += 5;
+            doc.text('Sistema Cardiovascular: Corazón: Rítmico, sin soplos ni ruidos patológicos.', margin, y); y += 5;
+            doc.text('Sistema Digestivo: Abdomen: Blando, depresible, sin dolor a la palpación.', margin, y); y += 5;
+            doc.text('Sistema Neurológico: Reflejos: Conservados. Conciencia: Orientada en tiempo, espacio y persona.', margin, y); y += 5;
+            doc.text('Sistema Osteomuscular: Columna: Sin desviaciones, postura adecuada. Extremidades: Con fuerza y movilidad.', margin, y); y += 5;
+            doc.text('Examen de la Vista: Agudeza Visual: 20/20. Visión de Colores: Normal.', margin, y); y += 8;
+
+            // 6. Conclusión
+            doc.setFont('helvetica', 'bold');
+            doc.text('CONCLUSIÓN:', margin, y);
+            y += 6;
+
+            doc.setFont('helvetica', 'normal');
+            const conclusionText = `El paciente se encuentra en buenas condiciones de salud general, sin signos de enfermedades infecciosas, crónicas o agudas que comprometen su bienestar en la actualidad. ${conclusion}`;
+            y = drawJustifiedText(doc, conclusionText, margin, y, pageWidth - 2 * margin, lineHeight);
+            y += 15;
+            
+            // 7. Fecha y Firma (Formato DOCX)
+            
+            const fecha = new Date(fechaEmisionVal + 'T12:00:00');
+            const day = fecha.getDate();
+            const month = fecha.toLocaleDateString('es-MX', { month: 'long' });
+            const year = fecha.getFullYear();
+            const yearText = year.toString().replace(/^(\d{2})(\d{2})$/, (m, p1, p2) => `dos mil ${p2}`); // Simple conversion
+            
+            doc.setFont('helvetica', 'normal');
+            doc.text('A', pageWidth / 2 - 30, y, { align: 'center' });
+            doc.setFont('helvetica', 'bold');
+            doc.text(`${day} días del Mes de ${month} del ${yearText}.`, pageWidth / 2, y, { align: 'center' });
+            y += 25;
+
+            // Línea de Firma
+            const firmaX = pageWidth / 2;
+            doc.setLineWidth(0.4);
+            doc.line(firmaX - 35, y, firmaX + 35, y);
+            y += 4;
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text(doctorNombre, firmaX, y, { align: 'center' });
+            y += 4;
+            doc.setFontSize(9);
+            doc.text(`${doctorEspecialidad}. Consultorio: ${doctorConsultorio} Turno: ${doctorTurno}.`, firmaX, y, { align: 'center' });
+            y += 4;
+            doc.text(doctorCedula, firmaX, y, { align: 'center' });
+            
+            // 8. Descarga
+            if (descargar) {
+                const safeName = (nombreP || 'PACIENTE').replace(/\s+/g, '_');
+                doc.save(`Certificado_IMSS_${safeName}.pdf`);
+                return true;
+            } else {
+                return doc.output('datauristring').split(',')[1];
+            }
+        }
 
         async function generarPDFRecetaSimilares(descargar = true) {
             const doc = new jsPDF('p', 'mm', 'a4');
