@@ -1363,7 +1363,8 @@
             const day = fecha.getDate();
             const month = fecha.toLocaleDateString('es-MX', { month: 'long' });
             const year = fecha.getFullYear();
-            const yearText = year.toString().replace(/^(\d{2})(\d{2})$/, (m, p1, p2) => `dos mil ${p2}`); // Simple conversion
+            // CORRECCIÓN: Se elimina el reemplazo de string defectuoso que causaba el fallo.
+            const yearText = year.toString(); 
             
             doc.setFont('helvetica', 'normal');
             doc.text('A', pageWidth / 2 - 30, y, { align: 'center' });
