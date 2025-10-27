@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Generador de Documentos - Acceso y Solicitudes</title>
+    <title>Generador de Documentos - Estatus de Solicitud</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
@@ -20,10 +20,10 @@
             padding-bottom: 100px;
         }
         h1 { color: #2c3e50; text-align: center; margin-bottom: 25px; }
-        .input-group, .form-section, .auth-form { background-color: #ffffff; padding: 20px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .input-group, .form-section { background-color: #ffffff; padding: 20px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         h2 { color: #34495e; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-bottom: 15px; }
         label { display: block; margin-top: 10px; font-weight: bold; color: #555; }
-        input[type="text"], input[type="date"], textarea, input[type="file"], input[type="password"], input[type="email"] {
+        input[type="text"], input[type="date"], textarea, input[type="file"], input[type="password"] {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -64,21 +64,23 @@
         .fixed-payment-info { position:fixed; bottom:0; right:0; background-color:#34495e; color:white; padding:10px 15px; border-top-left-radius:8px; font-size:0.85em; z-index:99; text-align:right; max-width:350px; }
         .fixed-payment-info strong { color:#f1c40f; }
         .fixed-payment-info p { margin:2px 0; }
-        .request-item, .user-item { border:1px solid #ccc; padding:10px; margin-bottom:10px; background-color:#fff; display:flex; justify-content:space-between; align-items:center; }
+        .request-item { border:1px solid #ccc; padding:10px; margin-bottom:10px; background-color:#fff; display:flex; justify-content:space-between; align-items:center; }
         .request-actions button { width:auto; padding:8px 12px; font-size:0.9em; margin-left:10px; }
         .btn-authorize { background-color:#3498db; color:#fff; border:none; padding:8px 10px; border-radius:4px; cursor:pointer; }
         .btn-reject { background-color:#c0392b; color:#fff; border:none; padding:8px 10px; border-radius:4px; cursor:pointer; }
         .download-link-box { background-color:#f0f0f0; border:1px dashed #3498db; padding:10px; margin-top:10px; word-break:break-all; font-size:0.9em; }
         input[type="file"] { padding:6px 10px; }
 
-        /* --- ESTILOS DE CUADRÍCULA Y ANIMACIÓN --- */
+        /* --- NUEVOS ESTILOS PARA LA CUADRÍCULA DE ICONOS Y ANIMACIÓN --- */
         .icon-grid {
             display: grid;
+            /* Crea columnas flexibles, mínimo 150px de ancho */
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-top: 10px;
             margin-bottom: 25px;
         }
+
         .menu-card {
             background-color: #ffffff;
             color: #34495e;
@@ -87,29 +89,35 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             cursor: pointer;
             text-align: center;
+            /* Transición para el efecto suave */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 120px; 
-            border: 1px solid #eee;
+            border: 1px solid #eee; /* Borde suave */
         }
+
+        /* ANIMACIÓN: Efecto al pasar el ratón */
         .menu-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.25);
+            transform: scale(1.05); /* Escala ligeramente (zoom) */
+            box-shadow: 0 8px 15px rgba(0,0,0,0.25); /* Sombra más pronunciada */
         }
+
         .menu-card i {
-            font-size: 2.5em;
+            font-size: 2.5em; /* Tamaño grande para el icono */
             margin-bottom: 8px;
             transition: color 0.3s ease;
         }
+
         .menu-card strong {
             font-size: 0.9em;
             font-weight: bold;
             display: block;
             line-height: 1.3;
         }
+
         /* Colores específicos para las categorías */
         .category-social i { color: #25d366; }
         .category-carta i { color: #e67e22; }
@@ -122,14 +130,6 @@
         .category-receta:hover i { color: #1e8449; }
         .category-certificado:hover i { color: #2980b9; }
         .category-especializado:hover i { color: #8e44ad; }
-        
-        /* Estilos específicos para login y registro */
-        .auth-form { max-width: 400px; margin: 100px auto; text-align: center; }
-        .auth-form h2 { border: none; }
-        .auth-form .btn-action { margin-top: 20px; }
-        .auth-form p { margin-top: 15px; font-size: 0.9em; }
-        .auth-form a { color: #3498db; text-decoration: none; font-weight: bold; }
-        .auth-form a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -141,38 +141,8 @@
     </div>
 
     <div id="app-container">
-        
-        <div id="user-login" class="auth-form">
-            <h2>🔑 Iniciar Sesión para Acceder a Servicios</h2>
-            <p>Ingrese su correo y contraseña para continuar.</p>
-            <div class="input-group">
-                <label for="userEmail">Correo (Usuario):</label>
-                <input type="email" id="userEmail" placeholder="ejemplo@correo.com">
-                <label for="userPass">Contraseña:</label>
-                <input type="password" id="userPass" placeholder="••••••••">
-                <button class="btn-action" style="background-color:#27ae60;" onclick="loginUser()">Acceder</button>
-            </div>
-            <p>¿Aún no tienes cuenta? <a href="#" onclick="showForm('user_register')">Regístrate aquí</a></p>
-            <button id="btn-go-admin" onclick="showForm('admin_login')">Acceso de Administrador</button>
-        </div>
-
-        <div id="user-register" class="auth-form" style="display:none;">
-            <button class="back-button" onclick="showForm('user_login')">← Volver al Login</button>
-            <h2>✍️ Registro de Nuevo Cliente</h2>
-            <p>Crea tu cuenta. Debes ser autorizado por el administrador para acceder.</p>
-            <div class="input-group">
-                <label for="registerName">Nombre Completo:</label>
-                <input type="text" id="registerName" placeholder="Juan Pérez">
-                <label for="registerEmail">Correo (Será tu Usuario):</label>
-                <input type="email" id="registerEmail" placeholder="ejemplo@correo.com">
-                <label for="registerPass">Contraseña:</label>
-                <input type="password" id="registerPass" placeholder="Crea una contraseña segura">
-                <button class="btn-action" onclick="registerUser()">Registrar Cuenta</button>
-            </div>
-        </div>
-
-        <div id="main-menu" style="display:none;">
-            <button class="back-button" onclick="logoutUser()">← Cerrar Sesión</button>
+        <div id="main-menu">
+            
             <h2>🌐 Acceso a Grupo y Soporte</h2>
             <div class="icon-grid">
                 <div class="menu-card category-social" onclick="showForm('whatsapp_group')">
@@ -266,38 +236,32 @@
             </div>
             
             <hr/>
+
+            <button id="btn-go-admin" onclick="showForm('admin_login')">Acceso de Administrador</button>
         </div>
 
-        <div id="admin-login" class="form-section" style="display:none;">
-            <button class="back-button" onclick="showForm('user_login')">← Volver al Login</button>
+        <div id="admin-login" class="form-section">
+            <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
             <h2>🔒 Acceso del Administrador</h2>
             <p>Ingrese sus credenciales para autorizar las solicitudes.</p>
             <div class="input-group">
                 <label for="adminUser">Usuario:</label>
-                <input type="text" id="adminUser" placeholder="Ingrese su usuario" value="">
+                <input type="text" id="adminUser" placeholder="Ingrese su usuario" value="trollgaga999@gmail.com">
                 <label for="adminPass">Contraseña:</label>
-                <input type="password" id="adminPass" placeholder="Ingrese su contraseña" value="">
+                <input type="password" id="adminPass" placeholder="Ingrese su contraseña" value="Johan207">
                 <button class="btn-action" style="background-color:#2c3e50;" onclick="authenticateAdmin()">Iniciar Sesión</button>
             </div>
         </div>
 
-        <div id="admin-dashboard" class="form-section" style="display:none;">
-            <button class="back-button" onclick="showForm('user_login')">← Cerrar Sesión</button>
+        <div id="admin-dashboard" class="form-section">
+            <button class="back-button" onclick="showForm('menu')">← Cerrar Sesión</button>
             <h2>⚙️ Panel de Autorización de Solicitudes</h2>
             <p>Al autorizar, el cliente verá automáticamente el botón de descarga en su página de espera.</p>
 
-            <hr>
-            <h3>👥 Autorización de Cuentas Pendientes:</h3>
-            <div id="pending-users-list" class="input-group">
-                <p id="no-users-msg">No hay cuentas de usuario pendientes de aprobación.</p>
-            </div>
-            <hr>
-            
-            <h3>📝 Solicitudes de Documentos Pendientes:</h3>
+            <h3>Solicitudes Pendientes:</h3>
             <div id="pending-requests-list" class="input-group">
-                <p id="no-requests-msg">No hay solicitudes de documentos pendientes.</p>
+                <p id="no-requests-msg">No hay solicitudes pendientes en el almacenamiento local de este navegador.</p>
             </div>
-            <p style="text-align:center; font-size:0.8em; color:#777;">Actualización automática cada 3 segundos.</p>
         </div>
 
         <div id="form-receta_similares" class="form-section">
@@ -461,9 +425,7 @@
     </div>
 
     <div id="status-page" class="status-page" style="display:none;">
-        <div class="disclaimer-notice">
-            *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
-        </div>
+        <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>
     </div>
 
     <a href="https://wa.me/message/AZLK65CETSPQL1" class="whatsapp-float" target="_blank" title="Soporte WhatsApp">
@@ -477,27 +439,19 @@
 
     <script>
         const { jsPDF } = window.jspdf;
-        const REQUESTS_KEY = 'pending_requests_list';
-        const APPROVED_REQUESTS_KEY = 'approved_requests_list';
-        // 🔑 CLAVES DE USUARIOS
-        const PENDING_USERS_KEY = 'pending_registrations_list';
-        const APPROVED_USERS_KEY = 'approved_users_list';
-        const SESSION_USER_KEY = 'current_user_email'; // Usar sessionStorage para simular la sesión
-
-        // 🔑 CREDENCIALES DEL ADMINISTRADOR
+        const STORAGE_KEY = 'pending_requests_list';
+        const APPROVED_KEY = 'approved_requests_list';
         const ADMIN_USER = 'trollgaga999@gmail.com';
         const ADMIN_PASS = 'Johan207';
 
         let statusCheckInterval = null;
-        let adminUpdateInterval = null;
 
         function getBaseUrl() {
             return window.location.href.split('#')[0];
         }
 
+        // Mapeo completo de IDs lógicos a IDs de elementos DOM
         const viewIdMap = {
-            'user_login': 'user-login', // NUEVO
-            'user_register': 'user-register', // NUEVO
             'menu': 'main-menu',
             'laboral': 'form-laboral',
             'personal': 'form-personal',
@@ -518,19 +472,16 @@
             'formato_solicitud_pdf': 'formato_solicitud_pdf'
         };
 
+        // 💡 FUNCIÓN DE NAVEGACIÓN CORREGIDA
         function showForm(viewId, pushHistory = true) {
             const sections = Object.values(viewIdMap);
             
-            // 🛑 Limpiar el intervalo del admin si se sale del dashboard
-            if (adminUpdateInterval) {
-                clearInterval(adminUpdateInterval);
-                adminUpdateInterval = null;
-            }
-
+            // Oculta todas las secciones
             sections.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
+            // Oculta la página de estatus y asegura que el contenedor principal esté visible
             document.getElementById('status-page').style.display = 'none'; 
             document.getElementById('app-container').style.display = 'block'; 
 
@@ -541,63 +492,57 @@
                 return;
             }
 
-            // ⚠️ Protección de acceso: si intenta acceder al menú y no está logueado, redirigir
-            if (viewId !== 'user_login' && viewId !== 'user_register' && viewId !== 'admin_login' && !viewId.startsWith('status') && !isLoggedIn()) {
-                 alert("Por favor, inicie sesión para acceder a los servicios.");
-                 showForm('user_login', false);
-                 return;
-            }
-            
-            if (viewId === 'admin_dashboard') {
-                // 🚀 Iniciar actualización en tiempo real al entrar al dashboard
-                loadPendingRequestsAndUsers();
-                adminUpdateInterval = setInterval(loadPendingRequestsAndUsers, 3000); // Actualizar cada 3 segundos
-            }
-
-
             if (document.getElementById(targetId)) {
                 document.getElementById(targetId).style.display = 'block';
                 window.scrollTo(0, 0);
 
+                // 💡 CLAVE: Registrar el estado en el historial para que funcione el botón de Atrás
                 if (pushHistory) {
                     let url = getBaseUrl();
                     let state = { viewId: viewId };
                     
-                    if (viewId !== 'menu' && viewId !== 'user_login') { 
+                    if (viewId !== 'menu') { 
                         url += `#${viewId}`; 
                     } else {
                         url = getBaseUrl(); 
                     }
                     
-                    if (window.location.hash !== (viewId === 'menu' || viewId === 'user_login' ? '' : `#${viewId}`)) {
+                    // Si el estado actual es el mismo, no hagas pushState para evitar duplicados
+                    if (window.location.hash !== (viewId === 'menu' ? '' : `#${viewId}`)) {
                          history.pushState(state, '', url);
                     }
                 }
             } else if (viewId.startsWith('status')) {
+                // Si la vista no es un formulario pero es un estado especial (ej: status?id=...)
                 checkURL(viewId); 
             } else {
-                showForm('user_login', false); // Redirigir al login si falla
+                // Si no se encuentra, vuelve al menú (esto es un fallback)
+                showForm('menu', false);
             }
         }
 
+        // 💡 EVENTO POPSTATE CORREGIDO: Captura el botón de Atrás del navegador
         window.addEventListener('popstate', (e) => {
             const state = history.state;
             
             if (!state || !state.viewId) {
-                showForm(isLoggedIn() ? 'menu' : 'user_login', false); 
+                // Si no hay estado guardado, vamos al menú
+                showForm('menu', false); 
                 return;
             }
 
             if (state.viewId.startsWith('status')) {
+                // Si el estado es 'status', llamamos a checkURL para reevaluar la URL
                 checkURL(state.viewId);
             } else {
+                // Muestra el formulario sin crear un nuevo historial (pushHistory = false)
                 showForm(state.viewId, false);
             }
         });
 
+        // 💡 FUNCIÓN CHECKURL CORREGIDA: Evalúa el hash al cargar o al navegar
         function checkURL(manualHash = null) {
             if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
-            if (adminUpdateInterval) { clearInterval(adminUpdateInterval); adminUpdateInterval = null; }
             
             const hash = manualHash || window.location.hash.substring(1);
             const parts = hash.split('?');
@@ -615,25 +560,31 @@
             }
             
             if (viewId && viewIdMap[viewId]) {
-                // Si el usuario intenta ir a una vista de servicio sin logear, lo mandamos al login
-                if (viewId !== 'user_login' && viewId !== 'user_register' && viewId !== 'admin_login' && !isLoggedIn()) {
-                    showForm('user_login', false);
-                    return;
-                }
+                // Si hay un hash válido para un formulario, lo mostramos.
                 showForm(viewId, false);
                 return;
             }
 
-            // Si no hay hash o es #, y no está logeado, va al login. Si sí está logeado, va al menú.
-            showForm(isLoggedIn() ? 'menu' : 'user_login', false);
+            // Si no hay hash o es inválido, mostramos el menú principal.
+            showForm('menu', false);
         }
 
-        // --- Funciones de Autenticación de Usuario ---
+        // --- CORRECCIÓN DEL INICIO DE SESIÓN DEL ADMINISTRADOR ---
+        function authenticateAdmin() {
+            // Se añade .trim() para evitar que espacios en blanco accidentales fallen la comparación
+            const user = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
 
-        function isLoggedIn() {
-            return sessionStorage.getItem(SESSION_USER_KEY) !== null;
+            if (user === ADMIN_USER && pass === ADMIN_PASS) {
+                alert("¡Bienvenido, Administrador! Accediendo al Panel de Autorización.");
+                showForm('admin_dashboard');
+                loadPendingRequests();
+            } else {
+                alert("Usuario o Contraseña incorrectos. Inténtalo de nuevo.");
+            }
         }
-        
+        // --------------------------------------------------------
+
         function getRequests(key) {
             const data = localStorage.getItem(key);
             return data ? JSON.parse(data) : [];
@@ -641,222 +592,51 @@
         function saveRequests(key, requests) {
             localStorage.setItem(key, JSON.stringify(requests));
         }
-        
-        function registerUser() {
-            const name = document.getElementById('registerName').value.trim();
-            const email = document.getElementById('registerEmail').value.trim();
-            const pass = document.getElementById('registerPass').value.trim();
 
-            if (!name || !email || !pass) {
-                alert("Por favor, complete todos los campos (Nombre, Correo y Contraseña).");
-                return;
-            }
-            
-            if (!email.includes('@')) {
-                 alert("Por favor, ingrese un correo válido.");
-                 return;
+        async function saveSolicitud(tipoCarta) {
+            let nombreSolicitante = 'Cliente', nombreAsunto = tipoCarta.toUpperCase(), pdfBase64 = null;
+
+            if (tipoCarta === 'receta_similares') {
+                nombreSolicitante = document.getElementById('nombrePacienteSimilares').value || 'Paciente';
+                nombreAsunto = nombreSolicitante;
+                pdfBase64 = await generarPDFRecetaSimilares(false);
+            } else {
+                pdfBase64 = "BASE64_PLACEHOLDER_FOR_NEW_TYPE";
             }
 
-            const pendingUsers = getRequests(PENDING_USERS_KEY);
-            const approvedUsers = getRequests(APPROVED_USERS_KEY);
-
-            if (pendingUsers.some(u => u.email === email) || approvedUsers.some(u => u.email === email)) {
-                alert("El correo ya se encuentra registrado. Intente Iniciar Sesión.");
+            if (!pdfBase64) {
+                alert(`Error al generar el documento ${tipoCarta}. Por favor, revise los campos.`);
                 return;
             }
 
-            const newUser = {
-                id: Date.now().toString(),
-                name: name,
-                email: email,
-                password: pass, // NOTA: En un entorno real, la contraseña DEBE ser hasheada.
+            if (pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
+                alert(`AVISO: Se ha guardado la solicitud ${tipoCarta} con datos de PRUEBA. El administrador procederá a la autorización.`);
+            }
+
+            const requestId = Date.now().toString();
+            const newRequest = {
+                id: requestId,
+                type: tipoCarta,
+                name: nombreAsunto,
+                requesterName: nombreSolicitante,
+                pdfBase64: pdfBase64,
+                status: 'pending',
                 timestamp: new Date().toLocaleString()
             };
 
-            pendingUsers.push(newUser);
-            saveRequests(PENDING_USERS_KEY, pendingUsers);
+            const requests = getRequests(STORAGE_KEY);
+            requests.push(newRequest);
+            saveRequests(STORAGE_KEY, requests);
 
-            alert("¡Registro exitoso! Su cuenta ha sido enviada para aprobación del administrador. Le notificaremos cuando pueda iniciar sesión.");
-            document.getElementById('userEmail').value = email; // Precargar email en el login
-            showForm('user_login');
-        }
-
-        function loginUser() {
-            const email = document.getElementById('userEmail').value.trim();
-            const pass = document.getElementById('userPass').value.trim();
-
-            if (!email || !pass) {
-                alert("Por favor, ingrese su correo y contraseña.");
-                return;
-            }
-
-            const approvedUsers = getRequests(APPROVED_USERS_KEY);
-            const pendingUsers = getRequests(PENDING_USERS_KEY);
-
-            const user = approvedUsers.find(u => u.email === email && u.password === pass);
-            const pending = pendingUsers.find(u => u.email === email);
-
-            if (user) {
-                sessionStorage.setItem(SESSION_USER_KEY, user.email);
-                alert(`¡Bienvenido, ${user.name}!`);
-                showForm('menu');
-            } else if (pending) {
-                alert("Su cuenta aún está pendiente de aprobación por el administrador. Por favor, espere.");
-            } else {
-                alert("Credenciales incorrectas o usuario no registrado/aprobado. Si ya se registró, asegúrese de usar las credenciales correctas.");
-            }
-        }
-
-        function logoutUser() {
-            sessionStorage.removeItem(SESSION_USER_KEY);
-            showForm('user_login');
-        }
-
-        // --- Funciones de Autenticación de Administrador ---
-
-        function authenticateAdmin() {
-            const user = document.getElementById('adminUser').value;
-            const pass = document.getElementById('adminPass').value;
-            
-            if (user === ADMIN_USER && pass === ADMIN_PASS) {
-                // NOTA: Para el administrador, no usamos el sistema de sesión de cliente.
-                alert("¡Bienvenido, Administrador! Accediendo al Panel de Autorización.");
-                showForm('admin_dashboard');
-            } else {
-                alert("Usuario o Contraseña de Administrador incorrectos.");
-            }
-        }
-
-        // --- Funciones del Dashboard de Administrador (Modificadas) ---
-
-        function loadPendingRequestsAndUsers() {
-            // 1. Cargar Solicitudes de Documentos
-            const requests = getRequests(REQUESTS_KEY).filter(req => req.status === 'pending');
-            const requestsListElement = document.getElementById('pending-requests-list');
-            
-            requestsListElement.innerHTML = requests.length > 0 ? '' : '<p id="no-requests-msg">No hay solicitudes de documentos pendientes.</p>';
-            
-            requests.forEach(req => {
-                if (document.getElementById(`request-${req.id}`)) return;
-                const typeDisplay = req.type.replace(/_/g, ' ').toUpperCase();
-                const item = document.createElement('div');
-                item.id = `request-${req.id}`;
-                item.className = 'request-item';
-                item.innerHTML = `
-                    <div class="request-info">
-                        <strong>[DOCUMENTO] ${typeDisplay} - ${req.name}</strong>
-                        <p>Solicitante: ${req.requesterName} (ID: ${req.id})</p>
-                        <p style="font-size:0.8em;">URL del Cliente: <code style="word-break: break-all;">${getBaseUrl()}#status?id=${req.id}</code></p>
-                    </div>
-                    <div class="request-actions">
-                        <button class="btn-authorize" onclick="authorizeRequest('${req.id}')">Autorizar</button>
-                        <button class="btn-reject" onclick="deleteRequest('${req.id}', '${REQUESTS_KEY}')">Rechazar</button>
-                    </div>
-                `;
-                requestsListElement.appendChild(item);
-            });
-            // Remover solicitudes eliminadas (limpieza)
-            cleanUpList(requestsListElement, requests.map(r => `request-${r.id}`));
-
-
-            // 2. Cargar Registros de Usuarios Pendientes
-            const users = getRequests(PENDING_USERS_KEY);
-            const usersListElement = document.getElementById('pending-users-list');
-            
-            usersListElement.innerHTML = users.length > 0 ? '' : '<p id="no-users-msg">No hay cuentas de usuario pendientes de aprobación.</p>';
-
-            users.forEach(user => {
-                if (document.getElementById(`user-${user.id}`)) return;
-                const item = document.createElement('div');
-                item.id = `user-${user.id}`;
-                item.className = 'user-item';
-                item.innerHTML = `
-                    <div class="user-info">
-                        <strong>[REGISTRO] ${user.name}</strong>
-                        <p>Correo: ${user.email}</p>
-                        <p style="font-size:0.8em;">Solicitado: ${user.timestamp}</p>
-                    </div>
-                    <div class="request-actions">
-                        <button class="btn-authorize" onclick="authorizeUser('${user.id}')">Autorizar Cuenta</button>
-                        <button class="btn-reject" onclick="deleteUser('${user.id}')">Rechazar</button>
-                    </div>
-                `;
-                usersListElement.appendChild(item);
-            });
-            // Remover usuarios eliminados (limpieza)
-            cleanUpList(usersListElement, users.map(u => `user-${u.id}`));
-
-            function cleanUpList(listElement, currentIds) {
-                Array.from(listElement.children).forEach(child => {
-                    if (child.id !== 'no-requests-msg' && child.id !== 'no-users-msg' && !currentIds.includes(child.id)) {
-                        listElement.removeChild(child);
-                    }
-                });
-            }
-        }
-
-        function authorizeUser(userId) {
-            let pendingUsers = getRequests(PENDING_USERS_KEY);
-            const index = pendingUsers.findIndex(u => u.id === userId);
-            if (index === -1) {
-                alert("Error: Usuario no encontrado.");
-                loadPendingRequestsAndUsers();
-                return;
-            }
-            const user = pendingUsers[index];
-            const approvedUsers = getRequests(APPROVED_USERS_KEY);
-            approvedUsers.push(user);
-            saveRequests(APPROVED_USERS_KEY, approvedUsers);
-            pendingUsers.splice(index, 1);
-            saveRequests(PENDING_USERS_KEY, pendingUsers);
-            alert(`¡Cuenta de usuario ${user.email} autorizada! Ahora puede iniciar sesión.`);
-            loadPendingRequestsAndUsers();
-        }
-
-        function deleteUser(userId) {
-            if (!confirm("¿Está seguro de rechazar y eliminar este registro de usuario?")) return;
-            let pendingUsers = getRequests(PENDING_USERS_KEY);
-            const index = pendingUsers.findIndex(u => u.id === userId);
-            if (index > -1) {
-                pendingUsers.splice(index, 1);
-                saveRequests(PENDING_USERS_KEY, pendingUsers);
-            }
-            loadPendingRequestsAndUsers();
-        }
-
-        function authorizeRequest(requestId) {
-            let pendingRequests = getRequests(REQUESTS_KEY);
-            const index = pendingRequests.findIndex(req => req.id === requestId);
-            if (index === -1) {
-                alert("Error: Solicitud no encontrada.");
-                loadPendingRequestsAndUsers();
-                return;
-            }
-            const request = pendingRequests[index];
-            request.status = 'approved';
-            const approvedRequests = getRequests(APPROVED_REQUESTS_KEY);
-            approvedRequests.push(request);
-            saveRequests(APPROVED_REQUESTS_KEY, approvedRequests);
-            pendingRequests.splice(index, 1);
-            saveRequests(REQUESTS_KEY, pendingRequests);
-            alert(`¡Solicitud Autorizada! El cliente ahora puede descargar el archivo.`);
-            loadPendingRequestsAndUsers(); // Recarga inmediata para reflejar el cambio
-        }
-
-        function deleteRequest(requestId, key) {
-            const confirmMsg = key === REQUESTS_KEY ? "¿Está seguro de rechazar y eliminar esta solicitud pendiente?" : "¿Está seguro de eliminar esta solicitud APROBADA del historial del administrador?";
-            if (!confirm(confirmMsg)) return;
-            let requests = getRequests(key);
-            const index = requests.findIndex(req => req.id === requestId);
-            if (index > -1) {
-                requests.splice(index, 1);
-                saveRequests(key, requests);
-            }
-            loadPendingRequestsAndUsers(); // Recarga inmediata para reflejar el cambio
+            // 💡 Navegación a la página de estatus
+            const url = `${getBaseUrl()}#status?id=${requestId}`;
+            const state = { viewId: 'status', requestId: requestId };
+            history.pushState(state, '', url);
+            checkURL();
         }
 
         function checkStatus(requestId) {
-            const approvedRequests = getRequests(APPROVED_REQUESTS_KEY);
+            const approvedRequests = getRequests(APPROVED_KEY);
             const request = approvedRequests.find(req => req.id === requestId);
             const statusPage = document.getElementById('status-page');
             const disclaimer = statusPage.querySelector('.disclaimer-notice') ? statusPage.querySelector('.disclaimer-notice').outerHTML : '';
@@ -879,9 +659,9 @@
                 `;
             }
         }
-        
+
         function triggerDownload(requestId) {
-            const approvedRequests = getRequests(APPROVED_REQUESTS_KEY);
+            const approvedRequests = getRequests(APPROVED_KEY);
             const request = approvedRequests.find(req => req.id === requestId);
             if (!request) {
                 alert("Error: Archivo no encontrado.");
@@ -913,54 +693,64 @@
             `;
         }
 
-        async function saveSolicitud(tipoCarta) {
-            if (!isLoggedIn()) {
-                alert("Debe iniciar sesión para guardar una solicitud.");
-                showForm('user_login');
+        function loadPendingRequests() {
+            const requests = getRequests(STORAGE_KEY).filter(req => req.status === 'pending');
+            const listElement = document.getElementById('pending-requests-list');
+            listElement.innerHTML = '';
+            if (requests.length === 0) {
+                listElement.innerHTML = '<p id="no-requests-msg">No hay solicitudes pendientes en el almacenamiento local de este navegador.</p>';
                 return;
             }
-            
-            let nombreSolicitante = 'Cliente', nombreAsunto = tipoCarta.toUpperCase(), pdfBase64 = null;
-
-            if (tipoCarta === 'receta_similares') {
-                nombreSolicitante = document.getElementById('nombrePacienteSimilares').value || 'Paciente';
-                nombreAsunto = nombreSolicitante;
-                pdfBase64 = await generarPDFRecetaSimilares(false);
-            } else {
-                pdfBase64 = "BASE64_PLACEHOLDER_FOR_NEW_TYPE";
-                if(pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
-                    console.warn(`AVISO: Se usó un placeholder para ${tipoCarta}.`);
-                }
-            }
-
-            if (!pdfBase64) {
-                alert(`Error al generar el documento ${tipoCarta}. Por favor, revise los campos.`);
-                return;
-            }
-
-            const requestId = Date.now().toString();
-            const newRequest = {
-                id: requestId,
-                type: tipoCarta,
-                name: nombreAsunto,
-                requesterName: nombreSolicitante,
-                requesterEmail: sessionStorage.getItem(SESSION_USER_KEY), // Registrar qué usuario hizo la solicitud
-                pdfBase64: pdfBase64,
-                status: 'pending',
-                timestamp: new Date().toLocaleString()
-            };
-
-            const requests = getRequests(REQUESTS_KEY);
-            requests.push(newRequest);
-            saveRequests(REQUESTS_KEY, requests);
-
-            const url = `${getBaseUrl()}#status?id=${requestId}`;
-            const state = { viewId: 'status', requestId: requestId };
-            history.pushState(state, '', url);
-            checkURL();
+            requests.forEach(req => {
+                const typeDisplay = req.type.replace(/_/g, ' ').toUpperCase();
+                const item = document.createElement('div');
+                item.id = `request-${req.id}`;
+                item.className = 'request-item';
+                item.innerHTML = `
+                    <div class="request-info">
+                        <strong>${typeDisplay} - ${req.name}</strong>
+                        <p>Solicitante: ${req.requesterName} (ID: ${req.id})</p>
+                        <p style="font-size:0.8em;">URL del Cliente: <code style="word-break: break-all;">${getBaseUrl()}#status?id=${req.id}</code></p>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn-authorize" onclick="authorizeRequest('${req.id}')">Autorizar</button>
+                        <button class="btn-reject" onclick="deleteRequest('${req.id}', '${STORAGE_KEY}')">Rechazar</button>
+                    </div>
+                `;
+                listElement.appendChild(item);
+            });
         }
 
-        // --- PDF functions (Mantenidas) ---
+        function authorizeRequest(requestId) {
+            let pendingRequests = getRequests(STORAGE_KEY);
+            const index = pendingRequests.findIndex(req => req.id === requestId);
+            if (index === -1) {
+                alert("Error: Solicitud no encontrada.");
+                loadPendingRequests();
+                return;
+            }
+            const request = pendingRequests[index];
+            request.status = 'approved';
+            const approvedRequests = getRequests(APPROVED_KEY);
+            approvedRequests.push(request);
+            saveRequests(APPROVED_KEY, approvedRequests);
+            pendingRequests.splice(index, 1);
+            saveRequests(STORAGE_KEY, pendingRequests);
+            alert(`¡Solicitud Autorizada! El cliente ahora puede descargar el archivo usando el enlace de su página de estatus.`);
+            loadPendingRequests();
+        }
+
+        function deleteRequest(requestId, key) {
+            const confirmMsg = key === STORAGE_KEY ? "¿Está seguro de rechazar y eliminar esta solicitud pendiente?" : "¿Está seguro de eliminar esta solicitud APROBADA del historial del administrador?";
+            if (!confirm(confirmMsg)) return;
+            let requests = getRequests(key);
+            const index = requests.findIndex(req => req.id === requestId);
+            if (index > -1) {
+                requests.splice(index, 1);
+                saveRequests(key, requests);
+            }
+            loadPendingRequests();
+        }
 
         function drawJustifiedText(doc, text, x, y, maxWidth, lineHeight) {
             let currentY = y;
@@ -994,8 +784,9 @@
             const totalParts = digits.length * 4;
             const unit = width / totalParts;
             let cursor = x;
-            doc.setFillColor(0);
+            doc.setFillColor(0); // Barras negras
             for (let i = 0; i < digits.length; i++) {
+                // Patrón simplificado de un código de barras de 10 dígitos (para simulación visual)
                 const d = parseInt(digits[i], 10);
                 const pattern = [
                     1 + (d % 3),
@@ -1004,8 +795,8 @@
                     1 + ((d + 1) % 2)
                 ];
                 for (let p = 0; p < pattern.length; p++) {
-                    const w = Math.max(0.5, unit * pattern[p] / 3);
-                    if (p % 2 === 0) {
+                    const w = Math.max(0.5, unit * pattern[p] / 3); // Ajuste para que se vea mejor
+                    if (p % 2 === 0) { // Dibuja la barra (pares)
                         doc.rect(cursor, y, w, height, 'F');
                     }
                     cursor += w;
@@ -1027,6 +818,7 @@
             </svg>`
         );
 
+        // Función de generación de PDF (Sin cambios)
         async function generarPDFRecetaSimilares(descargar = true) {
             const doc = new jsPDF('p', 'mm', 'a4');
             const pageWidth = doc.internal.pageSize.getWidth();
@@ -1041,6 +833,7 @@
             const ciudad = (document.getElementById('ciudadSimilares').value || '').toUpperCase();
             const fechaEmisionVal = document.getElementById('fechaEmisionSimilares').value;
             
+            // Formato de fecha mejorado
             const hoy = new Date();
             const fechaHora = `${fechaEmisionVal ? new Date(fechaEmisionVal + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' })} ${String(hoy.getHours()).padStart(2, '0')}:${String(hoy.getMinutes()).padStart(2, '0')}`;
             
@@ -1066,16 +859,20 @@
             const indicaciones = document.getElementById('indicacionesGeneralesSimilares').value || '';
             const proxima = document.getElementById('proximaCitaSimilares').value || '';
 
+            // Cargar logo
             const logoFile = document.getElementById('logoInputSimilares').files[0];
             const logoBase64 = logoFile ? await fileToBase64(logoFile) : DEFAULT_LOGO_DATAURL;
 
+            // Generar número de expediente
             const barcodeNumber = generarNumeroAleatorio();
 
             // --- ENCABEZADO ---
+            // Logo a la izquierda
             const logoW = 34;
             const logoH = 20;
             doc.addImage(logoBase64, 'PNG', margin, y, logoW, logoH);
 
+            // Información del médico centrada
             doc.setFontSize(12);
             doc.setFont(undefined, 'bold');
             doc.text(nombreDoc, pageWidth/2, y + 8, { align: 'center' });
@@ -1084,14 +881,16 @@
             doc.text(cedula, pageWidth/2, y + 13, { align: 'center' });
             doc.text('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', pageWidth/2, y + 18, { align: 'center' });
 
-            const barcodeW = 45;
-            const barcodeH = 12;
+            // Código de barras MÁS PEQUEÑO en la esquina superior derecha
+            const barcodeW = 45;  // Reducido de 70 a 45
+            const barcodeH = 12;  // Reducido de 18 a 12
             const barcodeX = pageWidth - margin - barcodeW;
             const barcodeY = y + 4;
             drawBarcodeStyled(doc, barcodeX, barcodeY, barcodeW, barcodeH, barcodeNumber);
 
             y += Math.max(logoH, 22) + 2;
 
+            // Línea separadora
             doc.setDrawColor(0);
             doc.setLineWidth(0.4);
             doc.line(margin, y, pageWidth - margin, y);
@@ -1104,6 +903,7 @@
             doc.text(`FECHA Y HORA DE ELABORACION: ${fechaHora}`, pageWidth - margin, y, { align: 'right' });
             y += 6;
 
+            // Línea separadora
             doc.setLineWidth(0.3);
             doc.line(margin, y, pageWidth - margin, y);
             y += 6;
@@ -1142,6 +942,7 @@
             doc.text(fechaNac, colLeftX + 42, y);
             y += fieldGapY + 2;
 
+            // Línea separadora
             doc.setLineWidth(0.3);
             doc.line(margin, y, pageWidth - margin, y);
             y += 6;
@@ -1201,6 +1002,7 @@
             yRight += lineHeight;
             doc.setFont(undefined, 'normal');
             
+            // Formatear tratamiento línea por línea
             const tratamientoLineas = tratamiento.split('\n').filter(l => l.trim());
             tratamientoLineas.forEach(linea => {
                 const wrapped = doc.splitTextToSize(linea, rightColW - 5);
@@ -1213,6 +1015,7 @@
             // Determinar y máximo
             y = Math.max(yLeft, yRight) + 4;
 
+            // Línea separadora
             doc.setLineWidth(0.3);
             doc.line(margin, y, pageWidth - margin, y);
             y += 6;
@@ -1271,10 +1074,11 @@
             }
         }
 
-        // CLAVE: Ejecuta checkURL en la carga para manejar el estado inicial y el enlace del botón de Atrás
+        // 💡 CLAVE: Ejecuta checkURL en la carga para manejar el estado inicial y el enlace del botón de Atrás
         window.addEventListener('load', () => {
+            // Reemplaza el estado inicial para que el botón de Atrás sepa que el inicio es el menú
             if (!window.location.hash || window.location.hash === '#menu') {
-                 history.replaceState({ viewId: 'user_login' }, '', getBaseUrl()); // Empieza en el login
+                 history.replaceState({ viewId: 'menu' }, '', getBaseUrl());
             }
             checkURL();
         });
