@@ -21,424 +21,1276 @@
         }
         h1 { color: #2c3e50; text-align: center; margin-bottom: 25px; }
         .input-group, .form-section { background-color: #ffffff; padding: 20px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h2 { color: #34495e; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-bottom: 15px; }
-        label { display: block; margin-top: 10px; margin-bottom: 5px; font-weight: 600; color: #34495e; }
-        input[type="text"], input[type="date"], textarea {
+        h2 { color: #34495e; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-bottom: 15px; }
+        label { display: block; margin-top: 10px; font-weight: bold; color: #555; }
+        input[type="text"], input[type="date"], textarea, input[type="file"], input[type="password"], input[type="email"] {
             width: 100%;
             padding: 10px;
+            margin-top: 5px;
             margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            font-size: 16px;
         }
-        textarea { resize: vertical; min-height: 80px; }
-        .date-container { display: flex; gap: 15px; }
-        .date-container > div { flex: 1; }
+        .date-container { display:flex; justify-content:space-between; gap:10px; }
+        .date-container input { width:100%; }
+        textarea { height:120px; resize:vertical; }
         .btn-action {
-            background-color: #2ecc71;
+            background-color: #e67e22;
             color: white;
             padding: 15px 20px;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 18px;
-            width: 100%;
-            margin-top: 20px;
-            transition: background-color 0.3s;
-        }
-        .btn-action:hover { background-color: #27ae60; }
-        .back-button {
-            background: none;
-            color: #3498db;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            font-size: 16px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-        .form-section { display: none; }
-        #menu-section { display: block; }
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-        .menu-card {
-            background-color: #ecf0f1;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .menu-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-        }
-        .menu-card i {
-            font-size: 36px;
-            color: #3498db;
-            margin-bottom: 10px;
-        }
-        .menu-card strong {
-            display: block;
-            font-size: 16px;
-            color: #2c3e50;
-        }
-        .disclaimer-notice, .payment-notice {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-            text-align: center;
-            font-weight: bold;
-        }
-        .disclaimer-notice {
-            background-color: #f9e3e3;
-            color: #c0392b;
-            border: 1px solid #e74c3c;
-        }
-        .payment-notice {
-            background-color: #d1f7d1;
-            color: #27ae60;
-            border: 1px solid #2ecc71;
-        }
-
-        /* Estilos del estatus de solicitud */
-        #status-section {
-            display: none;
-            background-color: #ffffff;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        #status-section h2 { border-bottom: none; }
-        .status-item {
-            padding: 10px 0;
-            border-bottom: 1px dashed #ecf0f1;
-        }
-        .status-item:last-child { border-bottom: none; }
-        .status-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-        .status-header strong { font-size: 1.1em; }
-        .status-details {
-            margin-top: 10px;
-            padding-left: 15px;
-            border-left: 3px solid #3498db;
-            display: none;
-        }
-        .status-details button { margin-top: 10px; }
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.8em;
-        }
-        .status-pendiente { background-color: #f1c40f; color: #2c3e50; }
-        .status-aprobado { background-color: #2ecc71; color: white; }
-        .status-rechazado { background-color: #e74c3c; color: white; }
-        
-        /* Contenido del footer */
-        #footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            max-width: 850px;
-            background-color: #3498db;
-            color: white;
-            padding: 15px 25px;
-            box-sizing: border-box;
-            text-align: center;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        #footer button {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
-            font-weight: bold;
+            font-size: 1.1em;
+            width: 100%;
+            margin-top: 10px;
             transition: background-color 0.3s;
         }
-        #footer button:hover { background-color: #c0392b; }
-        .whatsapp-link {
-            display: inline-flex;
-            align-items: center;
-            background-color: #25d366;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .whatsapp-link i { margin-right: 8px; font-size: 18px; }
+        .btn-action:hover { background-color: #d35400; }
+        .back-button { background-color: #95a5a6; width:auto; padding:10px 15px; font-size:1em; }
+        
+        /* Estilos de Control de Vistas */
+        .form-section, #main-menu { display:none; }
+        #app-container { min-height: 500px; } /* Asegura espacio para la vista inicial */
+        
+        /* ELIMINADO: #btn-go-admin */
+        
+        .status-page { text-align:center; padding:50px; background-color:#fff; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); min-height:250px; display:flex; flex-direction:column; justify-content:center; }
+        .status-page .spinner { border:5px solid #f3f3f3; border-top:5px solid #3498db; border-radius:50%; width:50px; height:50px; animation: spin 2s linear infinite; margin:20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .btn-download-now { background-color:#27ae60; margin-top:20px; width:50%; margin:20px auto; }
+        .payment-notice { background-color:#eaf7ff; color:#2980b9; padding:10px; border:1px solid #3498db; border-radius:4px; margin-bottom:15px; text-align:center; font-weight:bold; font-size:0.95em; }
+        .disclaimer-notice { background-color:#fcebeb; color:#c0392b; padding:10px; border:1px solid #c0392b; border-radius:4px; margin-bottom:20px; text-align:center; font-weight:bold; font-size:0.85em; }
+        .whatsapp-float { position:fixed; width:60px; height:60px; bottom:40px; left:20px; background-color:#25d366; color:#fff; border-radius:50px; text-align:center; font-size:30px; box-shadow:2px 2px 3px #999; z-index:100; display:flex; align-items:center; justify-content:center; text-decoration:none;}
+        .whatsapp-float:hover { background-color:#128c7e; }
+        .fixed-payment-info { position:fixed; bottom:0; right:0; background-color:#34495e; color:white; padding:10px 15px; border-top-left-radius:8px; font-size:0.85em; z-index:99; text-align:right; max-width:350px; }
+        .fixed-payment-info strong { color:#f1c40f; }
+        .fixed-payment-info p { margin:2px 0; }
+        .request-item, .client-item { border:1px solid #ccc; padding:10px; margin-bottom:10px; background-color:#fff; display:flex; justify-content:space-between; align-items:center; }
+        .request-actions button { width:auto; padding:8px 12px; font-size:0.9em; margin-left:10px; }
+        .btn-authorize { background-color:#3498db; color:#fff; border:none; padding:8px 10px; border-radius:4px; cursor:pointer; }
+        .btn-reject { background-color:#c0392b; color:#fff; border:none; padding:8px 10px; border-radius:4px; cursor:pointer; }
+        .download-link-box { background-color:#f0f0f0; border:1px dashed #3498db; padding:10px; margin-top:10px; word-break:break-all; font-size:0.9em; }
+        input[type="file"] { padding:6px 10px; }
 
+        /* Estilos de Grid y Menú */
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+            margin-bottom: 25px;
+        }
+        .menu-card {
+            background-color: #ffffff;
+            color: #34495e;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px; 
+            border: 1px solid #eee;
+        }
+        .menu-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.25);
+        }
+        .menu-card i {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+        .menu-card strong {
+            font-size: 0.9em;
+            font-weight: bold;
+            display: block;
+            line-height: 1.3;
+        }
+
+        /* Colores específicos para las categorías */
+        .category-social i { color: #25d366; }
+        .category-carta i { color: #e67e22; }
+        .category-receta i { color: #27ae60; }
+        .category-certificado i { color: #3498db; }
+        .category-especializado i { color: #9b59b6; }
+        
+        .category-social:hover i { color: #128c7e; }
+        .category-carta:hover i { color: #d35400; }
+        .category-receta:hover i { color: #1e8449; }
+        .category-certificado:hover i { color: #2980b9; }
+        .category-especializado:hover i { color: #8e44ad; }
+        
+        /* Estilos para el log de actividad */
+        #activity-log-display {
+            max-height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .log-entry {
+            border-bottom: 1px dashed #eee;
+            padding: 5px 0;
+            font-size: 0.85em;
+        }
+        .log-entry:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
 
-    <div id="app-container">
-        <h1>Generador de Documentos Médicos</h1>
+    <h1>📝 Generador de Documentos y Solicitudes</h1>
 
-        <div id="menu-section">
-            <h2>Selecciona el tipo de documento:</h2>
-            <div class="menu-grid">
+    <div class="disclaimer-notice">
+        *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
+    </div>
+
+    <div id="app-container">
+
+        <div id="auth-splash" class="form-section" style="display:block;">
+            <h2>👤 Acceso Requerido</h2>
+            <p>Inicie sesión para acceder al menú de servicios, o regístrese si es un usuario nuevo.</p>
+
+            <div id="login-form" class="input-group">
+                <h3>Iniciar Sesión</h3>
+                <label for="loginUser">Correo Electrónico:</label>
+                <input type="email" id="loginUser" placeholder="Correo electrónico">
+                <label for="loginPass">Contraseña:</label>
+                <input type="password" id="loginPass" placeholder="Ingrese su contraseña">
+                <button class="btn-action" style="background-color:#2c3e50;" onclick="authenticateUser()">Iniciar Sesión</button>
+            </div>
+            
+            <div class="input-group">
+                <h3>¿No tiene cuenta?</h3>
+                <p>Regístrese y espere la autorización del administrador.</p>
+                <button class="btn-action back-button" style="background-color: #3498db;" onclick="showForm('register')">Regístrarme Ahora</button>
+            </div>
+        </div>
+        <div id="form-register" class="form-section">
+            <button class="back-button" onclick="showForm('auth_splash')">← Volver al Acceso</button>
+            <h2>📝 Registro de Nuevo Usuario</h2>
+            <p>Complete los datos. Su cuenta quedará en estado <strong>PENDIENTE</strong> hasta que el administrador la apruebe.</p>
+            <div class="input-group">
+                <label for="regName">Nombre Completo:</label>
+                <input type="text" id="regName" placeholder="Su nombre completo" required>
+                <label for="regUser">Correo Electrónico (Será su Usuario):</label>
+                <input type="email" id="regUser" placeholder="Ingrese su email" required>
+                <label for="regPass">Contraseña:</label>
+                <input type="password" id="regPass" placeholder="Cree una contraseña" required>
+                <button class="btn-action" style="background-color:#27ae60;" onclick="registerUser()">Registrar Solicitud de Cuenta</button>
+            </div>
+        </div>
+        <div id="main-menu">
+            
+            <h2>🌐 Acceso a Grupo y Soporte</h2>
+            <div class="icon-grid">
+                <div class="menu-card category-social" onclick="showForm('whatsapp_group')">
+                    <i class="fab fa-whatsapp"></i>
+                    <strong>Unirse a nuestro Grupo de WhatsApp</strong>
+                </div>
+            </div>
+            
+            <hr/>
+            <h2>✉️ Cartas de Recomendación</h2>
+            <div class="icon-grid">
+                <div class="menu-card category-carta" onclick="showForm('laboral')">
+                    <i class="fas fa-briefcase"></i>
+                    <strong>Carta LABORAL</strong>
+                </div>
+                <div class="menu-card category-carta" onclick="showForm('personal')">
+                    <i class="fas fa-user-friends"></i>
+                    <strong>Carta PERSONAL</strong>
+                </div>
+            </div>
+
+            <hr/>
+            
+            <h2>💊 Documentos Médicos y Recetas</h2>
+            <div class="icon-grid">
+                <div class="menu-card category-receta" onclick="showForm('incapacidad_imss')">
+                    <i class="fas fa-user-minus"></i>
+                    <strong>Incapacidad IMSS</strong>
+                </div>
                 <div class="menu-card category-receta" onclick="showForm('receta_similares')">
                     <i class="fas fa-prescription-bottle-alt"></i>
-                    <strong>Receta Médica Similares</strong>
+                    <strong>Receta SIMILARES</strong>
                 </div>
-                <div class="menu-card category-certificado" onclick="showForm('certificado_medico_imss')">
+                <div class="menu-card category-receta" onclick="showForm('receta_ahorro')">
+                    <i class="fas fa-pills"></i>
+                    <strong>Receta DEL AHORRO</strong>
+                </div>
+                <div class="menu-card category-receta" onclick="showForm('certificado_medico_imss')">
                     <i class="fas fa-notes-medical"></i>
                     <strong>Certificado Médico IMSS</strong>
                 </div>
-                </div>
+            </div>
+
+            <hr/>
             
-            <div class="input-group" style="margin-top: 30px;">
-                <h2>Estatus de Solicitudes</h2>
-                <p>Haz clic en el botón para ver el estado de tus documentos guardados.</p>
-                <button class="btn-action" onclick="showForm('status')">Ver Estatus de Solicitudes</button>
+            <h2>🎓 Certificados de Estudios</h2>
+            <div class="icon-grid">
+                <div class="menu-card category-certificado" onclick="showForm('cert_primaria')">
+                    <i class="fas fa-child"></i>
+                    <strong>Certificado PRIMARIA</strong>
+                </div>
+                <div class="menu-card category-certificado" onclick="showForm('cert_secundaria')">
+                    <i class="fas fa-graduation-cap"></i>
+                    <strong>Certificado SECUNDARIA</strong>
+                </div>
+                <div class="menu-card category-certificado" onclick="showForm('cert_prepa')">
+                    <i class="fas fa-university"></i>
+                    <strong>Certificado PREPARATORIA</strong>
+                </div>
+            </div>
+
+            <hr/>
+            
+            <h2>⭐ Servicios Especializados</h2>
+            <div class="icon-grid">
+                <div class="menu-card category-especializado" onclick="showForm('metodo_shein')">
+                    <i class="fas fa-shopping-bag"></i>
+                    <strong>Metodo Shein</strong>
+                </div>
+                <div class="menu-card category-especializado" onclick="showForm('metodo_cinepolis')">
+                    <i class="fas fa-film"></i>
+                    <strong>Metodo Cinépolis</strong>
+                </div>
+                <div class="menu-card category-especializado" onclick="showForm('metodo_temu')">
+                    <i class="fas fa-gift"></i>
+                    <strong>Metodo TEMU</strong>
+                </div>
+                <div class="menu-card category-especializado" onclick="showForm('cv_desde_cero')">
+                    <i class="fas fa-file-alt"></i>
+                    <strong>CV DESDE CERO</strong>
+                </div>
+                <div class="menu-card category-especializado" onclick="showForm('sellos_personales')">
+                    <i class="fas fa-stamp"></i>
+                    <strong>SELLOS PERSONALES</strong>
+                </div>
+                <div class="menu-card category-especializado" onclick="showForm('formato_solicitud_pdf')">
+                    <i class="fas fa-file-pdf"></i>
+                    <strong>FORMATO DE SOLICITUD</strong>
+                </div>
+            </div>
+            
+            <hr/>
+
+            <button class="btn-action back-button" style="margin-top:10px;" onclick="logOut()">Cerrar Sesión</button>
+
+        </div>
+        <div id="admin-dashboard" class="form-section">
+            <button class="back-button" onclick="logOut()">← Cerrar Sesión</button>
+            <h2>⚙️ Panel de Administrador</h2>
+
+            <h3>Clientes Registrados (Autorización)</h3>
+            <div id="client-authorization-list" class="input-group">
+                <p id="no-clients-msg">Cargando lista de clientes...</p>
+            </div>
+            
+            <h3>Registro de Actividad del Último Cliente Seleccionado</h3>
+            <div id="activity-log-display" class="input-group">
+                <p>Seleccione un cliente para ver su actividad detallada.</p>
+            </div>
+
+            <h3>Solicitudes de Documentos Pendientes</h3>
+            <p>Al autorizar, el cliente verá automáticamente el botón de descarga en su página de espera.</p>
+            <div id="pending-requests-list" class="input-group">
+                <p id="no-requests-msg">No hay solicitudes pendientes.</p>
             </div>
         </div>
-
         <div id="form-receta_similares" class="form-section">
             <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
+
             <div class="disclaimer-notice">
                 *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
             </div>
             <div class="payment-notice">
                 *PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*
             </div>
-            <h2>💊 Receta Médica Similares</h2>
+
+            <h2>💊 Formulario de Receta Médica SIMILARES</h2>
+            <div class="input-group">
+                <h2>👨‍⚕️ Datos del Médico y Emisión</h2>
+                <label for="doctorNombreSimilares">Nombre del Médico (Ej: Dr. DUARTE ABDALA MARIO RAFAEL):</label>
+                <input type="text" id="doctorNombreSimilares" value="DR. ROGER GUITIERREZ SALAZAR">
+
+                <label for="cedulaSimilares">Cédula Profesional / Prof. / Especialidad:</label>
+                <input type="text" id="cedulaSimilares" value="MEDICO CIRUJANO  CED. PROF. 98569946">
+
+                <label for="direccionSimilares">Dirección del Consultorio (Ej: AV. PDTE...):</label>
+                <input type="text" id="direccionSimilares" value="#30 av. Luis Donaldo Colosio">
+
+                <label for="ciudadSimilares">Ciudad (Ej: CIUDAD DE MÉXICO):</label>
+                <input type="text" id="ciudadSimilares" value="CIUDAD DE MÉXICO">
+
+                <label for="fechaEmisionSimilares">Fecha de Emisión de la Receta:</label>
+                <input type="date" id="fechaEmisionSimilares" value="">
+
+                <label for="logoInputSimilares">Insertar Logo de la Institución/Receta (Opcional):</label>
+                <input type="file" id="logoInputSimilares" accept="image/*">
+            </div>
+
             <div class="input-group">
                 <h2>👤 Datos del Paciente</h2>
-                <label for="nombrePacienteSimilares">Nombre del Paciente:</label>
-                <input type="text" id="nombrePacienteSimilares" placeholder="Nombre completo del paciente" required>
+                <label for="nombrePacienteSimilares">Nombre(s) del Paciente:</label>
+                <input type="text" id="nombrePacienteSimilares" value="CRISTOPHER ORLANDO RAMIREZ">
+
+                <div class="date-container">
+                    <div>
+                        <label for="apellidoPSimilares">Apellido Paterno:</label>
+                        <input type="text" id="apellidoPSimilares" value="RAMIREZ">
+                    </div>
+                    <div>
+                        <label for="apellidoMSimilares">Apellido Materno:</label>
+                        <input type="text" id="apellidoMSimilares" value="">
+                    </div>
+                </div>
+
+                <div class="date-container">
+                    <div>
+                        <label for="sexoSimilares">Sexo (Ej: MASCULINO):</label>
+                        <input type="text" id="sexoSimilares" value="MASCULINO">
+                    </div>
+                    <div>
+                        <label for="edadSimilares">Edad:</label>
+                        <input type="text" id="edadSimilares" value="6 AÑOS">
+                    </div>
+                </div>
+
+                <div class="date-container">
+                    <div>
+                        <label for="fechaNacSimilares">Fecha de Nacimiento (Para la receta):</label>
+                        <input type="date" id="fechaNacSimilares" value="2019-07-18">
+                    </div>
+                    <div>
+                        <label for="alergiasSimilares">Alergias (Ej: NEGADAS):</label>
+                        <input type="text" id="alergiasSimilares" value="NEGADAS">
+                    </div>
+                </div>
             </div>
+
             <div class="input-group">
-                <h2>📝 Datos de la Receta</h2>
-                <label for="fechaRecetaSimilares">Fecha de la Receta:</label>
-                <input type="date" id="fechaRecetaSimilares" required>
-                
-                <label for="diagnosticoRecetaSimilares">Diagnóstico (Ej: Rinitis Alérgica):</label>
-                <input type="text" id="diagnosticoRecetaSimilares" placeholder="Diagnóstico médico" required>
-
-                <label for="medicamentoSimilares">Medicamento, Dosis y Vía de Administración:</label>
-                <textarea id="medicamentoSimilares" placeholder="Ej: Fexofenadina 180mg - Tomar 1 tableta cada 24 horas por 10 días." required></textarea>
-                
-                <label for="indicacionesRecetaSimilares">Indicaciones Adicionales:</label>
-                <textarea id="indicacionesRecetaSimilares" placeholder="Ej: Acudir a cita de revisión en 15 días." required></textarea>
-
-                <label for="proximaCitaSimilares">Próxima Cita (Ej: 2024-10-30):</label>
-                <input type="date" id="proximaCitaSimilares">
+                <h2>📈 Signos Vitales y Medidas</h2>
+                <div class="date-container">
+                    <div>
+                        <label for="spo2Similares">T.A. (Ej: 100/72MM/Hg):</label>
+                        <input type="text" id="spo2Similares" value="100/72MM/Hg">
+                    </div>
+                    <div>
+                        <label for="fcSimilares">TEMP (Ej: 36.5°):</label>
+                        <input type="text" id="fcSimilares" value="36.5°">
+                    </div>
+                </div>
+                <div class="date-container">
+                    <div>
+                        <label for="frSimilares">F.C X MIN:</label>
+                        <input type="text" id="frSimilares" value="MIN">
+                    </div>
+                    <div>
+                        <label for="tempSimilares">PESO (Ej: 25KG):</label>
+                        <input type="text" id="tempSimilares" value="25KG">
+                    </div>
+                </div>
+                <div class="date-container">
+                    <div>
+                        <label for="pesoSimilares">F.R X MIN:</label>
+                        <input type="text" id="pesoSimilares" value="MIN">
+                    </div>
+                    <div>
+                        <label for="tallaSimilares">TALLA:</label>
+                        <input type="text" id="tallaSimilares" value="6">
+                    </div>
+                </div>
+                <label for="dxSimilares">Diagnóstico/Motivo de Consulta:</label>
+                <input type="text" id="dxSimilares" value="INSOLACIÓN Y DOLOR ESTOMACAL">
             </div>
+
+            <div class="input-group">
+                <h2>📝 Contenido de la Receta</h2>
+                <label for="contenidoConsultaSimilares">Contenido de la Consulta (Texto):</label>
+                <textarea id="contenidoConsultaSimilares">Paciente acude a consulta médica con dolor abdominal, diarrea con episodios agudos y malestar general. Sin presentar fiebre.</textarea>
+
+                <label for="tratamientoSimilares">TRATAMIENTO (Una línea por medicamento):</label>
+                <textarea id="tratamientoSimilares">1.- AMBROXOL 3.2GR/100ML JARABE 120 ML
+1 CD 12 HRS DURANTE 7D ORAL
+2.- PARACETAMOL 40MG/1ML SUSPENSION 15 ML
+1 CD 12 HRS DURANTE 5D ORAL</textarea>
+
+                <label for="indicacionesGeneralesSimilares">Indicaciones Generales:</label>
+                <textarea id="indicacionesGeneralesSimilares">Reposo mínimo de 2-3 días</textarea>
+
+                <label for="proximaCitaSimilares">Próxima Cita (Fecha):</label>
+                <input type="text" id="proximaCitaSimilares" value="27/03/2021">
+
+                <label for="firmaInputSimilares">Firma del Médico (Opcional, NO colocada automáticamente si la sube):</label>
+                <input type="file" id="firmaInputSimilares" accept="image/*">
+            </div>
+
             <button class="btn-action" onclick="saveSolicitud('receta_similares')">💾 Guardar Solicitud (Esperar Aprobación)</button>
         </div>
 
-        <div id="form-certificado_medico_imss" class="form-section">
+        <div id="form-incapacidad_imss" class="form-section">
             <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
-            <div class="disclaimer-notice">
-                *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
-            </div>
-            <div class="payment-notice">
-                *PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*
-            </div>
-            <h2>🩺 Certificado Médico IMSS</h2>
+            <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+            <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+            <h2>💊 Formulario de Incapacidad IMSS</h2>
             <div class="input-group">
-                <h2>👤 Datos del Paciente</h2>
-                <label for="cmiNombrePaciente">✅ Nombre del paciente:</label>
-                <input type="text" id="cmiNombrePaciente" placeholder="CARMEN MORELOS HERNANDEZ" required>
-                
-                <div class="date-container">
-                    <div>
-                        <label for="cmiNss">✅ NSS (o NSS IMSS):</label>
-                        <input type="text" id="cmiNss" placeholder="1715990626-4" required>
-                    </div>
-                    <div>
-                        <label for="cmiEdad">✅ Edad:</label>
-                        <input type="text" id="cmiEdad" placeholder="30 años" required>
-                    </div>
-                </div>
-                
-                <label for="cmiFechaNac">✅ Fecha de nacimiento:</label>
-                <input type="date" id="cmiFechaNac" required>
-
-                <div class="date-container">
-                    <div>
-                        <label for="cmiPeso">✅ Peso (Ej: 90 kg):</label>
-                        <input type="text" id="cmiPeso" placeholder="90 kg" required>
-                    </div>
-                    <div>
-                        <label for="cmiTalla">✅ Talla (Ej: 1.65 mts):</label>
-                        <input type="text" id="cmiTalla" placeholder="1.65 mts" required>
-                    </div>
-                </div>
-                
-                <label for="cmiDireccion">✅ Dirección:</label>
-                <input type="text" id="cmiDireccion" placeholder="Dirección completa del paciente" required>
+                <p>⚠️ **FORMULARIO PENDIENTE:** Agregue los campos específicos para la Incapacidad IMSS aquí.</p>
+                <label for="placeholder1_incapacidad">Ejemplo de Campo (a borrar):</label>
+                <input type="text" id="placeholder1_incapacidad" value="">
             </div>
-
-            <div class="input-group">
-                <h2>🏥 Datos de la Unidad Médica</h2>
-                <div class="date-container">
-                    <div>
-                        <label for="cmiUmfNo">✅ UMF no.:</label>
-                        <input type="text" id="cmiUmfNo" placeholder="No. 99" required>
-                    </div>
-                    <div>
-                        <label for="cmiFechaEmision">✅ Fecha de emisión:</label>
-                        <input type="date" id="cmiFechaEmision" required>
-                    </div>
-                </div>
-                
-                <label for="cmiDoctor">Médico que Certifica (Ej: Dr. Yessica Mejia Carranza C.P. 5866652):</label>
-                <input type="text" id="cmiDoctor" placeholder="Médico Yessica Mejia Carranza C.P. 5866652" required>
-                
-                <label for="cmiConclusion">Conclusión Médica (Apto/No apto):</label>
-                <textarea id="cmiConclusion">El paciente se encuentra en buenas condiciones de salud general, sin signos de enfermedades infecciosas o cuadro agudo que comprometan su bienestar en la actualidad. Es apta para realizar actividades físicas sin restricciones.</textarea>
-            </div>
-
-            <button class="btn-action" onclick="saveSolicitud('certificado_medico_imss')">💾 Guardar Solicitud (Esperar Aprobación)</button>
-        </div>
-        <div id="status-section" class="form-section">
-            <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
-            <h2>Estatus de Solicitudes</h2>
-            <div id="solicitud-list">
-                </div>
-            <p id="no-solicitudes" style="text-align: center; color: #7f8c8d; margin-top: 20px;">No hay solicitudes guardadas.</p>
+            <button class="btn-action" onclick="saveSolicitud('incapacidad_imss')">💾 Guardar Solicitud</button>
         </div>
     </div>
 
-    <div id="footer">
-        <span>© 2024 Generador de Documentos.</span>
-        <a href="https://wa.me/XXXXXXXXXX" target="_blank" class="whatsapp-link">
-            <i class="fab fa-whatsapp"></i> Contactar
-        </a>
+    <div id="status-page" class="status-page" style="display:none;">
+        <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>
+    </div>
+
+    <a href="https://wa.me/message/AZLK65CETSPQL1" class="whatsapp-float" target="_blank" title="Soporte WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <div class="fixed-payment-info">
+        <p>⚠️ **PAGO**</p>
+        <p>*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</p>
     </div>
 
     <script>
         const { jsPDF } = window.jspdf;
-        const solicitudesKey = 'documentSolicitudes';
-        const currentUser = { id: 'user_temp_001', name: 'Usuario Invitado' }; // Usuario temporal para almacenamiento local
+        const STORAGE_KEY = 'pending_requests_list';
+        const APPROVED_KEY = 'approved_requests_list';
+        // 🔑 Nuevas claves para usuarios y actividad
+        const REGISTERED_USERS_KEY = 'registered_app_users';
+        const USER_ACTIVITY_KEY = 'user_activity_log';
+        // 🔑 Credenciales de administrador fijas (Solo para el Admin)
+        const ADMIN_USER = 'trollgaga999@gmail.com';
+        const ADMIN_PASS = 'Johan207';
+        // 🔑 Estado de la sesión
+        let statusCheckInterval = null;
+        let currentUser = null; // Variable global para el usuario logueado
+
+        function getBaseUrl() {
+            return window.location.href.split('#')[0];
+        }
 
         const viewIdMap = {
-            'menu': 'menu-section',
+            'auth_splash': 'auth-splash', // Nueva pantalla de inicio
+            'register': 'form-register', // Nuevo formulario de registro
+            'menu': 'main-menu',
+            'laboral': 'form-laboral',
+            'personal': 'form-personal',
+            // 'admin_login': 'admin-login', // Reemplazado por 'auth-splash' para simplificar
+            'admin_dashboard': 'admin-dashboard',
+            'incapacidad_imss': 'form-incapacidad_imss',
             'receta_similares': 'form-receta_similares',
-            'certificado_medico_imss': 'form-certificado_medico_imss',
-            'status': 'status-section'
+            'receta_ahorro': 'form-receta_ahorro',
+            'receta_imss': 'form-receta_imss',
+            'cert_primaria': 'form-cert_primaria',
+            'cert_secundaria': 'form-cert_secundaria',
+            'cert_prepa': 'form-cert_prepa',
+            'metodo_shein': 'form-metodo_shein',
+            'metodo_cinepolis': 'form-metodo_cinepolis',
+            'metodo_temu': 'form-metodo_temu',
+            'cv_desde_cero': 'form-cv_desde_cero',
+            'sellos_personales': 'form-sellos_personales',
+            'formato_solicitud_pdf': 'formato_solicitud_pdf'
         };
 
-        function showForm(viewName) {
-            // Oculta todas las secciones
-            document.querySelectorAll('#app-container > div').forEach(section => {
-                section.style.display = 'none';
+        function showForm(viewId, pushHistory = true) {
+            // Verifica el estado de autenticación para todas las vistas que no son de auth/register
+            const requiresAuth = !['auth_splash', 'register', 'status', 'whatsapp_group'].includes(viewId);
+            const isMenuOrService = viewId === 'menu' || viewIdMap[viewId]?.startsWith('form-');
+            const isDashboard = viewId === 'admin_dashboard';
+            
+            if (requiresAuth && !currentUser) {
+                alert("Debe iniciar sesión para acceder a este contenido.");
+                viewId = 'auth_splash';
+            } else if (isDashboard && (!currentUser || currentUser.user !== ADMIN_USER)) {
+                alert("Acceso denegado. Solo el administrador puede ver el panel.");
+                viewId = 'menu';
+            }
+
+            const sections = Object.values(viewIdMap);
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
             });
-            // Muestra la sección solicitada
-            const sectionId = viewIdMap[viewName];
-            if (sectionId) {
-                document.getElementById(sectionId).style.display = 'block';
-                if (viewName === 'status') {
-                    loadSolicitudes();
+
+            const targetId = viewIdMap[viewId] || viewId;
+            const viewElement = document.getElementById(targetId);
+
+            if (viewId === 'whatsapp_group') {
+                window.open('https://chat.whatsapp.com/GbkvIbPwCRX1JacpJJOS9D', '_blank');
+                logActivity(currentUser?.user || 'anon', 'VIEW_WHATSAPP_GROUP');
+                return;
+            }
+
+            if (viewElement) {
+                viewElement.style.display = 'block';
+                window.scrollTo(0, 0);
+                if (pushHistory) {
+                    let url = getBaseUrl();
+                    let state = { viewId: viewId };
+                    if (viewId !== 'menu') { url += `#${viewId}`; } else { url = getBaseUrl(); }
+                    history.pushState(state, '', url);
+                }
+                
+                // Registro de actividad (solo si no es auth/register/status)
+                if (isMenuOrService) {
+                    logActivity(currentUser.user, viewId === 'menu' ? 'ACCESS_MENU' : `VIEW_FORM:${viewId}`);
+                }
+                if (isDashboard) {
+                    logActivity(currentUser.user, 'ACCESS_ADMIN_DASHBOARD');
+                    loadAdminDashboard();
                 }
             }
         }
 
-        // --- FUNCION AUXILIAR PARA TEXTO JUSTIFICADO ---
-        // Función auxiliar para texto justificado y multilínea
-        function drawJustifiedText(doc, text, x, y, maxWidth, lineHeight) {
-            const lines = doc.splitTextToSize(text, maxWidth);
-            for (let i = 0; i < lines.length; i++) {
-                doc.text(lines[i], x, y);
-                y += lineHeight;
+        // --- CONFIRMACIÓN AL SALIR O VOLVER ATRÁS ---
+        window.addEventListener('popstate', (e) => {
+            const state = history.state;
+            // Solo preguntar si hay sesión activa y se intenta salir del menú o formularios
+            if (currentUser && (!state || !state.viewId || state.viewId === 'auth_splash')) {
+                const salir = confirm("⚠️ ¿Está seguro de que desea cerrar sesión y salir de los servicios?");
+                if (salir) {
+                    logOut();
+                } else {
+                    // Mantener la vista actual si cancela
+                    history.pushState({ viewId: 'menu' }, '', '#menu');
+                    showForm('menu', false);
+                }
+                return;
             }
-            return y;
+
+            // Si no hay sesión activa, ir al acceso normal
+            if (!state) { 
+                showForm('auth_splash', false); 
+                return; 
+            }
+
+            // Si hay estado previo, mostrar esa vista
+            showForm(state.viewId || 'auth_splash', false);
+        });
+
+        // --- FUNCIONES DE ALMACENAMIENTO (USERS & ACTIVITY) ---
+
+        function getRegisteredUsers() {
+            const data = localStorage.getItem(REGISTERED_USERS_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+        function saveRegisteredUsers(users) {
+            localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(users));
+        }
+        
+        function getActivityLog() {
+            const data = localStorage.getItem(USER_ACTIVITY_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+        function saveActivityLog(log) {
+            localStorage.setItem(USER_ACTIVITY_KEY, JSON.stringify(log));
         }
 
+        function logActivity(userIdentifier, action) {
+            if (!userIdentifier) userIdentifier = 'ANONIMO';
+            
+            const log = getActivityLog();
+            const newEntry = {
+                user: userIdentifier,
+                action: action,
+                timestamp: new Date().toLocaleString()
+            };
+            log.push(newEntry);
+            saveActivityLog(log);
+        }
 
-        // --- FUNCION GENERAR PDF RECETA SIMILARES ---
+        // --- FUNCIONES DE AUTENTICACIÓN Y REGISTRO ---
+
+        function registerUser() {
+            const name = document.getElementById('regName').value.trim();
+            const user = document.getElementById('regUser').value.trim();
+            const pass = document.getElementById('regPass').value;
+
+            if (!name || !user || !pass) {
+                alert("Por favor, complete todos los campos.");
+                return;
+            }
+            if (!user.includes('@') || user.length < 5) {
+                alert("Ingrese un correo electrónico válido.");
+                return;
+            }
+
+            const users = getRegisteredUsers();
+            if (users.some(u => u.user === user)) {
+                alert("Error: El correo electrónico ya está registrado o en proceso de autorización.");
+                return;
+            }
+
+            const newUser = { 
+                name: name, 
+                user: user, 
+                pass: pass, 
+                status: 'pending', // Clave: debe ser autorizado
+                timestamp: new Date().toLocaleString()
+            }; 
+            users.push(newUser);
+            saveRegisteredUsers(users);
+
+            // Limpiar campos
+            document.getElementById('regName').value = '';
+            document.getElementById('regUser').value = '';
+            document.getElementById('regPass').value = '';
+
+            logActivity(user, 'REGISTER_REQUESTED');
+            alert("¡Solicitud de registro exitosa! Su cuenta está PENDIENTE de autorización por el administrador. Le avisaremos cuando pueda iniciar sesión.");
+            showForm('auth_splash');
+        }
+
+        function authenticateUser() {
+            const user = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
+
+            // 1. Check against hardcoded ADMIN
+            if (user === ADMIN_USER && pass === ADMIN_PASS) {
+                currentUser = { user: user, name: 'ADMIN', status: 'authorized', isAdmin: true };
+                logActivity(user, 'ADMIN_LOGIN_SUCCESS');
+                alert("¡Bienvenido, Administrador! Accediendo al Panel de Control.");
+                showForm('admin_dashboard');
+                return;
+            }
+
+            // 2. Check against registered standard users
+            const registeredUsers = getRegisteredUsers();
+            const foundUser = registeredUsers.find(u => u.user === user && u.pass === pass);
+
+            if (foundUser) {
+                if (foundUser.status === 'pending') {
+                    alert(`Acceso denegado: Su cuenta está pendiente de autorización por el administrador.`);
+                    logActivity(user, 'LOGIN_FAIL:PENDING');
+                    return;
+                }
+                
+                // Usuario autorizado
+                currentUser = foundUser;
+                logActivity(user, 'USER_LOGIN_SUCCESS');
+                alert(`¡Bienvenido, ${foundUser.name}! Acceso completado.`);
+                showForm('menu');
+                return;
+            }
+            
+            // If neither is found
+            logActivity(user, 'LOGIN_FAIL:INVALID_CREDENTIALS');
+            alert("Usuario o Contraseña incorrectos. Si no tiene cuenta, por favor regístrese.");
+        }
+        
+        function logOut() {
+            if(currentUser) {
+                logActivity(currentUser.user, 'LOGOUT');
+            }
+            currentUser = null;
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
+            showForm('auth_splash');
+        }
+
+        // --- FUNCIONES DEL ADMINISTRADOR ---
+
+        function loadAdminDashboard() {
+            // Cargar solicitudes pendientes (lógica existente)
+            loadPendingRequests();
+            
+            // Cargar clientes registrados (nueva lógica)
+            loadRegisteredClients();
+            
+            // Limpiar log de actividad al cargar
+            document.getElementById('activity-log-display').innerHTML = '<p>Seleccione un cliente para ver su actividad detallada.</p>';
+        }
+
+        function loadRegisteredClients() {
+            const users = getRegisteredUsers();
+            const listElement = document.getElementById('client-authorization-list');
+            listElement.innerHTML = '';
+
+            if (users.length === 0) {
+                listElement.innerHTML = '<p>No hay clientes registrados.</p>';
+                return;
+            }
+
+            users.forEach(user => {
+                const statusColor = user.status === 'authorized' ? '#27ae60' : '#e67e22';
+                const item = document.createElement('div');
+                item.id = `client-${user.user.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                item.className = 'client-item';
+                item.innerHTML = `
+                    <div class="client-info">
+                        <strong>${user.name}</strong>
+                        <p>Email: ${user.user}</p>
+                        <p style="font-size:0.9em;">Estado: <strong style="color:${statusColor};">${user.status.toUpperCase()}</strong></p>
+                    </div>
+                    <div class="client-actions request-actions">
+                        <button class="btn-authorize" ${user.status === 'authorized' ? 'disabled' : ''} onclick="authorizeUser('${user.user}')">Autorizar</button>
+                        <button class="back-button" onclick="viewUserActivity('${user.user}')">Ver Actividad</button>
+                        <button class="btn-reject" onclick="deleteUser('${user.user}')">Eliminar</button>
+                    </div>
+                `;
+                listElement.appendChild(item);
+            });
+        }
+
+        function authorizeUser(userEmail) {
+            if (!confirm(`¿Está seguro de AUTORIZAR al usuario ${userEmail}?`)) return;
+            
+            const users = getRegisteredUsers();
+            const index = users.findIndex(u => u.user === userEmail);
+            
+            if (index > -1) {
+                users[index].status = 'authorized';
+                saveRegisteredUsers(users);
+                logActivity(ADMIN_USER, `AUTHORIZE_USER:${userEmail}`);
+                alert(`Usuario ${userEmail} autorizado. Ya puede iniciar sesión.`);
+                loadRegisteredClients();
+            } else {
+                alert("Error: Usuario no encontrado.");
+            }
+        }
+        
+        function deleteUser(userEmail) {
+            if (!confirm(`¿Está seguro de ELIMINAR al usuario ${userEmail}? Esto es irreversible.`)) return;
+            
+            let users = getRegisteredUsers();
+            const initialLength = users.length;
+            users = users.filter(u => u.user !== userEmail);
+            
+            if (users.length < initialLength) {
+                saveRegisteredUsers(users);
+                logActivity(ADMIN_USER, `DELETE_USER:${userEmail}`);
+                alert(`Usuario ${userEmail} eliminado.`);
+                loadRegisteredClients();
+            } else {
+                alert("Error: Usuario no encontrado.");
+            }
+        }
+
+        function viewUserActivity(userEmail) {
+            const logElement = document.getElementById('activity-log-display');
+            const fullLog = getActivityLog();
+            const userLog = fullLog.filter(entry => entry.user === userEmail).reverse(); // Mostrar lo más reciente primero
+
+            logElement.innerHTML = `<h4>Actividad de: ${userEmail}</h4>`;
+
+            if (userLog.length === 0) {
+                logElement.innerHTML += '<p>No se encontró actividad registrada para este cliente.</p>';
+                return;
+            }
+
+            userLog.forEach(entry => {
+                const item = document.createElement('div');
+                item.className = 'log-entry';
+                item.innerHTML = `[${entry.timestamp}] <strong>${entry.action}</strong>`;
+                logElement.appendChild(item);
+            });
+            logActivity(ADMIN_USER, `VIEW_ACTIVITY_LOG:${userEmail}`);
+        }
+        
+        // --- FUNCIONES EXISTENTES (MODIFICADAS LIGERAMENTE) ---
+
+        function getRequests(key) {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : [];
+        }
+        function saveRequests(key, requests) {
+            localStorage.setItem(key, JSON.stringify(requests));
+        }
+
+        async function saveSolicitud(tipoCarta) {
+            if (!currentUser) {
+                 alert("Error: Debe iniciar sesión para guardar una solicitud.");
+                 return;
+            }
+            let nombreSolicitante = currentUser.name, 
+                nombreAsunto = tipoCarta.toUpperCase(), 
+                pdfBase64 = null;
+
+            if (tipoCarta === 'receta_similares') {
+                nombreSolicitante = document.getElementById('nombrePacienteSimilares').value || 'Paciente';
+                nombreAsunto = nombreSolicitante;
+                pdfBase64 = await generarPDFRecetaSimilares(false);
+            } else {
+                pdfBase64 = "BASE64_PLACEHOLDER_FOR_NEW_TYPE";
+            }
+
+            if (!pdfBase64) {
+                alert(`Error al generar el documento ${tipoCarta}. Por favor, revise los campos.`);
+                return;
+            }
+
+            if (pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
+                alert(`AVISO: Se ha guardado la solicitud ${tipoCarta} con datos de PRUEBA. El administrador procederá a la autorización.`);
+            }
+
+            const requestId = Date.now().toString();
+            const newRequest = {
+                id: requestId,
+                userEmail: currentUser.user, // Se añade el email del solicitante
+                type: tipoCarta,
+                name: nombreAsunto,
+                requesterName: nombreSolicitante,
+                pdfBase64: pdfBase64,
+                status: 'pending',
+                timestamp: new Date().toLocaleString()
+            };
+
+            const requests = getRequests(STORAGE_KEY);
+            requests.push(newRequest);
+            saveRequests(STORAGE_KEY, requests);
+
+            logActivity(currentUser.user, `SAVE_REQUEST:${tipoCarta}:${requestId}`);
+            
+            const url = `${getBaseUrl()}#status?id=${requestId}`;
+            const state = { viewId: 'status', requestId: requestId };
+            history.pushState(state, '', url);
+            checkURL();
+        }
+
+        function loadPendingRequests() {
+            const requests = getRequests(STORAGE_KEY).filter(req => req.status === 'pending');
+            const listElement = document.getElementById('pending-requests-list');
+            listElement.innerHTML = '';
+            if (requests.length === 0) {
+                listElement.innerHTML = '<p id="no-requests-msg">No hay solicitudes pendientes en el almacenamiento local de este navegador.</p>';
+                return;
+            }
+            requests.forEach(req => {
+                const typeDisplay = req.type.replace(/_/g, ' ').toUpperCase();
+                const item = document.createElement('div');
+                item.id = `request-${req.id}`;
+                item.className = 'request-item';
+                item.innerHTML = `
+                    <div class="request-info">
+                        <strong>${typeDisplay} - ${req.name}</strong>
+                        <p>Solicitante: ${req.requesterName} (Email: ${req.userEmail || 'N/A'})</p>
+                        <p style="font-size:0.8em;">URL del Cliente: <code style="word-break: break-all;">${getBaseUrl()}#status?id=${req.id}</code></p>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn-authorize" onclick="authorizeRequest('${req.id}')">Autorizar</button>
+                        <button class="btn-reject" onclick="deleteRequest('${req.id}', '${STORAGE_KEY}')">Rechazar</button>
+                    </div>
+                `;
+                listElement.appendChild(item);
+            });
+        }
+        
+        function authorizeRequest(requestId) {
+            let pendingRequests = getRequests(STORAGE_KEY);
+            const index = pendingRequests.findIndex(req => req.id === requestId);
+            if (index === -1) {
+                alert("Error: Solicitud no encontrada.");
+                loadPendingRequests();
+                return;
+            }
+            const request = pendingRequests[index];
+            request.status = 'approved';
+            const approvedRequests = getRequests(APPROVED_KEY);
+            approvedRequests.push(request);
+            saveRequests(APPROVED_KEY, approvedRequests);
+            pendingRequests.splice(index, 1);
+            saveRequests(STORAGE_KEY, pendingRequests);
+            
+            logActivity(ADMIN_USER, `AUTHORIZE_REQUEST:${request.type}:${requestId}`);
+            
+            alert(`¡Solicitud Autorizada! El cliente ahora puede descargar el archivo usando el enlace de su página de estatus.`);
+            loadPendingRequests();
+        }
+        
+        function deleteRequest(requestId, key) {
+            if (!confirm(`¿Está seguro de ELIMINAR esta solicitud (ID: ${requestId})?`)) return;
+
+            let requests = getRequests(key);
+            const index = requests.findIndex(req => req.id === requestId);
+            
+            if (index > -1) {
+                const requestType = requests[index].type;
+                requests.splice(index, 1);
+                saveRequests(key, requests);
+                
+                logActivity(ADMIN_USER, `DELETE_REQUEST:${requestType}:${requestId}`);
+            }
+            loadPendingRequests();
+        }
+        
+        // El resto de funciones (checkURL, checkStatus, triggerDownload, generarPDFRecetaSimilares, etc.) se mantienen igual
+        
+        function checkURL() {
+            if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash.split('?')[1] || '');
+            const requestId = params.get('id');
+            if (hash.startsWith('status') && requestId) {
+                document.getElementById('app-container').style.display = 'none';
+                document.getElementById('status-page').style.display = 'flex';
+                document.getElementById('status-page').innerHTML = '<div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>';
+                checkStatus(requestId);
+                statusCheckInterval = setInterval(() => checkStatus(requestId), 5000);
+                return;
+            }
+            // Si no hay hash de estatus y no hay sesión, ir al splash
+            if (!currentUser) {
+                showForm('auth_splash', false);
+            } else {
+                showForm('menu', false);
+            }
+        }
+
+        function checkStatus(requestId) {
+            const approvedRequests = getRequests(APPROVED_KEY);
+            const request = approvedRequests.find(req => req.id === requestId);
+            const statusPage = document.getElementById('status-page');
+            const disclaimer = statusPage.querySelector('.disclaimer-notice') ? statusPage.querySelector('.disclaimer-notice').outerHTML : '';
+            if (!request) {
+                statusPage.innerHTML = disclaimer + `
+                    <h2>⏳ Solicitud Enviada - Esperando Autorización</h2>
+                    <div class="spinner"></div>
+                    <p>Su solicitud de <strong>${requestId}</strong> ha sido recibida.</p>
+                    <p>Estamos esperando que el administrador la apruebe una vez realizado el pago.</p>
+                    <p style="font-size:0.8em;color:#555;">(Esta página se actualizará automáticamente cada 5 segundos)</p>
+                    <p style="margin-top:20px;">Puede guardar este enlace: <code>${getBaseUrl()}#status?id=${requestId}</code></p>
+                `;
+            } else {
+                if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
+                statusPage.innerHTML = disclaimer + `
+                    <h2>✅ ¡Solicitud Aprobada!</h2>
+                    <p>El administrador ha autorizado su documento para <strong>${request.name}</strong>.</p>
+                    <button class="btn-action btn-download-now" onclick="triggerDownload('${request.id}')"> Descargar Documento Ahora </button>
+                    <p style="margin-top:30px;"><a href="#" onclick="showForm('menu')">← Volver al Menú Principal</a></p>
+                `;
+            }
+        }
+
+        function triggerDownload(requestId) {
+            const approvedRequests = getRequests(APPROVED_KEY);
+            const request = approvedRequests.find(req => req.id === requestId);
+            if (!request) {
+                alert("Error: Archivo no encontrado.");
+                showForm('menu');
+                return;
+            }
+            if (request.pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
+                alert("Este es un documento placeholder de PRUEBA. No se puede descargar un PDF real.");
+                return;
+            }
+            const pdfBase64 = request.pdfBase64;
+            const name = request.name.toUpperCase().replace(/\s/g, '_');
+            const type = request.type.toUpperCase().replace(/_/g, '-');
+            const link = document.createElement('a');
+            link.href = `data:application/pdf;base64,${pdfBase64}`;
+            link.download = `Documento_Aprobado_${name}_${type}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            if(currentUser) logActivity(currentUser.user, `DOWNLOAD_DOCUMENT:${request.type}:${requestId}`);
+
+            const statusPage = document.getElementById('status-page');
+            const disclaimer = statusPage.querySelector('.disclaimer-notice') ? statusPage.querySelector('.disclaimer-notice').outerHTML : '';
+            statusPage.innerHTML = disclaimer + `
+                <div>
+                    <h1>✅ Descarga Exitosa</h1>
+                    <p>Su documento para <strong>${request.name}</strong> ha sido descargado. Por favor, revise su carpeta de descargas.</p>
+                    <p style="margin-top:30px;"><a href="#" onclick="showForm('menu')">← Volver al Menú Principal</a></p>
+                </div>
+            `;
+        }
+        
+        // Funciones de PDF se mantienen sin cambios
+
+        const fileToBase64 = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => resolve(null);
+        });
+
+        function generarNumeroAleatorio() {
+            let num = '';
+            for (let i=0;i<10;i++) num += Math.floor(Math.random()*10).toString();
+            return num;
+        }
+
+        function drawJustifiedText(doc, text, x, y, maxWidth, lineHeight) {
+            let currentY = y;
+            const splitText = doc.splitTextToSize(text, maxWidth);
+            splitText.forEach((line, index) => {
+                if (index < splitText.length - 1) {
+                    doc.text(line, x, currentY, { align: 'justify' });
+                } else {
+                    doc.text(line, x, currentY);
+                }
+                currentY += lineHeight;
+            });
+            return currentY;
+        }
+
+        function drawBarcodeStyled(doc, x, y, width, height, code) {
+            const digits = code.split('');
+            const totalParts = digits.length * 4;
+            const unit = width / totalParts;
+            let cursor = x;
+            doc.setFillColor(0); 
+            for (let i = 0; i < digits.length; i++) {
+                const d = parseInt(digits[i], 10);
+                const pattern = [
+                    1 + (d % 3),
+                    1 + ((d + 1) % 3),
+                    1 + ((d + 2) % 3),
+                    1 + ((d + 1) % 2)
+                ];
+                for (let p = 0; p < pattern.length; p++) {
+                    const w = Math.max(0.5, unit * pattern[p] / 3);
+                    if (p % 2 === 0) { 
+                        doc.rect(cursor, y, w, height, 'F');
+                    }
+                    cursor += w;
+                }
+            }
+            doc.setFontSize(8);
+            doc.text(code, x + (width / 2), y + height + 4, { align: 'center' });
+        }
+
+        const DEFAULT_LOGO_DATAURL = 'data:image/svg+xml;base64,' + btoa(
+            `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="80" viewBox="0 0 200 80">
+                <rect width="200" height="80" fill="white"/>
+                <g transform="translate(10,8)">
+                  <circle cx="24" cy="24" r="24" fill="#0a6ebd"/>
+                  <path d="M18 24 C18 14 36 12 36 24 C36 36 18 34 18 24 Z" fill="white"/>
+                  <text x="62" y="36" font-family="Arial" font-size="14" fill="#0a6ebd" font-weight="bold">FARMACIAS</text>
+                  <text x="62" y="53" font-family="Arial" font-size="14" fill="#0a6ebd" font-weight="bold">SIMILARES</text>
+                </g>
+            </svg>`
+        );
+
         async function generarPDFRecetaSimilares(descargar = true) {
             const doc = new jsPDF('p', 'mm', 'a4');
             const pageWidth = doc.internal.pageSize.getWidth();
-            const margin = 15;
-            let y = 15;
+            const margin = 10;
+            let y = 10;
             const lineHeight = 5;
 
-            // Recuperar datos
-            const nombreP = (document.getElementById('nombrePacienteSimilares').value || 'PACIENTE').toUpperCase();
-            const fechaReceta = document.getElementById('fechaRecetaSimilares').value;
-            const diagnostico = document.getElementById('diagnosticoRecetaSimilares').value || 'SIN DIAGNÓSTICO';
-            const medicamento = document.getElementById('medicamentoSimilares').value || 'SIN MEDICAMENTO';
-            const indicaciones = document.getElementById('indicacionesRecetaSimilares').value || 'SIN INDICACIONES ADICIONALES';
-            const proxima = document.getElementById('proximaCitaSimilares').value || 'NO APLICA';
+            // Recuperar datos del formulario
+            const nombreDoc = (document.getElementById('doctorNombreSimilares').value || '').toUpperCase();
+            const cedula = (document.getElementById('cedulaSimilares').value || '').toUpperCase();
+            const direccion = (document.getElementById('direccionSimilares').value || '').toUpperCase();
+            const ciudad = (document.getElementById('ciudadSimilares').value || '').toUpperCase();
+            const fechaEmisionVal = document.getElementById('fechaEmisionSimilares').value;
             
-            doc.setFontSize(16);
+            // Formato de fecha mejorado
+            const hoy = new Date();
+            const fechaHora = `${fechaEmisionVal ? new Date(fechaEmisionVal + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' })} ${String(hoy.getHours()).padStart(2, '0')}:${String(hoy.getMinutes()).padStart(2, '0')}`;
+            
+            const nombreP = (document.getElementById('nombrePacienteSimilares').value || '').toUpperCase();
+            const apellidoP = (document.getElementById('apellidoPSimilares').value || '').toUpperCase();
+            const apellidoM = (document.getElementById('apellidoMSimilares').value || '').toUpperCase();
+            const sexo = (document.getElementById('sexoSimilares').value || '').toUpperCase();
+            const edad = (document.getElementById('edadSimilares').value || '').toUpperCase();
+            const fechaNacVal = document.getElementById('fechaNacSimilares').value;
+            const fechaNac = fechaNacVal ? new Date(fechaNacVal + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+            const alergias = (document.getElementById('alergiasSimilares').value || '').toUpperCase();
+
+            const ta = (document.getElementById('spo2Similares').value || '').toUpperCase();
+            const temp = (document.getElementById('fcSimilares').value || '').toUpperCase();
+            const fc = (document.getElementById('frSimilares').value || '').toUpperCase();
+            const peso = (document.getElementById('tempSimilares').value || '').toUpperCase();
+            const fr = (document.getElementById('pesoSimilares').value || '').toUpperCase();
+            const talla = (document.getElementById('tallaSimilares').value || '').toUpperCase();
+            const dx = (document.getElementById('dxSimilares').value || '').toUpperCase();
+
+            const contenido = document.getElementById('contenidoConsultaSimilares').value || '';
+            const tratamiento = document.getElementById('tratamientoSimilares').value || '';
+            const indicaciones = document.getElementById('indicacionesGeneralesSimilares').value || '';
+            const proxima = document.getElementById('proximaCitaSimilares').value || '';
+
+            // Cargar logo
+            const logoFile = document.getElementById('logoInputSimilares').files[0];
+            const logoBase64 = logoFile ? await fileToBase64(logoFile) : DEFAULT_LOGO_DATAURL;
+
+            // Generar número de expediente
+            const barcodeNumber = generarNumeroAleatorio();
+
+            // --- ENCABEZADO ---
+            // Logo a la izquierda
+            const logoW = 34;
+            const logoH = 20;
+            doc.addImage(logoBase64, 'PNG', margin, y, logoW, logoH);
+
+            // Información del médico centrada
+            doc.setFontSize(12);
             doc.setFont(undefined, 'bold');
-            doc.text('RECETA MÉDICA - FARMACIAS SIMILARES', pageWidth / 2, y, { align: 'center' });
-            y += 10;
-            
+            doc.text(nombreDoc, pageWidth/2, y + 8, { align: 'center' });
             doc.setFontSize(10);
             doc.setFont(undefined, 'normal');
-            doc.text(`Fecha: ${fechaReceta}`, pageWidth - margin, y, { align: 'right' });
-            y += 5;
+            doc.text(cedula, pageWidth/2, y + 13, { align: 'center' });
+            doc.text('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', pageWidth/2, y + 18, { align: 'center' });
+
+            // Código de barras MÁS PEQUEÑO en la esquina superior derecha
+            const barcodeW = 45;
+            const barcodeH = 12;
+            const barcodeX = pageWidth - margin - barcodeW;
+            const barcodeY = y + 4;
+            drawBarcodeStyled(doc, barcodeX, barcodeY, barcodeW, barcodeH, barcodeNumber);
+
+            y += Math.max(logoH, 22) + 2;
+
+            // Línea separadora
+            doc.setDrawColor(0);
+            doc.setLineWidth(0.4);
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 6;
+
+            // --- Dirección izquierda y Fecha derecha ---
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+            doc.text(direccion, margin, y);
+            doc.text(`FECHA Y HORA DE ELABORACION: ${fechaHora}`, pageWidth - margin, y, { align: 'right' });
+            y += 6;
+
+            // Línea separadora
+            doc.setLineWidth(0.3);
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 6;
+
+            // --- DATOS DEL PACIENTE ---
+            const colLeftX = margin;
+            const colRightX = pageWidth/2 + 10;
+            const fieldGapY = 5;
+
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'bold');
+            doc.text('NOMBRE:', colLeftX, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(`${nombreP} ${apellidoP} ${apellidoM}`.trim(), colLeftX + 20, y);
+
+            doc.setFont(undefined, 'bold');
+            doc.text('NUMERO DE EXPEDIENTE:', colRightX, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(barcodeNumber, colRightX + 48, y);
+            y += fieldGapY;
+
+            doc.setFont(undefined, 'bold');
+            doc.text('SEXO:', colLeftX, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(sexo, colLeftX + 14, y);
+
+            doc.setFont(undefined, 'bold');
+            doc.text('EDAD:', colRightX, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(edad, colRightX + 14, y);
+            y += fieldGapY;
+
+            doc.setFont(undefined, 'bold');
+            doc.text('FECHA DE NACIMIENTO:', colLeftX, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(fechaNac, colLeftX + 42, y);
+            y += fieldGapY + 2;
+
+            // Línea separadora
+            doc.setLineWidth(0.3);
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 6;
+
+            // --- SIGNOS VITALES Y TRATAMIENTO (dos columnas) ---
+            const leftColW = (pageWidth - margin*2) * 0.45;
+            const rightColX2 = margin + leftColW + 10;
+            const rightColW = pageWidth - margin - rightColX2;
+
+            let yLeft = y;
+            let yRight = y;
+
+            // Columna Izquierda: Signos Vitales
+            doc.setFont(undefined, 'bold');
+            doc.text('T.A.', margin, yLeft);
+            doc.setFont(undefined, 'normal');
+            doc.text(ta, margin + 10, yLeft);
+
+            doc.setFont(undefined, 'bold');
+            doc.text('TEMP:', margin + 42, yLeft);
+            doc.setFont(undefined, 'normal');
+            doc.text(temp, margin + 56, yLeft);
+            yLeft += lineHeight;
+
+            doc.setFont(undefined, 'bold');
+            doc.text('F.C X MIN', margin, yLeft);
+            doc.setFont(undefined, 'normal');
+            doc.text(fc, margin + 21, yLeft);
+
+            doc.setFont(undefined, 'bold');
+            doc.text('PESO:', margin + 42, yLeft);
+            doc.setFont(undefined, 'normal');
+            doc.text(peso, margin + 54, yLeft);
+            yLeft += lineHeight;
+
+            doc.setFont(undefined, 'bold');
+            doc.text('F.R X MIN', margin, yLeft);
+            doc.setFont(undefined, 'normal');
+            doc.text(fr, margin + 21, yLeft);
+
+            doc.setFont(undefined, 'bold');
+            doc.text('TALLA:', margin + 42, yLeft);
+            doc.setFont(undefined, 'normal');
+            doc.text(talla, margin + 54, yLeft);
+            yLeft += lineHeight + 2;
+
+            // Diagnóstico (I.D)
+            doc.setFont(undefined, 'bold');
+            doc.text('I.D', margin, yLeft);
+            doc.setFont(undefined, 'normal');
+            doc.text(dx, margin + 8, yLeft);
+            yLeft += lineHeight + 4;
+
+            // Columna Derecha: Tratamiento
+            doc.setFont(undefined, 'bold');
+            doc.text('TRATAMIENTO:', rightColX2, yRight);
+            yRight += lineHeight;
+            doc.setFont(undefined, 'normal');
             
-            // Datos del Paciente
-            doc.setDrawColor(52, 73, 94);
-            doc.setLineWidth(0.5);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 4;
-            doc.setFont(undefined, 'bold');
-            doc.text('PACIENTE:', margin, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(nombreP, margin + 25, y);
-            y += 5;
+            // Formatear tratamiento línea por línea
+            const tratamientoLineas = tratamiento.split('\n').filter(l => l.trim());
+            tratamientoLineas.forEach(linea => {
+                const wrapped = doc.splitTextToSize(linea, rightColW - 5);
+                wrapped.forEach(w => {
+                    doc.text(w, rightColX2, yRight);
+                    yRight += lineHeight;
+                });
+            });
 
-            // Diagnóstico
+            // Determinar y máximo
+            y = Math.max(yLeft, yRight) + 4;
+
+            // Línea separadora
+            doc.setLineWidth(0.3);
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 6;
+
+            // --- OBSERVACIONES ---
             doc.setFont(undefined, 'bold');
-            doc.text('DIAGNÓSTICO:', margin, y);
+            doc.text('OBSERVACIONES', margin, y);
+            y += 5;
             doc.setFont(undefined, 'normal');
-            doc.text(diagnostico.toUpperCase(), margin + 30, y);
+            y = drawJustifiedText(doc, contenido, margin, y, pageWidth - margin*2, lineHeight);
+            y += 4;
+
+            // INDICACIONES
+            doc.setFont(undefined, 'normal');
+            y = drawJustifiedText(doc, indicaciones, margin, y, pageWidth - margin*2, lineHeight);
             y += 8;
 
-            // Medicamento/Indicaciones
-            doc.setLineWidth(0.5);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 4;
-            doc.setFont(undefined, 'bold');
-            doc.text('Rx. (Prescripción)', margin, y);
-            y += 5;
-
-            doc.setFont(undefined, 'normal');
-            y = drawJustifiedText(doc, medicamento, margin, y, pageWidth - margin * 2, lineHeight);
-            y += 8;
-
-            // Indicaciones
-            doc.setLineWidth(0.5);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 4;
-            doc.setFont(undefined, 'bold');
-            doc.text('INDICACIONES ADICIONALES:', margin, y);
-            y += 5;
-
-            doc.setFont(undefined, 'normal');
-            y = drawJustifiedText(doc, indicaciones, margin, y, pageWidth - margin * 2, lineHeight);
-            y += 8;
-
-
-            // Próxima Cita y Firma
-            doc.setLineWidth(0.5);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 4;
+            // Próxima cita
             doc.setFont(undefined, 'bold');
             doc.text('PRÓXIMA CITA:', margin, y);
             doc.setFont(undefined, 'normal');
@@ -456,7 +1308,7 @@
 
             y += 18;
 
-            // Línea punteada inferior (para corte)
+            // Línea punteada inferior
             const dashY = doc.internal.pageSize.getHeight() - 28;
             const dashStartX = margin;
             const dashEndX = pageWidth - margin;
@@ -478,326 +1330,12 @@
                 return doc.output('datauristring').split(',')[1];
             }
         }
-        
-        
-        // --- FUNCION GENERAR PDF CERTIFICADO MEDICO IMSS (NUEVA) ---
-        async function generarPDFCertificadoIMSS(descargar = true) {
-            const doc = new jsPDF('p', 'mm', 'a4');
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const margin = 15;
-            let y = 15;
-            const lineHeight = 5;
-
-            // Recuperar datos del formulario
-            const nombreP = (document.getElementById('cmiNombrePaciente').value || '').toUpperCase();
-            const nss = (document.getElementById('cmiNss').value || '');
-            const edad = (document.getElementById('cmiEdad').value || '');
-            const fechaNacVal = document.getElementById('cmiFechaNac').value;
-            const fechaNac = fechaNacVal ? new Date(fechaNacVal + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'N/A';
-            const peso = (document.getElementById('cmiPeso').value || '').toUpperCase();
-            const talla = (document.getElementById('cmiTalla').value || '').toUpperCase();
-            const direccion = (document.getElementById('cmiDireccion').value || '').toUpperCase();
-            const umfNo = (document.getElementById('cmiUmfNo').value || '').toUpperCase();
-            const fechaEmisionVal = document.getElementById('cmiFechaEmision').value;
-            const fechaEmision = fechaEmisionVal ? new Date(fechaEmisionVal).toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' }) : 'N/A';
-            const doctor = (document.getElementById('cmiDoctor').value || 'MÉDICO EN TURNO').toUpperCase();
-            const conclusion = document.getElementById('cmiConclusion').value || 'Sin conclusión.';
-
-            // --- ENCABEZADO IMSS ---
-            // (Colocar Logo IMSS aquí si se tiene el dataURL)
-            doc.setFontSize(24);
-            doc.setFont(undefined, 'bold');
-            doc.text('IMSS', margin + 35, y + 10);
-            y += 20;
-
-            // 2. Títulos
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            doc.text('INSTITUTO MEXICANO DEL SEGURO SOCIAL', pageWidth / 2, y, { align: 'center' });
-            y += 4;
-            doc.text('DIRECCIÓN DE PRESTACIONES MÉDICAS', pageWidth / 2, y, { align: 'center' });
-            y += 4;
-            doc.text('UNIDAD MEDICA FAMILIAR NO. ' + umfNo, pageWidth / 2, y, { align: 'center' });
-            y += 4;
-            doc.text('DELEGACIÓN ESTADO DE MÉXICO', pageWidth / 2, y, { align: 'center' });
-            y += 8;
-
-            // 3. Título del Documento
-            doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
-            doc.text('CERTIFICADO MÉDICO', pageWidth / 2, y, { align: 'center' });
-            y += 10;
-
-            // 4. Asunto y Número de Certificado
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'bold');
-            doc.text('ASUNTO: CERTIFICADO MEDICO', pageWidth - margin, y, { align: 'right' });
-            y += 4;
-            doc.setFont(undefined, 'normal');
-            // Número simulado
-            doc.text(`I.Num.09.86.29/3409/171/F-009`, pageWidth - margin, y, { align: 'right' });
-            y += 8;
-
-            // 5. Cuerpo del Certificado
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            const cuerpoTexto = `Por medio del presente el que Médico ${doctor} con número de seguro social: ${nss} hago constar que el paciente
-${nombreP} de ${edad} de edad:`;
-            y = drawJustifiedText(doc, cuerpoTexto, margin, y, pageWidth - margin * 2, lineHeight);
-            y += 8;
-
-            // 6. Antecedentes Médicos (Simulado, basado en el formato IMSS)
-            doc.setFont(undefined, 'bold');
-            doc.text('Antecedentes Médicos:', margin, y);
-            y += lineHeight;
-            doc.setFont(undefined, 'normal');
-            doc.text('- Alergias: No presenta alergias de ningún tipo.', margin, y);
-            y += lineHeight;
-            doc.text('- Cirugías: No ha sido sometida a intervenciones quirúrgicas.', margin, y);
-            y += lineHeight;
-            doc.text('- Enfermedades Crónicas: Ninguna.', margin, y);
-            y += lineHeight;
-            doc.text('- Vacunas: Esquema de vacunación al día conforme a las normativas vigentes.', margin, y);
-            y += 8;
-
-            // 7. Examen Físico General
-            doc.setFont(undefined, 'bold');
-            doc.text('Examen Físico General:', margin, y);
-            y += lineHeight;
-            doc.setFont(undefined, 'normal');
-            
-            const examFields = [
-                `• Peso: ${peso}`,
-                `• Frecuencia Cardiaca: 75 lpm`,
-                `• Frecuencia Respiratoria: 16 rpm`,
-                `• Tipo de sangre: O+`,
-                `• Talla: ${talla}`,
-                `• Tensión Arterial: 110/75 mmHg`,
-                `• Temperatura corporal: 36.7 °C`,
-            ];
-            
-            // Organizar en dos columnas
-            const colWidth = (pageWidth - margin * 2) / 2;
-            let yExam = y;
-            for (let i = 0; i < examFields.length; i++) {
-                const xPos = margin + (i % 2) * colWidth;
-                doc.text(examFields[i], xPos, yExam);
-                if (i % 2 !== 0 || i === examFields.length - 1) {
-                    yExam += lineHeight;
-                }
-            }
-            y = yExam + 4;
 
 
-            // 8. Sistemas (Simulado)
-            doc.setFont(undefined, 'bold');
-            doc.text('Sistema Respiratorio:', margin, y);
-            y += lineHeight;
-            doc.setFont(undefined, 'normal');
-            doc.text('- Pulmones: Sin murmullo vesicular presente, sin ruidos agregados.', margin, y);
-            y += lineHeight + 2;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('Sistema Cardiovascular:', margin, y);
-            y += lineHeight;
-            doc.setFont(undefined, 'normal');
-            doc.text('- Corazón: Rítmico, sin soplos ni ruidos patológicos.', margin, y);
-            y += lineHeight + 2;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('Sistema Digestivo:', margin, y);
-            y += lineHeight;
-            doc.setFont(undefined, 'normal');
-            doc.text('- Abdomen: Blando, depresible, sin dolor a la palpación.', margin, y);
-            y += lineHeight + 2;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('Sistema Neurológico:', margin, y);
-            y += lineHeight;
-            doc.setFont(undefined, 'normal');
-            doc.text('- Reflejos: Conservados.', margin, y);
-            y += lineHeight;
-            doc.text('- Conciencia: Orientada en tiempo, espacio y persona.', margin, y);
-            y += lineHeight + 2;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('Sistema Osteomuscular:', margin, y);
-            y += lineHeight;
-            doc.setFont(undefined, 'normal');
-            doc.text('- Columna: Sin desviaciones, postura adecuada.', margin, y);
-            y += lineHeight;
-            doc.text('- Extremidades: Con mucha fuerza y movilidad.', margin, y);
-            y += lineHeight + 2;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('Examen de la Vista:', margin, y);
-            y += lineHeight;
-            doc.setFont(undefined, 'normal');
-            doc.text('- Agudeza Visual: 20/20 en ambos ojos sin corrección.', margin, y);
-            y += lineHeight;
-            doc.text('- Visión de Colores: Normal, sin evidencia de daltonismo.', margin, y);
-            y += lineHeight;
-            doc.text('- Campo Visual: Conservado en ambos ojos.', margin, y);
-            y += lineHeight;
-            doc.text('- Reflejo Pupilar: Reactivo a la luz, sin anormalidades.', margin, y);
-            y += lineHeight + 4;
-
-            // 9. Conclusión
-            doc.setFont(undefined, 'bold');
-            doc.text('Conclusión:', margin, y);
-            y += lineHeight;
-            doc.setFont(undefined, 'normal');
-            y = drawJustifiedText(doc, conclusion, margin, y, pageWidth - margin * 2, lineHeight);
-            y += 15;
-
-            // 10. Firma del Médico (Simulado)
-            const firmaX = margin;
-            doc.setLineWidth(0.4);
-            doc.line(firmaX, y, firmaX + 80, y);
-            y += 4;
-            doc.setFontSize(8);
-            doc.setFont(undefined, 'bold');
-            doc.text('DR. (A) YESSICA MEJIA CARRANZA CP. 5866652', firmaX, y);
-            y += 3;
-            doc.text('Medicina Familiar. Consultorio: 6 Turno: Vespertino.', firmaX, y);
-            y += 3;
-            doc.setFont(undefined, 'normal');
-            
-            // Formatear fecha de emisión para el pie de página
-            let dateParts = fechaEmision.split(' de ');
-            let day = dateParts[0];
-            let month = dateParts[1];
-            let year = dateParts[2];
-            
-            doc.text(`A ${day} días del mes de ${month} del año ${year}.`, pageWidth - margin, y, { align: 'right' });
-
-
-            if (descargar) {
-                const safeName = (nombreP || 'PACIENTE').replace(/\s+/g, '_');
-                doc.save(`Certificado_IMSS_${safeName}.pdf`);
-                return true;
-            } else {
-                return doc.output('datauristring').split(',')[1];
-            }
-        }
-        // --- FIN FUNCION GENERAR PDF CERTIFICADO MEDICO IMSS ---
-
-        // --- MANEJO DE SOLICITUDES ---
-
-        function getSolicitudes() {
-            const stored = localStorage.getItem(solicitudesKey);
-            return stored ? JSON.parse(stored) : [];
-        }
-
-        function setSolicitudes(solicitudes) {
-            localStorage.setItem(solicitudesKey, JSON.stringify(solicitudes));
-        }
-
-        async function saveSolicitud(tipoCarta) {
-            let nombreSolicitante = '';
-            let pdfBase64 = '';
-            let nombreAsunto = '';
-
-            if (tipoCarta === 'receta_similares') {
-                nombreSolicitante = document.getElementById('nombrePacienteSimilares').value || 'Paciente';
-                nombreAsunto = nombreSolicitante;
-                pdfBase64 = await generarPDFRecetaSimilares(false);
-            } else if (tipoCarta === 'certificado_medico_imss') { // <--- CASO AÑADIDO
-                nombreSolicitante = document.getElementById('cmiNombrePaciente').value || 'Paciente IMSS';
-                nombreAsunto = `CERTIFICADO MEDICO - ${nombreSolicitante}`;
-                pdfBase64 = await generarPDFCertificadoIMSS(false);
-            } else {
-                nombreSolicitante = currentUser.name;
-                nombreAsunto = 'Documento Desconocido';
-                // Puedes añadir un placeholder PDF para otros tipos
-            }
-
-            const nuevaSolicitud = {
-                id: Date.now().toString(),
-                userId: currentUser.id,
-                tipo: tipoCarta,
-                asunto: nombreAsunto,
-                fecha: new Date().toLocaleDateString('es-MX'),
-                estatus: 'Pendiente', // 'Pendiente', 'Aprobado', 'Rechazado'
-                pdfBase64: pdfBase64
-            };
-
-            const solicitudes = getSolicitudes();
-            solicitudes.push(nuevaSolicitud);
-            setSolicitudes(solicitudes);
-
-            alert(`Solicitud para "${nombreAsunto}" guardada exitosamente. Por favor, contacta por WhatsApp para la aprobación.`);
-            showForm('menu');
-        }
-
-        function loadSolicitudes() {
-            const lista = document.getElementById('solicitud-list');
-            const noSolicitudes = document.getElementById('no-solicitudes');
-            lista.innerHTML = '';
-            
-            // Filtra solo las solicitudes del usuario actual (en este caso, 'user_temp_001')
-            const solicitudes = getSolicitudes().filter(s => s.userId === currentUser.id);
-
-            if (solicitudes.length === 0) {
-                noSolicitudes.style.display = 'block';
-                return;
-            }
-            noSolicitudes.style.display = 'none';
-
-            solicitudes.forEach(solicitud => {
-                const estatusClass = `status-${solicitud.estatus.toLowerCase()}`;
-                
-                const item = document.createElement('div');
-                item.className = 'status-item';
-                item.innerHTML = `
-                    <div class="status-header" onclick="toggleDetails(this)">
-                        <strong>${solicitud.asunto}</strong>
-                        <span class="status-badge ${estatusClass}">${solicitud.estatus}</span>
-                    </div>
-                    <div class="status-details">
-                        <p><strong>Tipo:</strong> ${solicitud.tipo.replace('_', ' ').toUpperCase()}</p>
-                        <p><strong>Fecha:</strong> ${solicitud.fecha}</p>
-                        <p><strong>Detalles:</strong> ${solicitud.estatus === 'Pendiente' ? 'Esperando aprobación. Contactar por WhatsApp.' : solicitud.estatus === 'Rechazado' ? 'Rechazado. Contactar por WhatsApp para detalles.' : 'Documento aprobado. Puede descargarlo.'}</p>
-                        <button class="btn-action" style="background-color: #3498db; width: auto;" onclick="downloadPDF('${solicitud.id}', '${solicitud.tipo}')" ${solicitud.estatus !== 'Aprobado' ? 'disabled' : ''}>
-                            <i class="fas fa-download"></i> Descargar ${solicitud.estatus !== 'Aprobado' ? '(No Aprobado)' : ''}
-                        </button>
-                    </div>
-                `;
-                lista.appendChild(item);
-            });
-        }
-
-        function toggleDetails(element) {
-            const details = element.nextElementSibling;
-            if (details.style.display === 'block') {
-                details.style.display = 'none';
-            } else {
-                details.style.display = 'block';
-            }
-        }
-
-        function downloadPDF(id, tipo) {
-            const solicitudes = getSolicitudes();
-            const solicitud = solicitudes.find(s => s.id === id);
-
-            if (solicitud && solicitud.estatus === 'Aprobado') {
-                const link = document.createElement('a');
-                link.href = `data:application/pdf;base64,${solicitud.pdfBase64}`;
-                link.download = `${solicitud.asunto.replace(/\s/g, '_')}_${id}.pdf`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } else if (solicitud) {
-                alert(`El documento ${solicitud.asunto} no ha sido aprobado. Por favor, contacta al administrador.`);
-            } else {
-                alert('Documento no encontrado.');
-            }
-        }
-
-        // Inicializar la vista
-        document.addEventListener('DOMContentLoaded', () => {
-            showForm('menu');
+        window.addEventListener('load', () => {
+            checkURL();
         });
+
     </script>
 </body>
 </html>
