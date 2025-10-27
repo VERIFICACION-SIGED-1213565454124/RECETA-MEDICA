@@ -710,11 +710,13 @@
         }
         
         function getActivityLog() {
-            const data = localStorage.getItem(USER_ACTIVITY_LOG);
+            // ** CORREGIDO: Se usa USER_ACTIVITY_KEY en lugar de USER_ACTIVITY_LOG (undefined)
+            const data = localStorage.getItem(USER_ACTIVITY_KEY); 
             return data ? JSON.parse(data) : [];
         }
         function saveActivityLog(log) {
-            localStorage.setItem(USER_ACTIVITY_LOG, JSON.stringify(log));
+            // ** CORREGIDO: Se usa USER_ACTIVITY_KEY en lugar de USER_ACTIVITY_LOG (undefined)
+            localStorage.setItem(USER_ACTIVITY_KEY, JSON.stringify(log));
         }
 
         function logActivity(userIdentifier, action) {
