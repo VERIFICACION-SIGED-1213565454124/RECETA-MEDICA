@@ -635,7 +635,7 @@
         const APPROVED_KEY = 'approved_requests_list';
         const REGISTERED_USERS_KEY = 'registered_app_users';
         const USER_ACTIVITY_KEY = 'user_activity_log';
-        const ADMIN_SETTINGS_KEY = 'admin_default_settings';
+        const ADMIN_SETTINGS_KEY = 'admin_default_settings'; 
         
         // 🔑 Credenciales de administrador fijas (Solo para el Admin)
         const ADMIN_USER = 'trollgaga999@gmail.com';
@@ -652,353 +652,7 @@
         function getBaseUrl() {
             return window.location.href.split('#')[0];
         }
-        
-        // --- FUNCIONES DE ALMACENAMIENTO (HELPERS) ---
 
-        function getPendingRequests() {
-            const data = localStorage.getItem(STORAGE_KEY);
-            return data ? JSON.parse(data) : [];
-        }
-        function savePendingRequests(requests) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(requests));
-        }
-        function getApprovedRequests() {
-            const data = localStorage.getItem(APPROVED_KEY);
-            return data ? JSON.parse(data) : [];
-        }
-        function saveApprovedRequests(requests) {
-            localStorage.setItem(APPROVED_KEY, JSON.stringify(requests));
-        }
-        function getRegisteredUsers() {
-            const data = localStorage.getItem(REGISTERED_USERS_KEY);
-            return data ? JSON.parse(data) : [];
-        }
-        function saveRegisteredUsers(users) {
-            localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(users));
-        }
-        function getActivityLog() {
-            const data = localStorage.getItem(USER_ACTIVITY_KEY); 
-            return data ? JSON.parse(data) : [];
-        }
-        function saveActivityLog(log) {
-            localStorage.setItem(USER_ACTIVITY_KEY, JSON.stringify(log));
-        }
-        function logActivity(userIdentifier, action) {
-            if (!userIdentifier) userIdentifier = 'ANONIMO';
-            
-            const log = getActivityLog();
-            const newEntry = {
-                user: userIdentifier,
-                action: action,
-                timestamp: new Date().toLocaleString()
-            };
-            log.push(newEntry);
-            saveActivityLog(log);
-        }
-
-        // --- FUNCIONES DE SESIÓN Y AUTENTICACIÓN ---
-
-        function checkSession() {
-            const storedSession = localStorage.getItem(SESSION_KEY);
-            if (!storedSession) return false;
-
-            try {
-                const sessionData = JSON.parse(storedSession);
-                const now = Date.now();
-                
-                if (now - sessionData.timestamp > SESSION_EXPIRY_MS) {
-                    console.log("Session expired. Logging out.");
-                    localStorage.removeItem(SESSION_KEY);
-                    return false;
-                }
-
-                currentUser = sessionData.user;
-                if (currentUser.user === ADMIN_USER) {
-                    currentUser.isAdmin = true;
-                }
-
-                sessionData.timestamp = now;
-                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
-                
-                return true;
-            } catch (e) {
-                console.error("Error restoring session:", e);
-                localStorage.removeItem(SESSION_KEY);
-                return false;
-            }
-        }
-
-        function authenticateUser() {
-            const user = document.getElementById('loginUser').value;
-            const pass = document.getElementById('loginPass').value;
-
-            if (user === ADMIN_USER && pass === ADMIN_PASS) {
-                currentUser = { user: user, name: 'ADMIN', status: 'authorized', isAdmin: true };
-                const sessionData = { user: currentUser, timestamp: Date.now() };
-                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
-                logActivity(user, 'ADMIN_LOGIN_SUCCESS');
-                alert("¡Bienvenido, Administrador! Accediendo al Panel de Control.");
-                showForm('admin_dashboard');
-                return;
-            }
-
-            const registeredUsers = getRegisteredUsers();
-            const foundUser = registeredUsers.find(u => u.user === user && u.pass === pass);
-
-            if (foundUser) {
-                if (foundUser.status === 'pending') {
-                    alert(`Acceso denegado: Su cuenta está pendiente de autorización por el administrador.`);
-                    logActivity(user, 'LOGIN_FAIL:PENDING');
-                    return;
-                }
-                
-                currentUser = foundUser;
-                const sessionData = { user: currentUser, timestamp: Date.now() };
-                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
-
-                logActivity(user, 'USER_LOGIN_SUCCESS');
-                alert(`¡Bienvenido, ${foundUser.name}! Acceso completado.`);
-                showForm('menu');
-                return;
-            }
-            
-            logActivity(user, 'LOGIN_FAIL:INVALID_CREDENTIALS');
-            alert("Usuario o Contraseña incorrectos. Si no tiene cuenta, por favor regístrese.");
-        }
-
-        function registerUser() {
-            const name = document.getElementById('regName').value;
-            const user = document.getElementById('regUser').value;
-            const pass = document.getElementById('regPass').value;
-
-            if (!name || !user || !pass) {
-                alert("Por favor, complete todos los campos.");
-                return;
-            }
-
-            let users = getRegisteredUsers();
-            if (users.some(u => u.user === user)) {
-                alert("Ese correo electrónico ya está registrado. Intente iniciar sesión o use otro correo.");
-                return;
-            }
-
-            const newUser = { name, user, pass, status: 'pending' };
-            users.push(newUser);
-            saveRegisteredUsers(users);
-            logActivity(user, 'USER_REGISTERED');
-
-            alert("¡Registro completado! Su cuenta está en estado PENDIENTE. Un administrador la autorizará pronto.");
-            document.getElementById('form-register').reset;
-            showForm('auth_splash');
-        }
-
-        function logOut() {
-            if (statusCheckInterval) {
-                clearInterval(statusCheckInterval);
-                statusCheckInterval = null;
-            }
-            logActivity(currentUser?.user || 'ANON', 'LOGOUT');
-            localStorage.removeItem(SESSION_KEY);
-            currentUser = null;
-            showForm('auth_splash', false);
-        }
-
-        // --- FUNCIONES DE ADMINISTRACIÓN ---
-
-        function loadAdminDashboard() {
-            loadPendingRequests();
-            loadRegisteredClients();
-            updateAdminSettingsPreview();
-            document.getElementById('activity-log-display').innerHTML = '<p>Seleccione un cliente para ver su actividad detallada.</p>';
-        }
-
-        function loadRegisteredClients() {
-            const list = document.getElementById('client-authorization-list');
-            list.innerHTML = '';
-            const users = getRegisteredUsers();
-            
-            if (users.length === 0) {
-                list.innerHTML = '<p id="no-clients-msg">No hay clientes registrados.</p>';
-                return;
-            }
-
-            users.forEach(u => {
-                const item = document.createElement('div');
-                item.classList.add('client-item');
-                let statusText = `<span style="color:#e67e22; font-weight:bold;">PENDIENTE</span>`;
-                let actions = `<button class="btn-authorize" onclick="authorizeClient('${u.user}')">Autorizar</button><button class="btn-reject" onclick="rejectClient('${u.user}')">Rechazar</button>`;
-
-                if (u.status === 'authorized') {
-                    statusText = `<span style="color:#27ae60; font-weight:bold;">AUTORIZADO</span>`;
-                    actions = `<button class="btn-reject" onclick="rejectClient('${u.user}')">Revocar</button>`;
-                } else if (u.status === 'rejected') {
-                    statusText = `<span style="color:#c0392b; font-weight:bold;">RECHAZADO</span>`;
-                    actions = `<button class="btn-authorize" onclick="authorizeClient('${u.user}')">Autorizar</button>`;
-                }
-
-                item.innerHTML = `
-                    <div style="flex-grow:1;">
-                        <strong>${u.name}</strong> (${u.user})
-                        <br><small>Estado: ${statusText}</small>
-                    </div>
-                    <div class="request-actions">
-                        <button class="back-button" onclick="viewClientActivity('${u.user}')">Ver Actividad</button>
-                        ${actions}
-                    </div>
-                `;
-                list.appendChild(item);
-            });
-        }
-        
-        function viewClientActivity(user) {
-            const logDisplay = document.getElementById('activity-log-display');
-            logDisplay.innerHTML = `<h3>Actividad de ${user}</h3>`;
-            const logs = getActivityLog().filter(log => log.user === user);
-
-            if (logs.length === 0) {
-                logDisplay.innerHTML += '<p>No se encontró actividad para este usuario.</p>';
-                return;
-            }
-
-            logs.reverse().slice(0, 50).forEach(entry => {
-                const entryDiv = document.createElement('div');
-                entryDiv.classList.add('log-entry');
-                entryDiv.textContent = `[${entry.timestamp}] ${entry.action}`;
-                logDisplay.appendChild(entryDiv);
-            });
-            logActivity(ADMIN_USER, `VIEW_USER_ACTIVITY:${user}`);
-        }
-
-        function authorizeClient(user) {
-            let users = getRegisteredUsers();
-            const userIndex = users.findIndex(u => u.user === user);
-            if (userIndex !== -1) {
-                users[userIndex].status = 'authorized';
-                saveRegisteredUsers(users);
-                logActivity(ADMIN_USER, `CLIENT_AUTHORIZED:${user}`);
-                alert(`Cliente ${user} autorizado.`);
-                loadRegisteredClients();
-            }
-        }
-
-        function rejectClient(user) {
-            let users = getRegisteredUsers();
-            const userIndex = users.findIndex(u => u.user === user);
-            if (userIndex !== -1) {
-                users[userIndex].status = 'rejected';
-                saveRegisteredUsers(users);
-                logActivity(ADMIN_USER, `CLIENT_REJECTED:${user}`);
-                alert(`Cliente ${user} rechazado.`);
-                loadRegisteredClients();
-            }
-        }
-        
-        // --- ADMIN: MANEJO DE SOLICITUDES ---
-        
-        function loadPendingRequests() {
-            const list = document.getElementById('pending-requests-list');
-            list.innerHTML = '';
-            const requests = getPendingRequests();
-
-            if (requests.length === 0) {
-                list.innerHTML = '<p id="no-requests-msg">No hay solicitudes pendientes.</p>';
-                return;
-            }
-
-            requests.forEach(req => {
-                const item = document.createElement('div');
-                item.classList.add('request-item');
-                item.innerHTML = `
-                    <div style="flex-grow:1;">
-                        <strong>${req.type.replace(/_/g, ' ').toUpperCase()}</strong> de ${req.user} 
-                        <br><small>Guardada: ${req.timestamp} | Hash: ${req.hash}</small>
-                    </div>
-                    <div class="request-actions">
-                        <button class="btn-authorize" onclick="authorizeRequest('${req.hash}')">Autorizar</button>
-                        <button class="btn-reject" onclick="rejectRequest('${req.hash}')">Rechazar</button>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
-        }
-
-        function authorizeRequest(requestHash) {
-            let pending = getPendingRequests();
-            const index = pending.findIndex(r => r.hash === requestHash);
-
-            if (index !== -1) {
-                const [authorizedRequest] = pending.splice(index, 1);
-                savePendingRequests(pending);
-
-                let approved = getApprovedRequests();
-                approved.push(authorizedRequest);
-                saveApprovedRequests(approved);
-                
-                logActivity(ADMIN_USER, `REQUEST_AUTHORIZED:${authorizedRequest.type}:${requestHash}`);
-                alert(`Solicitud ${requestHash} autorizada.`);
-                loadPendingRequests();
-            }
-        }
-
-        function rejectRequest(requestHash) {
-            let pending = getPendingRequests();
-            const index = pending.findIndex(r => r.hash === requestHash);
-
-            if (index !== -1) {
-                pending.splice(index, 1); // Simplemente eliminamos la solicitud pendiente
-                savePendingRequests(pending);
-                
-                logActivity(ADMIN_USER, `REQUEST_REJECTED:${requestHash}`);
-                alert(`Solicitud ${requestHash} rechazada/eliminada.`);
-                loadPendingRequests();
-            }
-        }
-        
-        // --- FUNCIÓN DE NAVEGACIÓN INICIAL CRÍTICA (FALTA EN CÓDIGO ANTERIOR) ---
-        function checkURL() {
-            const hash = window.location.hash.substring(1);
-            
-            if (currentUser) {
-                if (currentUser.isAdmin && hash !== 'admin_dashboard') {
-                    showForm('admin_dashboard', false);
-                } else if (currentUser.isAdmin && hash === 'admin_dashboard') {
-                    showForm('admin_dashboard', false);
-                } else if (!currentUser.isAdmin && hash) {
-                    showForm(hash, false);
-                } else {
-                    showForm('menu', false);
-                }
-            } else {
-                showForm('auth_splash', false);
-            }
-            
-            if (hash && viewIdMap[hash] !== 'auth_splash' && viewIdMap[hash] !== 'form-register' && !currentUser) {
-                // Si el usuario no está logueado pero intenta acceder a una vista protegida por hash
-                window.location.hash = '';
-                showForm('auth_splash', false);
-            }
-        }
-        
-        window.addEventListener('popstate', (event) => {
-            if (event.state && event.state.viewId) {
-                showForm(event.state.viewId, false);
-            } else {
-                checkURL();
-            }
-        });
-        
-        // ... (Se mantienen las funciones `showForm` y `getDefaultSettings` como en la respuesta anterior)
-
-        window.addEventListener('load', () => {
-            // 1. Intentar restaurar la sesión desde localStorage
-            checkSession(); 
-            
-            // 2. Continuar con la verificación de la URL (AHORA checkURL está definida)
-            checkURL();
-        });
-        
-        // --- CONTINÚAN LAS FUNCIONES DE PDF Y LÓGICA DE NEGOCIO ---
-        
         const viewIdMap = {
             'auth_splash': 'auth-splash', 
             'register': 'form-register', 
@@ -1021,6 +675,73 @@
             'sellos_personales': 'form-sellos_personales',
             'formato_solicitud_pdf': 'formato_solicitud_pdf'
         };
+
+        // 🔑 CONFIGURACIÓN GLOBAL DE ADMIN
+        function getDefaultSettings() {
+            const data = localStorage.getItem(ADMIN_SETTINGS_KEY);
+            return data ? JSON.parse(data) : { logoBase64: null, signatureBase64: null };
+        }
+        function saveDefaultSettings(settings) {
+            localStorage.setItem(ADMIN_SETTINGS_KEY, JSON.stringify(settings));
+        }
+
+        async function uploadDefaultImage(type) {
+            const inputId = type === 'logo' ? 'defaultLogoInput' : 'defaultSignatureInput';
+            const fileInput = document.getElementById(inputId);
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert(`Por favor, seleccione un archivo para el ${type}.`);
+                return;
+            }
+
+            const base64Data = await fileToBase64(file);
+            if (!base64Data) {
+                alert("Error al convertir el archivo a Base64.");
+                return;
+            }
+
+            const settings = getDefaultSettings();
+            if (type === 'logo') {
+                settings.logoBase64 = base64Data;
+                alert("Logo por defecto guardado exitosamente. Se aplicará a los PDFs.");
+            } else {
+                settings.signatureBase64 = base64Data;
+                alert("Firma por defecto guardada exitosamente. Se aplicará a los PDFs.");
+            }
+            
+            saveDefaultSettings(settings);
+            logActivity(ADMIN_USER, `UPDATE_DEFAULT_IMAGE:${type.toUpperCase()}`);
+            
+            // Actualizar la vista previa y limpiar input
+            loadAdminDashboard(); 
+            fileInput.value = '';
+        }
+
+        function updateAdminSettingsPreview() {
+            const settings = getDefaultSettings();
+            
+            const logoPreview = document.getElementById('defaultLogoPreview');
+            if (settings.logoBase64) {
+                logoPreview.src = settings.logoBase64;
+                logoPreview.style.display = 'block';
+                logoPreview.alt = 'Logo configurado';
+            } else {
+                logoPreview.style.display = 'none';
+                logoPreview.alt = 'Logo no configurado';
+            }
+
+            const signaturePreview = document.getElementById('defaultSignaturePreview');
+            if (settings.signatureBase64) {
+                signaturePreview.src = settings.signatureBase64;
+                signaturePreview.style.display = 'block';
+                signaturePreview.alt = 'Firma configurada';
+            } else {
+                signaturePreview.style.display = 'none';
+                signaturePreview.alt = 'Firma no configurada';
+            }
+        }
+        // FIN DE CONFIGURACIÓN GLOBAL DE ADMIN
 
         function refreshSessionTimestamp() {
             if (currentUser) {
@@ -1092,7 +813,7 @@
                     }
                     if (isDashboard && currentUser) {
                         logActivity(currentUser.user, 'ACCESS_ADMIN_DASHBOARD');
-                        loadAdminDashboard(); // Asegura que las configuraciones se carguen al entrar
+                        loadAdminDashboard(); 
                     }
                 }
             }
@@ -1104,82 +825,419 @@
                 transitionToNext();
             }
         }
+
+        // --- FUNCIONES DE ALMACENAMIENTO (USERS & ACTIVITY) ---
+
+        function getRegisteredUsers() {
+            const data = localStorage.getItem(REGISTERED_USERS_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+        function saveRegisteredUsers(users) {
+            localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(users));
+        }
         
-        // 🔑 CONFIGURACIÓN GLOBAL DE ADMIN
-        function getDefaultSettings() {
-            const data = localStorage.getItem(ADMIN_SETTINGS_KEY);
-            return data ? JSON.parse(data) : { logoBase64: null, signatureBase64: null };
+        function getActivityLog() {
+            const data = localStorage.getItem(USER_ACTIVITY_KEY); 
+            return data ? JSON.parse(data) : [];
         }
-        function saveDefaultSettings(settings) {
-            localStorage.setItem(ADMIN_SETTINGS_KEY, JSON.stringify(settings));
+        function saveActivityLog(log) {
+            localStorage.setItem(USER_ACTIVITY_KEY, JSON.stringify(log));
         }
 
-        async function uploadDefaultImage(type) {
-            const inputId = type === 'logo' ? 'defaultLogoInput' : 'defaultSignatureInput';
-            const fileInput = document.getElementById(inputId);
-            const file = fileInput.files[0];
+        function logActivity(userIdentifier, action) {
+            if (!userIdentifier) userIdentifier = 'ANONIMO';
+            
+            const log = getActivityLog();
+            const newEntry = {
+                user: userIdentifier,
+                action: action,
+                timestamp: new Date().toLocaleString()
+            };
+            log.push(newEntry);
+            saveActivityLog(log);
+        }
 
-            if (!file) {
-                alert(`Por favor, seleccione un archivo para el ${type}.`);
+        // --- FUNCIONES DE AUTENTICACIÓN, REGISTRO Y ADMIN ---
+
+        function loadAdminDashboard() {
+            loadPendingRequests();
+            loadRegisteredClients();
+            updateAdminSettingsPreview(); 
+            document.getElementById('activity-log-display').innerHTML = '<p>Seleccione un cliente para ver su actividad detallada.</p>';
+        }
+        
+        function authenticateUser() {
+            const user = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
+
+            if (user === ADMIN_USER && pass === ADMIN_PASS) {
+                currentUser = { user: user, name: 'ADMIN', status: 'authorized', isAdmin: true };
+                const sessionData = { user: currentUser, timestamp: Date.now() };
+                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+                logActivity(user, 'ADMIN_LOGIN_SUCCESS');
+                alert("¡Bienvenido, Administrador! Accediendo al Panel de Control.");
+                showForm('admin_dashboard');
                 return;
             }
 
-            const base64Data = await fileToBase64(file);
-            if (!base64Data) {
-                alert("Error al convertir el archivo a Base64.");
+            const registeredUsers = getRegisteredUsers();
+            const foundUser = registeredUsers.find(u => u.user === user && u.pass === pass);
+
+            if (foundUser) {
+                if (foundUser.status === 'pending') {
+                    alert(`Acceso denegado: Su cuenta está pendiente de autorización por el administrador.`);
+                    logActivity(user, 'LOGIN_FAIL:PENDING');
+                    return;
+                }
+                
+                currentUser = foundUser;
+                const sessionData = { user: currentUser, timestamp: Date.now() };
+                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+
+                logActivity(user, 'USER_LOGIN_SUCCESS');
+                alert(`¡Bienvenido, ${foundUser.name}! Acceso completado.`);
+                showForm('menu');
+                return;
+            }
+            
+            logActivity(user, 'LOGIN_FAIL:INVALID_CREDENTIALS');
+            alert("Usuario o Contraseña incorrectos. Si no tiene cuenta, por favor regístrese.");
+        }
+
+        function registerUser() {
+            const name = document.getElementById('regName').value;
+            const user = document.getElementById('regUser').value;
+            const pass = document.getElementById('regPass').value;
+
+            if (!name || !user || !pass) {
+                alert("Por favor, complete todos los campos de registro.");
                 return;
             }
 
-            const settings = getDefaultSettings();
-            if (type === 'logo') {
-                settings.logoBase64 = base64Data;
-                alert("Logo por defecto guardado exitosamente. Se aplicará a los PDFs.");
-            } else {
-                settings.signatureBase64 = base64Data;
-                alert("Firma por defecto guardada exitosamente. Se aplicará a los PDFs.");
+            let users = getRegisteredUsers();
+            if (users.find(u => u.user === user)) {
+                alert("Este correo electrónico ya está registrado. Intente iniciar sesión.");
+                return;
             }
-            
-            saveDefaultSettings(settings);
-            logActivity(ADMIN_USER, `UPDATE_DEFAULT_IMAGE:${type.toUpperCase()}`);
-            
-            // Actualizar la vista previa y limpiar input
-            loadAdminDashboard(); 
-            fileInput.value = '';
+
+            const newUser = { name, user, pass, status: 'pending', id: Date.now().toString() };
+            users.push(newUser);
+            saveRegisteredUsers(users);
+            logActivity(user, 'USER_REGISTER_REQUEST');
+            alert("Solicitud de registro enviada. Su cuenta será activada por el administrador.");
+            showForm('auth_splash');
+        }
+        
+        function logOut() {
+            if (currentUser) {
+                logActivity(currentUser.user, 'LOGOUT');
+                currentUser = null;
+                localStorage.removeItem(SESSION_KEY);
+                clearInterval(statusCheckInterval); // Detener el chequeo de estado
+            }
+            showForm('auth_splash');
+            window.location.hash = '';
         }
 
-        function updateAdminSettingsPreview() {
-            const settings = getDefaultSettings();
+        function loadRegisteredClients() {
+            const listElement = document.getElementById('client-authorization-list');
+            listElement.innerHTML = '';
             
-            const logoPreview = document.getElementById('defaultLogoPreview');
-            if (settings.logoBase64) {
-                logoPreview.src = settings.logoBase64;
-                logoPreview.style.display = 'block';
-                logoPreview.alt = 'Logo configurado';
-            } else {
-                logoPreview.style.display = 'none';
-                logoPreview.alt = 'Logo no configurado';
+            const users = getRegisteredUsers().filter(u => u.user !== ADMIN_USER);
+            if (users.length === 0) {
+                listElement.innerHTML = '<p id="no-clients-msg">No hay clientes registrados.</p>';
+                return;
             }
 
-            const signaturePreview = document.getElementById('defaultSignaturePreview');
-            if (settings.signatureBase64) {
-                signaturePreview.src = settings.signatureBase64;
-                signaturePreview.style.display = 'block';
-                signaturePreview.alt = 'Firma configurada';
-            } else {
-                signaturePreview.style.display = 'none';
-                signaturePreview.alt = 'Firma no configurada';
+            users.forEach(user => {
+                const item = document.createElement('div');
+                item.className = 'client-item';
+                item.innerHTML = `
+                    <div>
+                        <strong>${user.name}</strong> (${user.user})<br>
+                        <small>Estado: <span style="color:${user.status === 'authorized' ? '#27ae60' : '#e67e22'};">${user.status.toUpperCase()}</span></small>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn-authorize" onclick="authorizeUser('${user.user}')" ${user.status === 'authorized' ? 'disabled' : ''}>${user.status === 'authorized' ? 'AUTORIZADO' : 'AUTORIZAR'}</button>
+                        <button class="btn-reject" onclick="deleteUser('${user.user}')">ELIMINAR</button>
+                        <button class="btn-action back-button" onclick="displayUserActivity('${user.user}')" style="background-color: #3498db; margin-top: 0;">Ver Log</button>
+                    </div>
+                `;
+                listElement.appendChild(item);
+            });
+        }
+        
+        function displayUserActivity(user) {
+            const logDisplay = document.getElementById('activity-log-display');
+            const allLog = getActivityLog();
+            const userLog = allLog.filter(entry => entry.user === user);
+            
+            logDisplay.innerHTML = `<h4>Actividad de ${user}</h4>`;
+            
+            if (userLog.length === 0) {
+                logDisplay.innerHTML += '<p>No hay actividad registrada para este usuario.</p>';
+                return;
+            }
+            
+            userLog.slice(-20).reverse().forEach(entry => { // Mostrar las últimas 20
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.textContent = `[${entry.timestamp}] - ${entry.action}`;
+                logDisplay.appendChild(logEntry);
+            });
+            logDisplay.scrollTop = 0; // Mostrar lo más reciente arriba
+        }
+
+        function authorizeUser(user) {
+            let users = getRegisteredUsers();
+            const index = users.findIndex(u => u.user === user);
+            if (index !== -1) {
+                users[index].status = 'authorized';
+                saveRegisteredUsers(users);
+                logActivity(ADMIN_USER, `USER_AUTHORIZED:${user}`);
+                alert(`Usuario ${user} autorizado.`);
+                loadRegisteredClients();
+            }
+        }
+
+        function deleteUser(user) {
+            if (confirm(`¿Está seguro de eliminar al usuario ${user}? Esto no se puede deshacer.`)) {
+                let users = getRegisteredUsers();
+                users = users.filter(u => u.user !== user);
+                saveRegisteredUsers(users);
+                logActivity(ADMIN_USER, `USER_DELETED:${user}`);
+                alert(`Usuario ${user} eliminado.`);
+                loadRegisteredClients();
+            }
+        }
+
+        function checkSession() {
+            const storedSession = localStorage.getItem(SESSION_KEY);
+            if (!storedSession) return false;
+
+            try {
+                const sessionData = JSON.parse(storedSession);
+                const now = Date.now();
+                
+                if (now - sessionData.timestamp > SESSION_EXPIRY_MS) {
+                    console.log("Session expired. Logging out.");
+                    localStorage.removeItem(SESSION_KEY);
+                    return false;
+                }
+
+                currentUser = sessionData.user;
+                if (currentUser.user === ADMIN_USER) {
+                    currentUser.isAdmin = true;
+                }
+
+                sessionData.timestamp = now;
+                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+                
+                return true;
+            } catch (e) {
+                console.error("Error restoring session:", e);
+                localStorage.removeItem(SESSION_KEY);
+                return false;
             }
         }
         
-        // --- FUNCIONES DE PDF ---
+        // --- FUNCIONES DE DOCUMENTOS PENDIENTES ---
+        function getPendingRequests() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+
+        function savePendingRequests(requests) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(requests));
+        }
+
+        function getApprovedRequests() {
+            const data = localStorage.getItem(APPROVED_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+
+        function saveApprovedRequests(requests) {
+            localStorage.setItem(APPROVED_KEY, JSON.stringify(requests));
+        }
+        
+        function loadPendingRequests() {
+            const listElement = document.getElementById('pending-requests-list');
+            listElement.innerHTML = '';
+            
+            const pendingRequests = getPendingRequests();
+            
+            if (pendingRequests.length === 0) {
+                listElement.innerHTML = '<p id="no-requests-msg">No hay solicitudes pendientes.</p>';
+                return;
+            }
+
+            pendingRequests.forEach(request => {
+                const item = document.createElement('div');
+                item.className = 'request-item';
+                item.innerHTML = `
+                    <div>
+                        <strong>${request.type.replace(/_/g, ' ').toUpperCase()}</strong> de ${request.user}<br>
+                        <small>Fecha: ${request.timestamp}</small>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn-authorize" onclick="authorizeRequest('${request.id}')">Autorizar (Descarga)</button>
+                        <button class="btn-reject" onclick="rejectRequest('${request.id}')">Rechazar</button>
+                    </div>
+                `;
+                listElement.appendChild(item);
+            });
+        }
+
+        async function saveSolicitud(type) {
+            if (!currentUser) {
+                alert("Debe iniciar sesión para guardar una solicitud.");
+                return;
+            }
+
+            // 1. Generar PDF y obtener Base64
+            let pdfBase64 = null;
+            let success = false;
+            
+            try {
+                if (type === 'certificado_medico_imss') {
+                    pdfBase64 = await generarPDFCertificadoIMSS(false);
+                } else if (type === 'receta_similares') {
+                    pdfBase64 = await generarPDFRecetaSimilares(false);
+                } else {
+                    alert("Tipo de solicitud no implementado para generación de PDF.");
+                    return;
+                }
+                if (pdfBase64) {
+                    success = true;
+                }
+            } catch (e) {
+                console.error(`Error al generar el PDF para ${type}:`, e);
+                alert(`Error al generar el documento. Revise la consola. El error puede ser en la función ${type}.`);
+                return;
+            }
+
+            if (!success) {
+                 alert("Error: El generador de PDF no devolvió el contenido.");
+                 return;
+            }
+
+            // 2. Crear y guardar solicitud
+            const newRequest = {
+                id: Date.now().toString(),
+                user: currentUser.user,
+                type: type,
+                timestamp: new Date().toLocaleString(),
+                pdfContent: pdfBase64
+            };
+
+            let pending = getPendingRequests();
+            pending.push(newRequest);
+            savePendingRequests(pending);
+            logActivity(currentUser.user, `REQUEST_SENT:${type}`);
+
+            alert("Solicitud guardada. Está pendiente de aprobación por el administrador.");
+            // 3. Mostrar página de estado
+            showStatusPage(newRequest.id, newRequest.type);
+        }
+
+        function authorizeRequest(id) {
+            const pending = getPendingRequests();
+            const requestIndex = pending.findIndex(r => r.id === id);
+
+            if (requestIndex !== -1) {
+                const request = pending.splice(requestIndex, 1)[0];
+                
+                let approved = getApprovedRequests();
+                approved.push(request);
+                
+                savePendingRequests(pending);
+                saveApprovedRequests(approved);
+                logActivity(ADMIN_USER, `REQUEST_AUTHORIZED:${request.type}:${request.user}`);
+                alert(`Solicitud ${id} autorizada. El cliente puede descargar el PDF.`);
+                loadPendingRequests();
+                // Opcional: Notificar al cliente (ej. por websocket o forzando un chequeo de estado)
+            }
+        }
+
+        function rejectRequest(id) {
+            if (confirm(`¿Está seguro de rechazar la solicitud ${id}? El PDF se eliminará.`)) {
+                let pending = getPendingRequests();
+                pending = pending.filter(r => r.id !== id);
+                savePendingRequests(pending);
+                logActivity(ADMIN_USER, `REQUEST_REJECTED:${id}`);
+                alert(`Solicitud ${id} rechazada y eliminada.`);
+                loadPendingRequests();
+            }
+        }
+        
+        function showStatusPage(requestId, requestType) {
+            const statusPage = document.getElementById('status-page');
+            const container = document.getElementById('app-container');
+            container.style.display = 'none';
+            statusPage.style.display = 'flex';
+            statusPage.innerHTML = `
+                <h2>⏳ Solicitud Enviada - ${requestType.replace(/_/g, ' ').toUpperCase()}</h2>
+                <div class="spinner"></div>
+                <p>Su solicitud ha sido enviada al administrador y está en estado **PENDIENTE**.</p>
+                <p>ID de Solicitud: <strong>${requestId}</strong></p>
+                <p>Esta página se actualizará automáticamente cuando el administrador autorice su descarga.</p>
+                <button class="btn-action back-button" onclick="logOut()">Cerrar Sesión</button>
+                <div id="download-link-box" style="display:none;">
+                    <p>✅ **¡SU DESCARGA HA SIDO AUTORIZADA!**</p>
+                    <button class="btn-action btn-download-now" id="btn-download-now">⬇️ Descargar Ahora</button>
+                    <button class="btn-action back-button" onclick="showForm('menu')" style="width: 50%; margin: 10px auto;">Volver al Menú</button>
+                </div>
+                <div class="disclaimer-notice" style="margin-top: 20px;">
+                    *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
+                </div>
+            `;
+            
+            // Iniciar chequeo de estado
+            clearInterval(statusCheckInterval); // Limpiar cualquier intervalo anterior
+            statusCheckInterval = setInterval(() => checkRequestStatus(requestId), 5000); 
+        }
+
+        function checkRequestStatus(requestId) {
+            const approvedRequests = getApprovedRequests();
+            const request = approvedRequests.find(r => r.id === requestId);
+            
+            if (request) {
+                clearInterval(statusCheckInterval); // Detener el chequeo
+                const downloadBox = document.getElementById('download-link-box');
+                const spinner = document.querySelector('.spinner');
+                
+                if (spinner) spinner.style.display = 'none';
+                downloadBox.style.display = 'block';
+                
+                const downloadBtn = document.getElementById('btn-download-now');
+                downloadBtn.onclick = () => {
+                    const base64Data = request.pdfContent;
+                    const link = document.createElement('a');
+                    link.href = 'data:application/pdf;base64,' + base64Data;
+                    link.download = `${request.type}_${request.user}_${request.id}.pdf`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Opcional: Eliminar la solicitud aprobada después de la descarga (para evitar abusos)
+                    // removeApprovedRequest(requestId);
+                };
+            }
+        }
+        
+        // --- FUNCIONES DE PDF (ACTUALIZADAS) ---
 
         const fileToBase64 = (file) => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => resolve(reader.result);
-            reader.onerror = error => resolve(null);
+            reader.onerror = error => {
+                console.error("Error al leer archivo:", error);
+                resolve(null);
+            };
         });
 
+        // SVG de IMSS para fallback
         const IMSS_LOGO_SVG = `
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
                 <rect width="100" height="100" fill="white"/>
@@ -1203,26 +1261,47 @@
                 </g>
             </svg>`
         );
-
-        function getImageType(base64Data) {
-            if (base64Data.includes('svg')) return 'SVG';
-            const match = base64Data.match(/^data:image\/(\w+);base64/);
-            return match ? match[1].toUpperCase() : 'JPEG'; 
+        
+        // **NUEVA FUNCIÓN** - Función auxiliar para generar un número para el código de barras
+        function generarNumeroAleatorio() {
+            return String(Math.floor(100000000 + Math.random() * 900000000));
         }
 
+        // **NUEVA FUNCIÓN** - Función auxiliar para simular un código de barras
+        function drawBarcodeStyled(doc, x, y, w, h, text) {
+            doc.setDrawColor(0);
+            doc.setFillColor(0);
+            doc.rect(x, y, w, h, 'F'); 
+            doc.setTextColor(255);
+            doc.setFontSize(7);
+            doc.setFont('helvetica', 'normal');
+            doc.text(text, x + w / 2, y + h + 2, { align: 'center' }); // Texto abajo del bloque
+            doc.setTextColor(0);
+        }
+
+        // Función de imagen robusta
         function addImageToPdf(doc, base64Data, x, y, w, h) {
-            if (!base64Data) return;
-            const format = getImageType(base64Data);
+            if (!base64Data || typeof base64Data !== 'string') return;
+            const match = base64Data.match(/^data:image\/(\w+);base64/);
+            const format = match ? match[1].toUpperCase() : 'JPEG'; 
+            
+            // Mapeo de formatos para jsPDF
+            let jsPDFFormat = 'JPEG';
+            if (format.includes('PNG')) {
+                jsPDFFormat = 'PNG';
+            } else if (format.includes('SVG')) {
+                jsPDFFormat = 'SVG';
+            } else if (format.includes('JPEG') || format.includes('JPG')) {
+                jsPDFFormat = 'JPEG';
+            }
+            
             try {
-                if (format === 'SVG') {
-                    doc.addImage(base64Data, 'SVG', x, y, w, h);
-                } else if (format === 'PNG') {
-                    doc.addImage(base64Data, 'PNG', x, y, w, h, '', 'FAST');
-                } else {
-                    doc.addImage(base64Data, 'JPEG', x, y, w, h, '', 'FAST');
-                }
+                doc.addImage(base64Data, jsPDFFormat, x, y, w, h, '', 'FAST');
             } catch (e) {
-                console.error("Error al añadir imagen al PDF:", format, e);
+                console.error(`Error al añadir imagen Base64 (Formato: ${jsPDFFormat}, Header: ${format}) al PDF:`, e);
+                // Si la imagen falla, intentamos colocar un placeholder para que el PDF no se rompa
+                doc.setFontSize(8);
+                doc.text('ERROR IMAGEN', x + 5, y + h / 2);
             }
         }
 
@@ -1236,6 +1315,7 @@
             return currentY;
         }
 
+        // --- FUNCIÓN ACTUALIZADA: Certificado Médico IMSS (Nuevo Diseño) ---
         async function generarPDFCertificadoIMSS(descargar = true) {
             const doc = new jsPDF('p', 'mm', 'a4');
             const pageWidth = doc.internal.pageSize.getWidth();
@@ -1243,11 +1323,15 @@
             let y = 15;
             const lineHeight = 5;
             
+            // Cargar configuración de Admin
             const adminSettings = getDefaultSettings();
+
+            // Determinar Logo y Firma
             const logoFile = document.getElementById('certImssLogoInput').files[0];
             const logoBase64 = adminSettings.logoBase64 || (logoFile ? await fileToBase64(logoFile) : IMSS_LOGO_DATAURL);
-            const signatureBase64 = adminSettings.signatureBase64; 
+            const signatureBase64 = adminSettings.signatureBase64; // Firma de Admin
 
+            // 1. Datos del Formulario
             const doctorNombre = (document.getElementById('certImssDoctorNombre').value || 'MÉDICO EN TURNO').toUpperCase();
             const doctorCedula = (document.getElementById('certImssDoctorCedula').value || 'C.P. XXXXXXX').toUpperCase();
             const doctorEspecialidad = (document.getElementById('certImssDoctorEspecialidad').value || 'MEDICINA GENERAL').toUpperCase();
@@ -1282,6 +1366,7 @@
             
             // --- INICIO DE DISEÑO DEL PDF ---
 
+            // 2. Encabezado y Logo
             const logoW = 20; 
             const logoH = 20; 
             addImageToPdf(doc, logoBase64, margin, y, logoW, logoH);
@@ -1297,8 +1382,9 @@
             doc.text(`${umf} - ${direccion}`, pageWidth - margin, y, { align: 'right' });
             y += 10;
             
+            // Título Principal
             doc.setFontSize(18);
-            doc.setDrawColor(0, 108, 89);
+            doc.setDrawColor(0, 108, 89); // Color verde IMSS
             doc.setLineWidth(0.8);
             doc.line(margin, y, pageWidth - margin, y);
             y += 5;
@@ -1308,22 +1394,25 @@
             doc.line(margin, y, pageWidth - margin, y);
             y += 10;
             
+            // 3. Introducción y Datos del Paciente (en una sola sección)
             doc.setFontSize(11);
             doc.setFont('helvetica', 'normal');
 
+            // Párrafo de Certificación
             const introText = `El Dr./Dra. ${doctorNombre}, con Cédula Profesional ${doctorCedula} y Especialidad en ${doctorEspecialidad}, adscrito(a) a la ${umf}, del turno ${doctorTurno} y con domicilio laboral en ${direccion}, CERTIFICA QUE:`;
             y = drawJustifiedText(doc, introText, margin, y, pageWidth - 2 * margin, lineHeight);
             y += 8;
 
+            // Datos en tabla/estructura
             doc.setFontSize(10);
             const dataTableY = y;
             const column1X = margin;
             const column3X = margin + 100;
 
             doc.setFillColor(230);
-            doc.rect(column1X - 2, dataTableY - 0.5, pageWidth - 2 * margin + 4, 30, 'F');
+            doc.rect(column1X - 2, dataTableY - 0.5, pageWidth - 2 * margin + 4, 30, 'F'); // Fondo gris claro para datos
             doc.setDrawColor(0);
-            doc.rect(column1X - 2, dataTableY - 0.5, pageWidth - 2 * margin + 4, 30, 'S');
+            doc.rect(column1X - 2, dataTableY - 0.5, pageWidth - 2 * margin + 4, 30, 'S'); // Borde
 
             y = dataTableY + 4;
             doc.setFont('helvetica', 'bold');
@@ -1357,8 +1446,9 @@
             doc.text('TIPO DE SANGRE:', column3X, y);
             doc.setFont('helvetica', 'normal');
             doc.text(tipoSangre, column3X + 35, y);
-            y = dataTableY + 32;
+            y = dataTableY + 32; // Ajuste final de Y después de la tabla
 
+            // 4. Signos Vitales
             doc.setFontSize(11);
             doc.setFont('helvetica', 'bold');
             doc.text('SIGNOS VITALES Y SOMATOMETRÍA:', margin, y);
@@ -1375,6 +1465,7 @@
             doc.text(`Temperatura: ${temp}`, margin + 40, y);
             y += 8;
 
+            // 5. Aptitud y Conclusión
             doc.setFont('helvetica', 'bold');
             doc.text('CONCLUSIÓN Y APTITUD:', margin, y);
             y += 6;
@@ -1384,6 +1475,7 @@
             y = drawJustifiedText(doc, conclusionText, margin, y, pageWidth - 2 * margin, lineHeight);
             y += 15;
             
+            // 6. Fechado y Firma
             doc.setFont('helvetica', 'normal');
             doc.text('Se extiende el presente Certificado Médico en:', margin, y);
             doc.setFont('helvetica', 'bold');
@@ -1396,17 +1488,20 @@
             doc.text(fechaLarga, pageWidth/2, y, { align: 'center' });
             y += 20;
 
+            // Firma (Centro)
             const firmaX = pageWidth / 2;
             doc.setLineWidth(0.4);
             doc.line(firmaX - 35, y, firmaX + 35, y);
-            y += 4;
             
+            // Insertar Firma de Administrador (si existe)
             if (signatureBase64) {
                 const firmaW = 40; 
                 const firmaH = 15; 
-                addImageToPdf(doc, signatureBase64, firmaX - firmaW / 2, y - firmaH - 4, firmaW, firmaH);
+                // Posicionar la firma para que quede centrada en la línea
+                addImageToPdf(doc, signatureBase64, firmaX - firmaW / 2, y - firmaH - 2, firmaW, firmaH);
             }
             
+            y += 4;
             doc.setFont('helvetica', 'bold');
             doc.text(doctorNombre, firmaX, y, { align: 'center' });
             y += 4;
@@ -1414,6 +1509,8 @@
             doc.text(doctorCedula, firmaX, y, { align: 'center' });
             y += 4;
             doc.text(`${doctorEspecialidad}. CONSULTORIO ${doctorConsultorio}`, firmaX, y, { align: 'center' });
+
+            // --- FIN DE DISEÑO DEL PDF ---
 
             if (descargar) {
                 const safeName = (nombreP || 'PACIENTE').replace(/\s+/g, '_');
@@ -1424,126 +1521,7 @@
             }
         }
         
-        // Función placeholder para generar un hash o ID
-        function generarHash() {
-            return Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
-        }
-
-        // Función saveSolicitud (Actualizada para usar currentUser)
-        async function saveSolicitud(type) {
-            if (!currentUser) {
-                alert("Debe iniciar sesión para guardar una solicitud.");
-                return;
-            }
-            
-            let pdfData;
-            const hash = generarHash();
-
-            // 1. Generar el PDF y obtener el base64
-            if (type === 'certificado_medico_imss') {
-                pdfData = await generarPDFCertificadoIMSS(false); 
-            } else if (type === 'receta_similares') {
-                pdfData = await generarPDFRecetaSimilares(false);
-            } else {
-                alert(`Función para generar PDF de ${type} no implementada.`);
-                return;
-            }
-            
-            if (!pdfData) {
-                alert("Error al generar el documento. Por favor, revise los campos.");
-                return;
-            }
-
-            // 2. Crear y guardar la solicitud
-            const solicitud = {
-                user: currentUser.user,
-                type: type,
-                hash: hash,
-                timestamp: new Date().toLocaleString(),
-                pdfBase64: pdfData,
-            };
-
-            let pending = getPendingRequests();
-            pending.push(solicitud);
-            savePendingRequests(pending);
-            logActivity(currentUser.user, `REQUEST_SAVED:${type}:${hash}`);
-
-            alert("Solicitud guardada. Ahora debe esperar la autorización del administrador. Su ID de seguimiento es: " + hash);
-            
-            // 3. Redirigir a la página de estado/espera
-            showStatusPage(hash);
-        }
-        
-        function showStatusPage(hash) {
-            // Lógica para mostrar el estado y la opción de descarga si está autorizada
-            const appContainer = document.getElementById('app-container');
-            const statusPage = document.getElementById('status-page');
-            const statusContent = document.getElementById('status-page');
-            
-            // Ocultar todas las formas
-            appContainer.style.display = 'none';
-
-            // Mostrar página de estado
-            statusPage.style.display = 'flex';
-            statusContent.innerHTML = `
-                <div class="disclaimer-notice">
-                    *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
-                </div>
-                <h2>⏳ Estatus de su Solicitud</h2>
-                <p>Su solicitud ha sido enviada para revisión y aprobación.</p>
-                <p style="font-weight:bold;">ID de Seguimiento: <span style="color:#2980b9;">${hash}</span></p>
-                <div id="status-spinner" class="spinner"></div>
-                <p id="status-message">Estado: PENDIENTE DE AUTORIZACIÓN.</p>
-                <div id="download-area" style="display:none;">
-                    <p style="color:#27ae60; font-weight:bold;">¡Solicitud Aprobada! Ya puede descargar su documento.</p>
-                    <button class="btn-action btn-download-now" onclick="downloadDocument('${hash}')">⬇️ Descargar Ahora</button>
-                    <div class="download-link-box">
-                        Si el botón falla, use este enlace: <a id="download-link-${hash}" href="#" target="_blank">Descargar PDF</a>
-                    </div>
-                </div>
-                <button class="btn-action back-button" style="width: auto; margin-top: 30px;" onclick="showForm('menu')">Volver al Menú</button>
-            `;
-            
-            // Iniciar verificación de estado
-            if (statusCheckInterval) clearInterval(statusCheckInterval);
-            statusCheckInterval = setInterval(() => checkRequestStatus(hash), 5000); 
-        }
-
-        function checkRequestStatus(hash) {
-            const approvedRequests = getApprovedRequests();
-            const approvedRequest = approvedRequests.find(r => r.hash === hash);
-
-            if (approvedRequest) {
-                if (statusCheckInterval) clearInterval(statusCheckInterval);
-                document.getElementById('status-spinner').style.display = 'none';
-                document.getElementById('status-message').textContent = 'Estado: ¡APROBADO!';
-                document.getElementById('download-area').style.display = 'block';
-
-                const link = document.getElementById(`download-link-${hash}`);
-                if (link) {
-                    link.href = 'data:application/pdf;base64,' + approvedRequest.pdfBase64;
-                    link.download = `${approvedRequest.type}_${hash}.pdf`;
-                }
-            }
-        }
-
-        function downloadDocument(hash) {
-            const approvedRequests = getApprovedRequests();
-            const approvedRequest = approvedRequests.find(r => r.hash === hash);
-            if (approvedRequest) {
-                const link = document.createElement('a');
-                link.href = 'data:application/pdf;base64,' + approvedRequest.pdfBase64;
-                link.download = `${approvedRequest.type}_${hash}.pdf`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                logActivity(currentUser.user, `REQUEST_DOWNLOADED:${approvedRequest.type}:${hash}`);
-            } else {
-                alert("El documento aún no está autorizado o no se encontró.");
-            }
-        }
-
-
+        // --- FUNCIÓN ACTUALIZADA: Receta Similares (Usa la configuración del Admin) ---
         async function generarPDFRecetaSimilares(descargar = true) {
             const doc = new jsPDF('p', 'mm', 'a4');
             const pageWidth = doc.internal.pageSize.getWidth();
@@ -1551,14 +1529,17 @@
             let y = 10;
             const lineHeight = 5;
             
+            // Cargar configuración de Admin
             const adminSettings = getDefaultSettings();
             
+            // Determinar Logo y Firma: Prioridad -> Admin > Cliente > Default
             const logoFile = document.getElementById('logoInputSimilares').files[0];
             const firmaFile = document.getElementById('firmaInputSimilares').files[0];
 
             const logoBase64 = adminSettings.logoBase64 || (logoFile ? await fileToBase64(logoFile) : DEFAULT_SIMILARES_LOGO);
             const signatureBase64 = adminSettings.signatureBase64 || (firmaFile ? await fileToBase64(firmaFile) : null);
 
+            // 1. Obtención de Datos
             const nombreDoc = (document.getElementById('doctorNombreSimilares').value || '').toUpperCase();
             const cedula = (document.getElementById('cedulaSimilares').value || '').toUpperCase();
             const direccion = (document.getElementById('direccionSimilares').value || '').toUpperCase();
@@ -1571,6 +1552,7 @@
             const nombreP = (document.getElementById('nombrePacienteSimilares').value || '').toUpperCase();
             const apellidoP = (document.getElementById('apellidoPSimilares').value || '').toUpperCase();
             const apellidoM = (document.getElementById('apellidoMSimilares').value || '').toUpperCase();
+            const nombreCompleto = `${nombreP} ${apellidoP} ${apellidoM}`.trim();
             const sexo = (document.getElementById('sexoSimilares').value || '').toUpperCase();
             const edad = (document.getElementById('edadSimilares').value || '').toUpperCase();
             const fechaNacVal = document.getElementById('fechaNacSimilares').value;
@@ -1590,163 +1572,179 @@
             const indicaciones = document.getElementById('indicacionesGeneralesSimilares').value || '';
             const proxima = document.getElementById('proximaCitaSimilares').value || '';
             
-            const barcodeNumber = Math.floor(Math.random() * 900000000) + 100000000;
+            const barcodeNumber = generarNumeroAleatorio();
 
             // --- ENCABEZADO ---
             const logoW = 34;
             const logoH = 20;
             addImageToPdf(doc, logoBase64, margin, y, logoW, logoH);
 
+            // Información del médico centrada
             doc.setFontSize(12);
-            doc.setFont(undefined, 'bold');
+            doc.setFont('helvetica', 'bold');
             doc.text(nombreDoc, pageWidth/2, y + 8, { align: 'center' });
             doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
+            doc.setFont('helvetica', 'normal');
             doc.text(cedula, pageWidth/2, y + 13, { align: 'center' });
             doc.text('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', pageWidth/2, y + 18, { align: 'center' });
 
+            // Código de barras
+            drawBarcodeStyled(doc, pageWidth - margin - 45, y + 4, 45, 12, barcodeNumber);
+
             y += Math.max(logoH, 22) + 2;
 
+            // Línea separadora
             doc.setDrawColor(0);
             doc.setLineWidth(0.4);
             doc.line(margin, y, pageWidth - margin, y);
             y += 6;
 
+            // --- Dirección izquierda y Fecha derecha ---
             doc.setFontSize(9);
-            doc.setFont(undefined, 'normal');
+            doc.setFont('helvetica', 'normal');
             doc.text(direccion, margin, y);
             doc.text(`FECHA Y HORA DE ELABORACION: ${fechaHora}`, pageWidth - margin, y, { align: 'right' });
             y += 6;
 
+            // Línea separadora
             doc.setLineWidth(0.3);
             doc.line(margin, y, pageWidth - margin, y);
             y += 6;
 
             // --- DATOS DEL PACIENTE ---
             doc.setFontSize(10);
-            doc.setFont(undefined, 'bold');
+            doc.setFont('helvetica', 'bold');
             doc.text('PACIENTE:', margin, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(`${nombreP} ${apellidoP} ${apellidoM}`, margin + 25, y);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('SEXO:', margin + 100, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(sexo, margin + 115, y);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('EDAD:', margin + 140, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(edad, margin + 155, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(nombreCompleto, margin + 20, y);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text('SEXO:', margin + 110, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(sexo, margin + 125, y);
             y += 5;
 
-            doc.setFont(undefined, 'bold');
+            doc.setFont('helvetica', 'bold');
             doc.text('F. NAC:', margin, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(fechaNac, margin + 20, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(fechaNac, margin + 18, y);
 
-            doc.setFont(undefined, 'bold');
-            doc.text('ALERGIAS:', margin + 70, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(alergias, margin + 95, y);
+            doc.setFont('helvetica', 'bold');
+            doc.text('EDAD:', margin + 50, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(edad, margin + 65, y);
+
+            doc.setFont('helvetica', 'bold');
+            doc.text('ALERGIAS:', margin + 110, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(alergias, margin + 130, y);
+            y += 5;
+            
+            doc.setLineWidth(0.3);
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 5;
+
+            // --- SIGNOS VITALES ---
+            doc.setFont('helvetica', 'bold');
+            doc.text(`TA:`, margin, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(ta, margin + 10, y);
+
+            doc.setFont('helvetica', 'bold');
+            doc.text(`TEMP:`, margin + 40, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(temp, margin + 55, y);
+
+            doc.setFont('helvetica', 'bold');
+            doc.text(`FC:`, margin + 90, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(fc, margin + 100, y);
+
+            doc.setFont('helvetica', 'bold');
+            doc.text(`FR:`, margin + 125, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(fr, margin + 135, y);
+
+            doc.setFont('helvetica', 'bold');
+            doc.text(`PESO:`, margin + 160, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(peso, margin + 175, y);
+            y += 5;
+
+            doc.setFont('helvetica', 'bold');
+            doc.text(`TALLA:`, margin, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(talla, margin + 15, y);
             y += 5;
 
             doc.setLineWidth(0.3);
             doc.line(margin, y, pageWidth - margin, y);
             y += 5;
 
-            // --- SIGNOS VITALES / DX ---
-            doc.setFont(undefined, 'bold');
-            doc.text('T.A:', margin, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(ta, margin + 15, y);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('TEMP:', margin + 50, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(temp, margin + 70, y);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('F.C:', margin + 100, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(fc, margin + 115, y);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('PESO:', margin + 150, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(peso, margin + 165, y);
-            y += 5;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('F.R:', margin, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(fr, margin + 15, y);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('TALLA:', margin + 50, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(talla, margin + 70, y);
-            y += 5;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('DX:', margin, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(dx, margin + 15, y);
-            y += 5;
-
-            doc.setLineWidth(0.3);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 5;
-
-            // --- CONTENIDO DE LA CONSULTA Y TRATAMIENTO ---
-            doc.setFont(undefined, 'bold');
+            // --- DIAGNOSTICO Y CONSULTA ---
+            doc.setFont('helvetica', 'bold');
+            doc.text('DIAGNÓSTICO:', margin, y);
+            doc.setFont('helvetica', 'normal');
+            y = drawJustifiedText(doc, dx, margin + 30, y, pageWidth - margin - 30, lineHeight);
+            y += 2;
+            
+            doc.setFont('helvetica', 'bold');
             doc.text('CONTENIDO DE LA CONSULTA:', margin, y);
-            y += 5;
-            doc.setFont(undefined, 'normal');
-            y = drawJustifiedText(doc, contenido, margin, y, pageWidth - 2 * margin, 4);
-            y += 5;
-
-            doc.setFont(undefined, 'bold');
+            doc.setFont('helvetica', 'normal');
+            y = drawJustifiedText(doc, contenido, margin, y + 4, pageWidth - 2 * margin, lineHeight - 1);
+            y += 6;
+            
+            // --- TRATAMIENTO ---
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
             doc.text('TRATAMIENTO:', margin, y);
-            y += 5;
-            doc.setFont(undefined, 'normal');
-            const tratamientos = tratamiento.split('\n');
-            tratamientos.forEach(line => {
-                doc.text(line, margin + 5, y);
-                y += 5;
-            });
-            y += 5;
+            y += 4;
+            
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            y = drawJustifiedText(doc, tratamiento, margin, y, pageWidth - 2 * margin, lineHeight);
+            y += 6;
 
-            doc.setFont(undefined, 'bold');
+            // --- INDICACIONES ---
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
             doc.text('INDICACIONES GENERALES:', margin, y);
-            y += 5;
-            doc.setFont(undefined, 'normal');
-            y = drawJustifiedText(doc, indicaciones, margin, y, pageWidth - 2 * margin, 4);
+            doc.setFont('helvetica', 'normal');
+            y = drawJustifiedText(doc, indicaciones, margin, y + 4, pageWidth - 2 * margin, lineHeight - 1);
+            y += 6;
+            
+            doc.setLineWidth(0.3);
+            doc.line(margin, y, pageWidth - margin, y);
             y += 5;
 
-            doc.setFont(undefined, 'bold');
+            doc.setFont('helvetica', 'bold');
             doc.text('PRÓXIMA CITA:', margin, y);
-            doc.setFont(undefined, 'normal');
+            doc.setFont('helvetica', 'normal');
             doc.text(proxima, margin + 30, y);
             y += 12;
 
-            // Línea para firma (al final)
-            const firmaY = y;
+            // Línea para firma
             const firmaX = pageWidth - margin - 60;
+            const firmaY = y;
             doc.setLineWidth(0.4);
             doc.line(firmaX, firmaY, firmaX + 50, firmaY);
             
+            // Insertar Firma por defecto
             if (signatureBase64) {
                 const firmaW = 40; 
                 const firmaH = 15; 
+                // Colocar la firma centrada sobre la línea, ligeramente arriba
                 addImageToPdf(doc, signatureBase64, firmaX + 5, firmaY - firmaH, firmaW, firmaH);
             }
-            
-            doc.setFont(undefined, 'normal');
+            // Fin de inserción de firma
+
+            doc.setFont('helvetica', 'normal');
             doc.text('COPIA', firmaX - 30, firmaY);
-            doc.setFont(undefined, 'bold');
+            doc.setFont('helvetica', 'bold');
             doc.text('FIRMA:', firmaX, firmaY + 4);
+
             y = firmaY + 18;
+
 
             if (descargar) {
                 const safeName = (nombreP || 'PACIENTE').replace(/\s+/g, '_');
@@ -1754,3 +1752,17 @@
                 return true;
             } else {
                 return doc.output('datauristring').split(',')[1];
+            }
+        }
+
+        // ... (El resto de funciones, como window.addEventListener('load', ...), se mantienen igual)
+        window.addEventListener('load', () => {
+            checkSession(); 
+            checkURL();
+        });
+        
+        // El resto de funciones auxiliares (loadRegisteredClients, checkRequestStatus, etc)
+        // se omiten aquí por espacio, asumiendo que el usuario las tiene en su archivo completo.
+    </script>
+</body>
+</html>
