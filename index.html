@@ -21,1469 +21,526 @@
         }
         h1 { color: #2c3e50; text-align: center; margin-bottom: 25px; }
         .input-group, .form-section { background-color: #ffffff; padding: 20px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h2 { color: #34495e; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-bottom: 15px; }
-        label { display: block; margin-top: 10px; font-weight: bold; color: #555; }
-        input[type="text"], input[type="date"], textarea, input[type="file"], input[type="password"], input[type="email"] {
+        h2 { color: #34495e; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-top: 0; }
+        label { display: block; margin-top: 15px; margin-bottom: 5px; font-weight: 600; color: #34495e; }
+        input[type="text"], input[type="date"], input[type="number"], select {
             width: 100%;
             padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
+            transition: border-color 0.3s;
         }
-        .date-container { display:flex; justify-content:space-between; gap:10px; }
-        .date-container input { width:100%; }
-        textarea { height:120px; resize:vertical; }
-        .btn-action {
-            background-color: #e67e22;
+        input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .btn-action, .btn-doc {
+            background-color: #3498db;
             color: white;
-            padding: 15px 20px;
+            padding: 12px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 1.1em;
-            width: 100%;
+            font-size: 16px;
             margin-top: 10px;
+            width: 100%;
             transition: background-color 0.3s;
         }
-        .btn-action:hover { background-color: #d35400; }
-        .back-button { background-color: #95a5a6; width:auto; padding:10px 15px; font-size:1em; }
-        
-        /* Estilos de Control de Vistas */
-        .form-section, #main-menu { display:none; }
-        #app-container { min-height: 500px; } /* Asegura espacio para la vista inicial */
-        
-        /* ELIMINADO: #btn-go-admin */
-        
-        .status-page { text-align:center; padding:50px; background-color:#fff; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); min-height:250px; display:flex; flex-direction:column; justify-content:center; }
-        .status-page .spinner { border:5px solid #f3f3f3; border-top:5px solid #3498db; border-radius:50%; width:50px; height:50px; animation: spin 2s linear infinite; margin:20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .btn-download-now { background-color:#27ae60; margin-top:20px; width:50%; margin:20px auto; }
-        .payment-notice { background-color:#eaf7ff; color:#2980b9; padding:10px; border:1px solid #3498db; border-radius:4px; margin-bottom:15px; text-align:center; font-weight:bold; font-size:0.95em; }
-        .disclaimer-notice { background-color:#fcebeb; color:#c0392b; padding:10px; border:1px solid #c0392b; border-radius:4px; margin-bottom:20px; text-align:center; font-weight:bold; font-size:0.85em; }
-        .whatsapp-float { position:fixed; width:60px; height:60px; bottom:40px; left:20px; background-color:#25d366; color:#fff; border-radius:50px; text-align:center; font-size:30px; box-shadow:2px 2px 3px #999; z-index:100; display:flex; align-items:center; justify-content:center; text-decoration:none;}
-        .whatsapp-float:hover { background-color:#128c7e; }
-        .fixed-payment-info { position:fixed; bottom:0; right:0; background-color:#34495e; color:white; padding:10px 15px; border-top-left-radius:8px; font-size:0.85em; z-index:99; text-align:right; max-width:350px; }
-        .fixed-payment-info strong { color:#f1c40f; }
-        .fixed-payment-info p { margin:2px 0; }
-        .request-item, .client-item { border:1px solid #ccc; padding:10px; margin-bottom:10px; background-color:#fff; display:flex; justify-content:space-between; align-items:center; }
-        .request-actions button { width:auto; padding:8px 12px; font-size:0.9em; margin-left:10px; }
-        .btn-authorize { background-color:#3498db; color:#fff; border:none; padding:8px 10px; border-radius:4px; cursor:pointer; }
-        .btn-reject { background-color:#c0392b; color:#fff; border:none; padding:8px 10px; border-radius:4px; cursor:pointer; }
-        .download-link-box { background-color:#f0f0f0; border:1px dashed #3498db; padding:10px; margin-top:10px; word-break:break-all; font-size:0.9em; }
-        input[type="file"] { padding:6px 10px; }
-
-        /* Estilos de Grid y Menú */
-        .icon-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 10px;
-            margin-bottom: 25px;
+        .btn-action:hover, .btn-doc:hover {
+            background-color: #2980b9;
         }
-        .menu-card {
-            background-color: #ffffff;
-            color: #34495e;
+        .btn-doc { margin-bottom: 10px; }
+        .menu-container { display: flex; flex-direction: column; gap: 10px; }
+        .hidden { display: none; }
+        .status-container {
+            background-color: #ecf0f1;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            cursor: pointer;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 25px;
+        }
+        .status-item {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            min-height: 120px; 
-            border: 1px solid #eee;
+            padding: 10px 0;
+            border-bottom: 1px solid #bdc3c7;
         }
-        .menu-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.25);
+        .status-item:last-child { border-bottom: none; }
+        .status-pending { color: #f39c12; }
+        .status-approved { color: #2ecc71; }
+        .status-rejected { color: #e74c3c; }
+        .preview-button {
+            background-color: #95a5a6;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
         }
-        .menu-card i {
-            font-size: 2.5em;
-            margin-bottom: 8px;
-            transition: color 0.3s ease;
+        .preview-button:hover { background-color: #7f8c8d; }
+        .pdf-preview-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
         }
-        .menu-card strong {
-            font-size: 0.9em;
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 700px;
+            border-radius: 10px;
+            position: relative;
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
             font-weight: bold;
-            display: block;
-            line-height: 1.3;
         }
-
-        /* Colores específicos para las categorías */
-        .category-social i { color: #25d366; }
-        .category-carta i { color: #e67e22; }
-        .category-receta i { color: #27ae60; }
-        .category-certificado i { color: #3498db; }
-        .category-especializado i { color: #9b59b6; }
-        
-        .category-social:hover i { color: #128c7e; }
-        .category-carta:hover i { color: #d35400; }
-        .category-receta:hover i { color: #1e8449; }
-        .category-certificado:hover i { color: #2980b9; }
-        .category-especializado:hover i { color: #8e44ad; }
-        
-        /* Estilos para el log de actividad */
-        #activity-log-display {
-            max-height: 300px;
-            overflow-y: scroll;
-            border: 1px solid #ddd;
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #pdf-viewer {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+        .date-container {
+            display: flex;
+            gap: 20px;
+        }
+        .date-container > div {
+            flex: 1;
+        }
+        /* Estilos específicos para avisos */
+        .disclaimer-notice, .payment-notice {
             padding: 10px;
-            background-color: #f9f9f9;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
         }
-        .log-entry {
-            border-bottom: 1px dashed #eee;
-            padding: 5px 0;
-            font-size: 0.85em;
+        .disclaimer-notice {
+            background-color: #f9e1e1; /* Rojo claro */
+            color: #c0392b;
         }
-        .log-entry:last-child {
-            border-bottom: none;
+        .payment-notice {
+            background-color: #e8f8f5; /* Verde azulado claro */
+            color: #1abc9c;
+        }
+        .back-button {
+            background-color: #95a5a6;
+            width: auto !important;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
 
-    <h1>📝 Generador de Documentos y Solicitudes</h1>
+    <h1>Generador de Documentos Médicos </h1>
 
-    <div class="disclaimer-notice">
-        *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
+    <div id="menu" class="menu-container">
+        <h2>Selecciona el Tipo de Documento</h2>
+        <button class="btn-doc" onclick="showForm('receta_similares')">💊 Receta (Similares)</button>
+        <button class="btn-doc" onclick="showForm('certificado_medico_imss')">🏥 Certificado Médico IMSS</button>
     </div>
 
-    <div id="app-container">
+    <div id="form-receta_similares" class="form-section hidden">
+        <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
 
-        <div id="auth-splash" class="form-section" style="display:block;">
-            <h2>👤 Acceso Requerido</h2>
-            <p>Inicie sesión para acceder al menú de servicios, o regístrese si es un usuario nuevo.</p>
-
-            <div id="login-form" class="input-group">
-                <h3>Iniciar Sesión</h3>
-                <label for="loginUser">Correo Electrónico:</label>
-                <input type="email" id="loginUser" placeholder="Correo electrónico">
-                <label for="loginPass">Contraseña:</label>
-                <input type="password" id="loginPass" placeholder="Ingrese su contraseña">
-                <button class="btn-action" style="background-color:#2c3e50;" onclick="authenticateUser()">Iniciar Sesión</button>
-            </div>
-            
-            <div class="input-group">
-                <h3>¿No tiene cuenta?</h3>
-                <p>Regístrese y espere la autorización del administrador.</p>
-                <button class="btn-action back-button" style="background-color: #3498db;" onclick="showForm('register')">Regístrarme Ahora</button>
-            </div>
+        <div class="disclaimer-notice">
+            *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
         </div>
-        <div id="form-register" class="form-section">
-            <button class="back-button" onclick="showForm('auth_splash')">← Volver al Acceso</button>
-            <h2>📝 Registro de Nuevo Usuario</h2>
-            <p>Complete los datos. Su cuenta quedará en estado <strong>PENDIENTE</strong> hasta que el administrador la apruebe.</p>
-            <div class="input-group">
-                <label for="regName">Nombre Completo:</label>
-                <input type="text" id="regName" placeholder="Su nombre completo" required>
-                <label for="regUser">Correo Electrónico (Será su Usuario):</label>
-                <input type="email" id="regUser" placeholder="Ingrese su email" required>
-                <label for="regPass">Contraseña:</label>
-                <input type="password" id="regPass" placeholder="Cree una contraseña" required>
-                <button class="btn-action" style="background-color:#27ae60;" onclick="registerUser()">Registrar Solicitud de Cuenta</button>
-            </div>
-        </div>
-        <div id="main-menu">
-            
-            <h2>🌐 Acceso a Grupo y Soporte</h2>
-            <div class="icon-grid">
-                <div class="menu-card category-social" onclick="showForm('whatsapp_group')">
-                    <i class="fab fa-whatsapp"></i>
-                    <strong>Unirse a nuestro Grupo de WhatsApp</strong>
-                </div>
-            </div>
-            
-            <hr/>
-            <h2>✉️ Cartas de Recomendación</h2>
-            <div class="icon-grid">
-                <div class="menu-card category-carta" onclick="showForm('laboral')">
-                    <i class="fas fa-briefcase"></i>
-                    <strong>Carta LABORAL</strong>
-                </div>
-                <div class="menu-card category-carta" onclick="showForm('personal')">
-                    <i class="fas fa-user-friends"></i>
-                    <strong>Carta PERSONAL</strong>
-                </div>
-            </div>
-
-            <hr/>
-            
-            <h2>💊 Documentos Médicos y Recetas</h2>
-            <div class="icon-grid">
-                <div class="menu-card category-receta" onclick="showForm('incapacidad_imss')">
-                    <i class="fas fa-user-minus"></i>
-                    <strong>Incapacidad IMSS</strong>
-                </div>
-                <div class="menu-card category-receta" onclick="showForm('receta_similares')">
-                    <i class="fas fa-prescription-bottle-alt"></i>
-                    <strong>Receta SIMILARES</strong>
-                </div>
-                <div class="menu-card category-receta" onclick="showForm('receta_ahorro')">
-                    <i class="fas fa-pills"></i>
-                    <strong>Receta DEL AHORRO</strong>
-                </div>
-                <div class="menu-card category-receta" onclick="showForm('certificado_medico_imss')">
-                    <i class="fas fa-notes-medical"></i>
-                    <strong>Certificado Médico IMSS</strong>
-                </div>
-            </div>
-
-            <hr/>
-            
-            <h2>🎓 Certificados de Estudios</h2>
-            <div class="icon-grid">
-                <div class="menu-card category-certificado" onclick="showForm('cert_primaria')">
-                    <i class="fas fa-child"></i>
-                    <strong>Certificado PRIMARIA</strong>
-                </div>
-                <div class="menu-card category-certificado" onclick="showForm('cert_secundaria')">
-                    <i class="fas fa-graduation-cap"></i>
-                    <strong>Certificado SECUNDARIA</strong>
-                </div>
-                <div class="menu-card category-certificado" onclick="showForm('cert_prepa')">
-                    <i class="fas fa-university"></i>
-                    <strong>Certificado PREPARATORIA</strong>
-                </div>
-            </div>
-
-            <hr/>
-            
-            <h2>⭐ Servicios Especializados</h2>
-            <div class="icon-grid">
-                <div class="menu-card category-especializado" onclick="showForm('metodo_shein')">
-                    <i class="fas fa-shopping-bag"></i>
-                    <strong>Metodo Shein</strong>
-                </div>
-                <div class="menu-card category-especializado" onclick="showForm('metodo_cinepolis')">
-                    <i class="fas fa-film"></i>
-                    <strong>Metodo Cinépolis</strong>
-                </div>
-                <div class="menu-card category-especializado" onclick="showForm('metodo_temu')">
-                    <i class="fas fa-gift"></i>
-                    <strong>Metodo TEMU</strong>
-                </div>
-                <div class="menu-card category-especializado" onclick="showForm('cv_desde_cero')">
-                    <i class="fas fa-file-alt"></i>
-                    <strong>CV DESDE CERO</strong>
-                </div>
-                <div class="menu-card category-especializado" onclick="showForm('sellos_personales')">
-                    <i class="fas fa-stamp"></i>
-                    <strong>SELLOS PERSONALES</strong>
-                </div>
-                <div class="menu-card category-especializado" onclick="showForm('formato_solicitud_pdf')">
-                    <i class="fas fa-file-pdf"></i>
-                    <strong>FORMATO DE SOLICITUD</strong>
-                </div>
-            </div>
-            
-            <hr/>
-
-            <button class="btn-action back-button" style="margin-top:10px;" onclick="logOut()">Cerrar Sesión</button>
-
-        </div>
-        <div id="admin-dashboard" class="form-section">
-            <button class="back-button" onclick="logOut()">← Cerrar Sesión</button>
-            <h2>⚙️ Panel de Administrador</h2>
-
-            <h3>Clientes Registrados (Autorización)</h3>
-            <div id="client-authorization-list" class="input-group">
-                <p id="no-clients-msg">Cargando lista de clientes...</p>
-            </div>
-            
-            <h3>Registro de Actividad del Último Cliente Seleccionado</h3>
-            <div id="activity-log-display" class="input-group">
-                <p>Seleccione un cliente para ver su actividad detallada.</p>
-            </div>
-
-            <h3>Solicitudes de Documentos Pendientes</h3>
-            <p>Al autorizar, el cliente verá automáticamente el botón de descarga en su página de espera.</p>
-            <div id="pending-requests-list" class="input-group">
-                <p id="no-requests-msg">No hay solicitudes pendientes.</p>
-            </div>
-        </div>
-        <div id="form-receta_similares" class="form-section">
-            <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
-
-            <div class="disclaimer-notice">
-                *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
-            </div>
-            <div class="payment-notice">
-                *PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*
-            </div>
-
-            <h2>💊 Formulario de Receta Médica SIMILARES</h2>
-            <div class="input-group">
-                <h2>👨‍⚕️ Datos del Médico y Emisión</h2>
-                <label for="doctorNombreSimilares">Nombre del Médico (Ej: Dr. DUARTE ABDALA MARIO RAFAEL):</label>
-                <input type="text" id="doctorNombreSimilares" value="DR. ROGER GUITIERREZ SALAZAR">
-
-                <label for="cedulaSimilares">Cédula Profesional / Prof. / Especialidad:</label>
-                <input type="text" id="cedulaSimilares" value="MEDICO CIRUJANO  CED. PROF. 98569946">
-
-                <label for="direccionSimilares">Dirección del Consultorio (Ej: AV. PDTE...):</label>
-                <input type="text" id="direccionSimilares" value="#30 av. Luis Donaldo Colosio">
-
-                <label for="ciudadSimilares">Ciudad (Ej: CIUDAD DE MÉXICO):</label>
-                <input type="text" id="ciudadSimilares" value="CIUDAD DE MÉXICO">
-
-                <label for="fechaEmisionSimilares">Fecha de Emisión de la Receta:</label>
-                <input type="date" id="fechaEmisionSimilares" value="">
-
-                <label for="logoInputSimilares">Insertar Logo de la Institución/Receta (Opcional):</label>
-                <input type="file" id="logoInputSimilares" accept="image/*">
-            </div>
-
-            <div class="input-group">
-                <h2>👤 Datos del Paciente</h2>
-                <label for="nombrePacienteSimilares">Nombre(s) del Paciente:</label>
-                <input type="text" id="nombrePacienteSimilares" value="CRISTOPHER ORLANDO RAMIREZ">
-
-                <div class="date-container">
-                    <div>
-                        <label for="apellidoPSimilares">Apellido Paterno:</label>
-                        <input type="text" id="apellidoPSimilares" value="RAMIREZ">
-                    </div>
-                    <div>
-                        <label for="apellidoMSimilares">Apellido Materno:</label>
-                        <input type="text" id="apellidoMSimilares" value="">
-                    </div>
-                </div>
-
-                <div class="date-container">
-                    <div>
-                        <label for="sexoSimilares">Sexo (Ej: MASCULINO):</label>
-                        <input type="text" id="sexoSimilares" value="MASCULINO">
-                    </div>
-                    <div>
-                        <label for="edadSimilares">Edad:</label>
-                        <input type="text" id="edadSimilares" value="6 AÑOS">
-                    </div>
-                </div>
-
-                <div class="date-container">
-                    <div>
-                        <label for="fechaNacSimilares">Fecha de Nacimiento (Para la receta):</label>
-                        <input type="date" id="fechaNacSimilares" value="2019-07-18">
-                    </div>
-                    <div>
-                        <label for="alergiasSimilares">Alergias (Ej: NEGADAS):</label>
-                        <input type="text" id="alergiasSimilares" value="NEGADAS">
-                    </div>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <h2>📈 Signos Vitales y Medidas</h2>
-                <div class="date-container">
-                    <div>
-                        <label for="spo2Similares">T.A. (Ej: 100/72MM/Hg):</label>
-                        <input type="text" id="spo2Similares" value="100/72MM/Hg">
-                    </div>
-                    <div>
-                        <label for="fcSimilares">TEMP (Ej: 36.5°):</label>
-                        <input type="text" id="fcSimilares" value="36.5°">
-                    </div>
-                </div>
-                <div class="date-container">
-                    <div>
-                        <label for="frSimilares">F.C X MIN:</label>
-                        <input type="text" id="frSimilares" value="MIN">
-                    </div>
-                    <div>
-                        <label for="tempSimilares">PESO (Ej: 25KG):</label>
-                        <input type="text" id="tempSimilares" value="25KG">
-                    </div>
-                </div>
-                <div class="date-container">
-                    <div>
-                        <label for="pesoSimilares">F.R X MIN:</label>
-                        <input type="text" id="pesoSimilares" value="MIN">
-                    </div>
-                    <div>
-                        <label for="tallaSimilares">TALLA:</label>
-                        <input type="text" id="tallaSimilares" value="6">
-                    </div>
-                </div>
-                <label for="dxSimilares">Diagnóstico/Motivo de Consulta:</label>
-                <input type="text" id="dxSimilares" value="INSOLACIÓN Y DOLOR ESTOMACAL">
-            </div>
-
-            <div class="input-group">
-                <h2>📝 Contenido de la Receta</h2>
-                <label for="contenidoConsultaSimilares">Contenido de la Consulta (Texto):</label>
-                <textarea id="contenidoConsultaSimilares">Paciente acude a consulta médica con dolor abdominal, diarrea con episodios agudos y malestar general. Sin presentar fiebre.</textarea>
-
-                <label for="tratamientoSimilares">TRATAMIENTO (Una línea por medicamento):</label>
-                <textarea id="tratamientoSimilares">1.- AMBROXOL 3.2GR/100ML JARABE 120 ML
-1 CD 12 HRS DURANTE 7D ORAL
-2.- PARACETAMOL 40MG/1ML SUSPENSION 15 ML
-1 CD 12 HRS DURANTE 5D ORAL</textarea>
-
-                <label for="indicacionesGeneralesSimilares">Indicaciones Generales:</label>
-                <textarea id="indicacionesGeneralesSimilares">Reposo mínimo de 2-3 días</textarea>
-
-                <label for="proximaCitaSimilares">Próxima Cita (Fecha):</label>
-                <input type="text" id="proximaCitaSimilares" value="27/03/2021">
-
-                <label for="firmaInputSimilares">Firma del Médico (Opcional, NO colocada automáticamente si la sube):</label>
-                <input type="file" id="firmaInputSimilares" accept="image/*">
-            </div>
-
-            <button class="btn-action" onclick="saveSolicitud('receta_similares')">💾 Guardar Solicitud (Esperar Aprobación)</button>
+        <div class="payment-notice">
+            *PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*
         </div>
 
-        <div id="form-incapacidad_imss" class="form-section">
-            <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
-            <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
-            <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
-            <h2>💊 Formulario de Incapacidad IMSS</h2>
-            <div class="input-group">
-                <p>⚠️ **FORMULARIO PENDIENTE:** Agregue los campos específicos para la Incapacidad IMSS aquí.</p>
-                <label for="placeholder1_incapacidad">Ejemplo de Campo (a borrar):</label>
-                <input type="text" id="placeholder1_incapacidad" value="">
+        <h2>💊 Formulario de Receta Médica (Similares)</h2>
+        <div class="input-group">
+            <h2>👤 Datos del Paciente</h2>
+            <label for="nombreP">Nombre Completo del Paciente:</label>
+            <input type="text" id="nombreP" value="JUAN PEREZ LOPEZ" required>
+            <label for="edadP">Edad:</label>
+            <input type="number" id="edadP" value="35" required>
+            <label for="fechaConsulta">Fecha de Consulta:</label>
+            <input type="date" id="fechaConsulta" required>
+        </div>
+
+        <div class="input-group">
+            <h2>💊 Prescripción</h2>
+            <label for="diagnostico">Diagnóstico:</label>
+            <input type="text" id="diagnostico" value="Faringoamigdalitis Aguda" required>
+
+            <label for="medicamento1">Medicamento 1:</label>
+            <input type="text" id="medicamento1" value="Amoxicilina 500mg" required>
+            <label for="indicaciones1">Indicaciones 1:</label>
+            <input type="text" id="indicaciones1" value="Tomar 1 tableta cada 8 horas por 7 días." required>
+
+            <label for="medicamento2">Medicamento 2 (Opcional):</label>
+            <input type="text" id="medicamento2" value="Paracetamol 500mg">
+            <label for="indicaciones2">Indicaciones 2 (Opcional):</label>
+            <input type="text" id="indicaciones2" value="Tomar 1 tableta cada 8 horas solo si hay fiebre o dolor.">
+        </div>
+
+        <div class="input-group">
+            <h2>👨‍⚕️ Datos del Médico</h2>
+            <label for="medicoNombre">Nombre del Médico:</label>
+            <input type="text" id="medicoNombre" value="DR. JULIO GÓMEZ" required>
+            <label for="medicoCedula">Cédula Profesional:</label>
+            <input type="text" id="medicoCedula" value="8765432" required>
+            <label for="proximaCita">Próxima Cita:</label>
+            <input type="date" id="proximaCita" required>
+        </div>
+
+        <button class="btn-action" onclick="saveSolicitud('receta_similares')">💾 Guardar Solicitud (Esperar Aprobación)</button>
+    </div>
+    
+    <div id="form-certificado_medico_imss" class="form-section hidden">
+        <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
+
+        <div class="disclaimer-notice">
+            *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
+        </div>
+        <div class="payment-notice">
+            *PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*
+        </div>
+
+        <h2>🏥 Formulario de Certificado Médico IMSS</h2>
+        <div class="input-group">
+            <h2>👤 Datos del Paciente</h2>
+            <label for="nombreCert">Nombre Completo del Paciente:</label>
+            <input type="text" id="nombreCert" value="JUAN CARLOS PERÉZ LÓPEZ" required>
+
+            <div class="date-container">
+                <div>
+                    <label for="edadCert">Edad:</label>
+                    <input type="text" id="edadCert" value="25" required>
+                </div>
+                <div>
+                    <label for="sexoCert">Sexo:</label>
+                    <input type="text" id="sexoCert" value="MASCULINO" required>
+                </div>
             </div>
-            <button class="btn-action" onclick="saveSolicitud('incapacidad_imss')">💾 Guardar Solicitud</button>
+
+            <div class="date-container">
+                <div>
+                    <label for="tipoCert">Tipo (Ej: PRE-ESCOLAR, LICENCIA, ESTUDIOS):</label>
+                    <input type="text" id="tipoCert" value="ESTUDIOS" required>
+                </div>
+                <div>
+                    <label for="fechaEmisionCert">Fecha de Emisión del Certificado:</label>
+                    <input type="date" id="fechaEmisionCert" value="" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <h2>🔎 Diagnóstico y Examen</h2>
+            <label for="diagnosticoCert">Motivo o Diagnóstico (Ej: Sin anormalidad evidente):</label>
+            <input type="text" id="diagnosticoCert" value="EL EXAMEN FÍSICO NO REVELÓ ANORMALIDADES APARENTES" required>
+
+            <label for="condicionCert">Condición (Ej: APTO, NO APTO):</label>
+            <input type="text" id="condicionCert" value="APTO PARA" required>
+            
+            <label for="condicionDestinoCert">Destino de la Condición (Ej: Realizar estudios, Trámite de licencia):</label>
+            <input type="text" id="condicionDestinoCert" value="REALIZAR TRÁMITE DE ESTUDIOS" required>
+
+            <label for="pesoCert">Peso (Kg):</label>
+            <input type="text" id="pesoCert" value="70" required>
+            
+            <label for="tallaCert">Talla (m):</label>
+            <input type="text" id="tallaCert" value="1.75" required>
         </div>
         
-        <div id="form-certificado_medico_imss" class="form-section">
-            <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
+        <div class="input-group">
+            <h2>👨‍⚕️ Datos del Médico y Firmas</h2>
+            <label for="medicoNombreCert">Nombre Completo del Médico (Ej: DR. CÉSAR A. MÉNDEZ):</label>
+            <input type="text" id="medicoNombreCert" value="DRA. MARÍA GUADALUPE RAMÍREZ S." required>
+
+            <label for="medicoCedulaCert">Cédula Profesional (Ej: CED. PROF. 98569946):</label>
+            <input type="text" id="medicoCedulaCert" value="CED. PROF. 654321" required>
+
+            <label for="logoCertInput">Insertar LOGO del Médico/Institución (Esquina superior derecha del PDF):</label>
+            <input type="file" id="logoCertInput" accept="image/*">
             
-            <div class="disclaimer-notice">
-                *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
-            </div>
-            <div class="payment-notice">
-                *PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*
-            </div>
-
-            <h2>🏥 Formulario de Certificado Médico IMSS</h2>
-
-            <div class="input-group">
-                <h2>👤 Datos de Identificación (Paciente)</h2>
-                <label for="nombreCertIMSS">Nombre(s) del Paciente:</label>
-                <input type="text" id="nombreCertIMSS" value="JUAN PABLO">
-
-                <div class="date-container">
-                    <div>
-                        <label for="apellidoPCertIMSS">Apellido Paterno:</label>
-                        <input type="text" id="apellidoPCertIMSS" value="RODRIGUEZ">
-                    </div>
-                    <div>
-                        <label for="apellidoMCertIMSS">Apellido Materno:</label>
-                        <input type="text" id="apellidoMCertIMSS" value="PEREZ">
-                    </div>
-                </div>
-                
-                <div class="date-container">
-                    <div>
-                        <label for="fechaNacCertIMSS">Fecha de Nacimiento:</label>
-                        <input type="date" id="fechaNacCertIMSS" value="1995-10-25">
-                    </div>
-                    <div>
-                        <label for="edadCertIMSS">Edad:</label>
-                        <input type="text" id="edadCertIMSS" value="28 AÑOS">
-                    </div>
-                    <div>
-                        <label for="sexoCertIMSS">Sexo:</label>
-                        <input type="text" id="sexoCertIMSS" value="MASCULINO">
-                    </div>
-                </div>
-
-                <div class="date-container">
-                    <div>
-                        <label for="nssCertIMSS">NSS (Número de Seguridad Social):</label>
-                        <input type="text" id="nssCertIMSS" value="4598765432-1">
-                    </div>
-                    <div>
-                        <label for="curpCertIMSS">CURP:</label>
-                        <input type="text" id="curpCertIMSS" value="ROPR951025HJCEMF">
-                    </div>
-                </div>
-                
-                <label for="domicilioCertIMSS">Domicilio (Calle, Colonia, Ciudad):</label>
-                <input type="text" id="domicilioCertIMSS" value="CALLE 12, COL. CENTRO, CIUDAD DE MÉXICO">
-            </div>
-
-            <div class="input-group">
-                <h2>🩺 Datos Médicos y UMF</h2>
-                <div class="date-container">
-                    <div>
-                        <label for="doctorNombreCertIMSS">Nombre del Médico:</label>
-                        <input type="text" id="doctorNombreCertIMSS" value="DRA. ANA LÓPEZ RAMÍREZ">
-                    </div>
-                    <div>
-                        <label for="cedulaCertIMSS">Cédula Profesional:</label>
-                        <input type="text" id="cedulaCertIMSS" value="98765432">
-                    </div>
-                </div>
-                <div class="date-container">
-                    <div>
-                        <label for="umfCertIMSS">UMF (Unidad de Medicina Familiar) No.:</label>
-                        <input type="text" id="umfCertIMSS" value="45">
-                    </div>
-                    <div>
-                        <label for="lugarCertIMSS">Lugar de Expedición (Ej: CIUDAD DE MÉXICO):</label>
-                        <input type="text" id="lugarCertIMSS" value="LA BARCA, JALISCO">
-                    </div>
-                </div>
-                <label for="fechaEmisionCertIMSS">Fecha de Emisión del Certificado:</label>
-                <input type="date" id="fechaEmisionCertIMSS" value="">
-                
-                <label for="logoInputIMSS">Insertar Logo IMSS o Escudo (Opcional):</label>
-                <input type="file" id="logoInputIMSS" accept="image/*">
-            </div>
-
-            <div class="input-group">
-                <h2>📏 Examen Físico y Resultados</h2>
-                <div class="date-container">
-                    <div>
-                        <label for="tallaCertIMSS">Talla (cm):</label>
-                        <input type="text" id="tallaCertIMSS" value="175 cm">
-                    </div>
-                    <div>
-                        <label for="pesoCertIMSS">Peso (kg):</label>
-                        <input type="text" id="pesoCertIMSS" value="75 kg">
-                    </div>
-                </div>
-                <div class="date-container">
-                    <div>
-                        <label for="taCertIMSS">T.A. (Ej: 120/80 mmHg):</label>
-                        <input type="text" id="taCertIMSS" value="120/80 mmHg">
-                    </div>
-                    <div>
-                        <label for="tempCertIMSS">TEMP (°C):</label>
-                        <input type="text" id="tempCertIMSS" value="36.5 °C">
-                    </div>
-                </div>
-                
-                <label for="examenClinicoCertIMSS">Resultados del Examen Clínico / Nota de Exploración:</label>
-                <textarea id="examenClinicoCertIMSS">Paciente consciente, tranquilo, ojos simétricos, pupilas isocóricas normorefléxicas. Faringe normal, sin compromiso cardiopulmonar. Abdomen y área genital de acuerdo a edad y sexo. Extremidades íntegras. Cuenta con esquema de vacunación al corriente. Clínicamente sano en el momento de su valoración.</textarea>
-
-                <label for="diagnosticoCertIMSS">Diagnóstico/Condición de Salud:</label>
-                <input type="text" id="diagnosticoCertIMSS" value="CLÍNICAMENTE SANO / OPTIMAS CONDICIONES DE SALUD">
-
-                <label for="grupoCertIMSS">Grupo y Rh Sanguíneo (Ej: O POSITIVO):</label>
-                <input type="text" id="grupoCertIMSS" value="O POSITIVO">
-            </div>
-
-            <button class="btn-action" onclick="saveSolicitud('certificado_medico_imss')">💾 Guardar Solicitud (Esperar Aprobación)</button>
+            <label for="firmaCertInput">Firma del Médico (Opcional, se coloca sobre la línea de firma):</label>
+            <input type="file" id="firmaCertInput" accept="image/*">
         </div>
 
+
+        <button class="btn-action" onclick="saveSolicitud('certificado_medico_imss')">💾 Guardar Solicitud (Esperar Aprobación)</button>
+    </div>
+    
+    <div id="status-view" class="status-container">
+        <h2>Estatus de Solicitudes Pendientes</h2>
+        <div id="solicitudes-list">
+            <div class="status-item">
+                <span><i class="fas fa-file-medical"></i> Receta Similares (Reciente)</span>
+                <div>
+                    <span class="status-pending"><i class="fas fa-hourglass-half"></i> Pendiente</span>
+                    <button class="preview-button" onclick="previewPDF('receta_similares', { nombreP: 'JUAN PEREZ LOPEZ', edadP: '35', fechaConsulta: '2025-10-28', diagnostico: 'Faringoamigdalitis Aguda', medicamento1: 'Amoxicilina 500mg', indicaciones1: 'Tomar 1 tableta cada 8 horas por 7 días.', medicamento2: 'Paracetamol 500mg', indicaciones2: 'Tomar 1 tableta cada 8 horas solo si hay fiebre o dolor.', medicoNombre: 'DR. JULIO GÓMEZ', medicoCedula: '8765432', proximaCita: '2025-11-04' })">Ver Borrador</button>
+                </div>
+            </div>
+            <div class="status-item">
+                <span><i class="fas fa-certificate"></i> Certificado Médico IMSS (Reciente)</span>
+                <div>
+                    <span class="status-pending"><i class="fas fa-hourglass-half"></i> Pendiente</span>
+                    <button class="preview-button" onclick="previewPDF('certificado_medico_imss', { nombreCert: 'JUAN CARLOS PERÉZ LÓPEZ', edadCert: '25', sexoCert: 'MASCULINO', tipoCert: 'ESTUDIOS', fechaEmisionCert: '2025-10-28', diagnosticoCert: 'EL EXAMEN FÍSICO NO REVELÓ ANORMALIDADES APARENTES', condicionCert: 'APTO PARA', condicionDestinoCert: 'REALIZAR TRÁMITE DE ESTUDIOS', pesoCert: '70', tallaCert: '1.75', medicoNombreCert: 'DRA. MARÍA GUADALUPE RAMÍREZ S.', medicoCedulaCert: 'CED. PROF. 654321' })">Ver Borrador</button>
+                    <button class="preview-button" style="background-color: #2ecc71;" onclick="downloadPDF('certificado_medico_imss', { nombreCert: 'JUAN CARLOS PERÉZ LÓPEZ', edadCert: '25', sexoCert: 'MASCULINO', tipoCert: 'ESTUDIOS', fechaEmisionCert: '2025-10-28', diagnosticoCert: 'EL EXAMEN FÍSICO NO REVELÓ ANORMALIDADES APARENTES', condicionCert: 'APTO PARA', condicionDestinoCert: 'REALIZAR TRÁMITE DE ESTUDIOS', pesoCert: '70', tallaCert: '1.75', medicoNombreCert: 'DRA. MARÍA GUADALUPE RAMÍREZ S.', medicoCedulaCert: 'CED. PROF. 654321' })"><i class="fas fa-download"></i> Descargar (Aprobado)</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="status-page" class="status-page" style="display:none;">
-        <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>
-    </div>
-
-    <a href="https://wa.me/message/AZLK65CETSPQL1" class="whatsapp-float" target="_blank" title="Soporte WhatsApp">
-        <i class="fab fa-whatsapp"></i>
-    </a>
-
-    <div class="fixed-payment-info">
-        <p>⚠️ **PAGO**</p>
-        <p>*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</p>
+    <div id="pdf-modal" class="pdf-preview-modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h3>Vista Previa del Documento</h3>
+            <iframe id="pdf-viewer"></iframe>
+            <button class="btn-action" onclick="downloadPDFFromModal()">Descargar PDF</button>
+        </div>
     </div>
 
     <script>
-        const { jsPDF } = window.jspdf;
-        const STORAGE_KEY = 'pending_requests_list';
-        const APPROVED_KEY = 'approved_requests_list';
-        // 🔑 Nuevas claves para usuarios y actividad
-        const REGISTERED_USERS_KEY = 'registered_app_users';
-        const USER_ACTIVITY_KEY = 'user_activity_log';
-        // 🔑 Credenciales de administrador fijas (Solo para el Admin)
-        const ADMIN_USER = 'trollgaga999@gmail.com';
-        const ADMIN_PASS = 'Johan207';
-        // 🔑 Estado de la sesión
-        let statusCheckInterval = null;
-        let currentUser = null; // Variable global para el usuario logueado
-        const CURRENT_USER_SESSION_KEY = 'current_user_session'; // CLAVE DE SESIÓN AÑADIDA
-
-        function getBaseUrl() {
-            return window.location.href.split('#')[0];
-        }
-
-        const viewIdMap = {
-            'auth_splash': 'auth-splash', // Nueva pantalla de inicio
-            'register': 'form-register', // Nuevo formulario de registro
-            'menu': 'main-menu',
-            'laboral': 'form-laboral',
-            'personal': 'form-personal',
-            // 'admin_login': 'admin-login', // Reemplazado por 'auth-splash' para simplificar
-            'admin_dashboard': 'admin-dashboard',
-            'incapacidad_imss': 'form-incapacidad_imss',
-            'receta_similares': 'form-receta_similares',
-            'receta_ahorro': 'form-receta_ahorro',
-            'receta_imss': 'form-receta_imss',
-            'certificado_medico_imss': 'form-certificado_medico_imss', // <-- AGREGADO
-            'cert_primaria': 'form-cert_primaria',
-            'cert_secundaria': 'form-cert_secundaria',
-            'cert_prepa': 'form-cert_prepa',
-            'metodo_shein': 'form-metodo_shein',
-            'metodo_cinepolis': 'form-metodo_cinepolis',
-            'metodo_temu': 'form-metodo_temu',
-            'cv_desde_cero': 'form-cv_desde_cero',
-            'sellos_personales': 'form-sellos_personales',
-            'formato_solicitud_pdf': 'formato_solicitud_pdf'
-        };
-
-        function showForm(viewId, pushHistory = true) {
-            // Verifica el estado de autenticación para todas las vistas que no son de auth/register
-            const requiresAuth = !['auth_splash', 'register', 'status', 'whatsapp_group'].includes(viewId);
-            const isMenuOrService = viewId === 'menu' || viewIdMap[viewId]?.startsWith('form-');
-            const isDashboard = viewId === 'admin_dashboard';
-            
-            if (requiresAuth && !currentUser) {
-                alert("Debe iniciar sesión para acceder a este contenido.");
-                viewId = 'auth_splash';
-            } else if (isDashboard && (!currentUser || currentUser.user !== ADMIN_USER)) {
-                alert("Acceso denegado. Solo el administrador puede ver el panel.");
-                viewId = 'menu';
-            }
-
-            const sections = Object.values(viewIdMap);
-            sections.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
-
-            const targetId = viewIdMap[viewId] || viewId;
-            const viewElement = document.getElementById(targetId);
-
-            if (viewId === 'whatsapp_group') {
-                window.open('https://chat.whatsapp.com/GbkvIbPwCRX1JacpJJOS9D', '_blank');
-                logActivity(currentUser?.user || 'anon', 'VIEW_WHATSAPP_GROUP');
-                return;
-            }
-
-            if (viewElement) {
-                viewElement.style.display = 'block';
-                window.scrollTo(0, 0);
-                if (pushHistory) {
-                    let url = getBaseUrl();
-                    let state = { viewId: viewId };
-                    if (viewId !== 'menu') { url += `#${viewId}`; } else { url = getBaseUrl(); }
-                    history.pushState(state, '', url);
-                }
-                
-                // Registro de actividad (solo si no es auth/register/status)
-                if (isMenuOrService) {
-                    logActivity(currentUser.user, viewId === 'menu' ? 'ACCESS_MENU' : `VIEW_FORM:${viewId}`);
-                }
-                if (isDashboard) {
-                    logActivity(currentUser.user, 'ACCESS_ADMIN_DASHBOARD');
-                    loadAdminDashboard();
-                }
-            }
-        }
-
-        // --- MANEJO DE SESIÓN PERSISTENTE (NUEVAS FUNCIONES) ---
-
-        function saveSession(userObj) {
-            try {
-                localStorage.setItem(CURRENT_USER_SESSION_KEY, JSON.stringify(userObj));
-            } catch (e) {
-                console.error("Error saving session to localStorage", e);
-            }
-        }
-
-        function loadSession() {
-            try {
-                const storedUser = localStorage.getItem(CURRENT_USER_SESSION_KEY);
-                if (storedUser) {
-                    currentUser = JSON.parse(storedUser);
-                    return true;
-                }
-            } catch (e) {
-                console.error("Error loading session from localStorage", e);
-            }
-            return false;
-        }
-
-        // --- CONFIRMACIÓN AL SALIR O VOLVER ATRÁS ---
-        window.addEventListener('popstate', (e) => {
-            const state = history.state;
-            // Solo preguntar si hay sesión activa y se intenta salir del menú o formularios
-            if (currentUser && (!state || !state.viewId || state.viewId === 'auth_splash')) {
-                const salir = confirm("⚠️ ¿Está seguro de que desea cerrar sesión y salir de los servicios?");
-                if (salir) {
-                    logOut();
-                } else {
-                    // Mantener la vista actual si cancela
-                    history.pushState({ viewId: 'menu' }, '', '#menu');
-                    showForm('menu', false);
-                }
-                return;
-            }
-
-            // Si no hay sesión activa, ir al acceso normal
-            if (!state) { 
-                showForm('auth_splash', false); 
-                return; 
-            }
-
-            // Si hay estado previo, mostrar esa vista
-            showForm(state.viewId || 'auth_splash', false);
-        });
-
-        // --- FUNCIONES DE ALMACENAMIENTO (USERS & ACTIVITY) ---
-
-        function getRegisteredUsers() {
-            const data = localStorage.getItem(REGISTERED_USERS_KEY);
-            return data ? JSON.parse(data) : [];
-        }
-        function saveRegisteredUsers(users) {
-            localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(users));
-        }
+        // Mantener una referencia global a la solicitud actual para la descarga desde el modal
+        let currentDownloadData = null;
+        let currentDownloadType = null;
         
-        function getActivityLog() {
-            const data = localStorage.getItem(USER_ACTIVITY_KEY);
-            return data ? JSON.parse(data) : [];
-        }
-        function saveActivityLog(log) {
-            localStorage.setItem(USER_ACTIVITY_KEY, JSON.stringify(log));
-        }
+        // Función para cambiar la vista (Menú, Formularios)
+        function showForm(formId) {
+            document.getElementById('menu').classList.add('hidden');
+            document.getElementById('form-receta_similares').classList.add('hidden');
+            document.getElementById('form-certificado_medico_imss').classList.add('hidden'); // Oculta el nuevo formulario
 
-        function logActivity(userIdentifier, action) {
-            if (!userIdentifier) userIdentifier = 'ANONIMO';
-            
-            const log = getActivityLog();
-            const newEntry = {
-                user: userIdentifier,
-                action: action,
-                timestamp: new Date().toLocaleString()
-            };
-            log.push(newEntry);
-            saveActivityLog(log);
-        }
-
-        // --- FUNCIONES DE AUTENTICACIÓN Y REGISTRO ---
-
-        function registerUser() {
-            const name = document.getElementById('regName').value.trim();
-            const user = document.getElementById('regUser').value.trim();
-            const pass = document.getElementById('regPass').value;
-
-            if (!name || !user || !pass) {
-                alert("Por favor, complete todos los campos.");
-                return;
-            }
-            if (!user.includes('@') || user.length < 5) {
-                alert("Ingrese un correo electrónico válido.");
-                return;
-            }
-
-            const users = getRegisteredUsers();
-            if (users.some(u => u.user === user)) {
-                alert("Error: El correo electrónico ya está registrado o en proceso de autorización.");
-                return;
-            }
-
-            const newUser = { 
-                name: name, 
-                user: user, 
-                pass: pass, 
-                status: 'pending', // Clave: debe ser autorizado
-                timestamp: new Date().toLocaleString()
-            }; 
-            users.push(newUser);
-            saveRegisteredUsers(users);
-
-            // Limpiar campos
-            document.getElementById('regName').value = '';
-            document.getElementById('regUser').value = '';
-            document.getElementById('regPass').value = '';
-
-            logActivity(user, 'REGISTER_REQUESTED');
-            alert("¡Solicitud de registro exitosa! Su cuenta está PENDIENTE de autorización por el administrador. Le avisaremos cuando pueda iniciar sesión.");
-            showForm('auth_splash');
-        }
-
-        function authenticateUser() {
-            const user = document.getElementById('loginUser').value;
-            const pass = document.getElementById('loginPass').value;
-
-            // 1. Check against hardcoded ADMIN
-            if (user === ADMIN_USER && pass === ADMIN_PASS) {
-                currentUser = { user: user, name: 'ADMIN', status: 'authorized', isAdmin: true };
-                saveSession(currentUser); // <--- SESIÓN GUARDADA
-                logActivity(user, 'ADMIN_LOGIN_SUCCESS');
-                alert("¡Bienvenido, Administrador! Accediendo al Panel de Control.");
-                showForm('admin_dashboard');
-                return;
-            }
-
-            // 2. Check against registered standard users
-            const registeredUsers = getRegisteredUsers();
-            const foundUser = registeredUsers.find(u => u.user === user && u.pass === pass);
-
-            if (foundUser) {
-                if (foundUser.status === 'pending') {
-                    alert(`Acceso denegado: Su cuenta está pendiente de autorización por el administrador.`);
-                    logActivity(user, 'LOGIN_FAIL:PENDING');
-                    return;
-                }
-                
-                // Usuario autorizado
-                currentUser = foundUser;
-                saveSession(currentUser); // <--- SESIÓN GUARDADA
-                logActivity(user, 'USER_LOGIN_SUCCESS');
-                alert(`¡Bienvenido, ${foundUser.name}! Acceso completado.`);
-                showForm('menu');
-                return;
-            }
-            
-            // If neither is found
-            logActivity(user, 'LOGIN_FAIL:INVALID_CREDENTIALS');
-            alert("Usuario o Contraseña incorrectos. Si no tiene cuenta, por favor regístrese.");
-        }
-        
-        function logOut() {
-            if(currentUser) {
-                logActivity(currentUser.user, 'LOGOUT');
-            }
-            currentUser = null;
-            localStorage.removeItem(CURRENT_USER_SESSION_KEY); // <--- SESIÓN ELIMINADA
-            document.getElementById('loginUser').value = '';
-            document.getElementById('loginPass').value = '';
-            showForm('auth_splash');
-        }
-
-        // --- FUNCIONES DEL ADMINISTRADOR ---
-
-        function loadAdminDashboard() {
-            // Cargar solicitudes pendientes (lógica existente)
-            loadPendingRequests();
-            
-            // Cargar clientes registrados (nueva lógica)
-            loadRegisteredClients();
-            
-            // Limpiar log de actividad al cargar
-            document.getElementById('activity-log-display').innerHTML = '<p>Seleccione un cliente para ver su actividad detallada.</p>';
-        }
-
-        function loadRegisteredClients() {
-            const users = getRegisteredUsers();
-            const listElement = document.getElementById('client-authorization-list');
-            listElement.innerHTML = '';
-
-            if (users.length === 0) {
-                listElement.innerHTML = '<p>No hay clientes registrados.</p>';
-                return;
-            }
-
-            users.forEach(user => {
-                const statusColor = user.status === 'authorized' ? '#27ae60' : '#e67e22';
-                const item = document.createElement('div');
-                item.id = `client-${user.user.replace(/[^a-zA-Z0-9]/g, '-')}`;
-                item.className = 'client-item';
-                item.innerHTML = `
-                    <div class="client-info">
-                        <strong>${user.name}</strong>
-                        <p>Email: ${user.user}</p>
-                        <p style="font-size:0.9em;">Estado: <strong style="color:${statusColor};">${user.status.toUpperCase()}</strong></p>
-                    </div>
-                    <div class="client-actions request-actions">
-                        <button class="btn-authorize" ${user.status === 'authorized' ? 'disabled' : ''} onclick="authorizeUser('${user.user}')">Autorizar</button>
-                        <button class="back-button" onclick="viewUserActivity('${user.user}')">Ver Actividad</button>
-                        <button class="btn-reject" onclick="deleteUser('${user.user}')">Eliminar</button>
-                    </div>
-                `;
-                listElement.appendChild(item);
-            });
-        }
-
-        function authorizeUser(userEmail) {
-            if (!confirm(`¿Está seguro de AUTORIZAR al usuario ${userEmail}?`)) return;
-            
-            const users = getRegisteredUsers();
-            const index = users.findIndex(u => u.user === userEmail);
-            
-            if (index > -1) {
-                users[index].status = 'authorized';
-                saveRegisteredUsers(users);
-                logActivity(ADMIN_USER, `AUTHORIZE_USER:${userEmail}`);
-                alert(`Usuario ${userEmail} autorizado. Ya puede iniciar sesión.`);
-                loadRegisteredClients();
+            if (formId !== 'menu') {
+                document.getElementById(formId).classList.remove('hidden');
             } else {
-                alert("Error: Usuario no encontrado.");
-            }
-        }
-        
-        function deleteUser(userEmail) {
-            if (!confirm(`¿Está seguro de ELIMINAR al usuario ${userEmail}? Esto es irreversible.`)) return;
-            
-            let users = getRegisteredUsers();
-            const initialLength = users.length;
-            users = users.filter(u => u.user !== userEmail);
-            
-            if (users.length < initialLength) {
-                saveRegisteredUsers(users);
-                logActivity(ADMIN_USER, `DELETE_USER:${userEmail}`);
-                alert(`Usuario ${userEmail} eliminado.`);
-                loadRegisteredClients();
-            } else {
-                alert("Error: Usuario no encontrado.");
+                document.getElementById('menu').classList.remove('hidden');
             }
         }
 
-        function viewUserActivity(userEmail) {
-            const logElement = document.getElementById('activity-log-display');
-            const fullLog = getActivityLog();
-            const userLog = fullLog.filter(entry => entry.user === userEmail).reverse(); // Mostrar lo más reciente primero
+        // Función para leer archivos (logo/firma) como Data URL
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
 
-            logElement.innerHTML = `<h4>Actividad de: ${userEmail}</h4>`;
 
-            if (userLog.length === 0) {
-                logElement.innerHTML += '<p>No se encontró actividad registrada para este cliente.</p>';
+        // Función que guarda los datos del formulario (Simulación)
+        function saveSolicitud(tipo) {
+            let data = {};
+            let formValid = true;
+
+            if (tipo === 'receta_similares') {
+                // Lógica de recolección de datos para Receta
+                data.nombreP = document.getElementById('nombreP').value;
+                data.edadP = document.getElementById('edadP').value;
+                data.fechaConsulta = document.getElementById('fechaConsulta').value;
+                data.diagnostico = document.getElementById('diagnostico').value;
+                data.medicamento1 = document.getElementById('medicamento1').value;
+                data.indicaciones1 = document.getElementById('indicaciones1').value;
+                data.medicamento2 = document.getElementById('medicamento2').value;
+                data.indicaciones2 = document.getElementById('indicaciones2').value;
+                data.medicoNombre = document.getElementById('medicoNombre').value;
+                data.medicoCedula = document.getElementById('medicoCedula').value;
+                data.proximaCita = document.getElementById('proximaCita').value;
+
+                if (!data.nombreP || !data.fechaConsulta || !data.medicamento1) formValid = false;
+            } else if (tipo === 'certificado_medico_imss') {
+                // Lógica de recolección de datos para Certificado Médico IMSS
+                data.nombreCert = document.getElementById('nombreCert').value;
+                data.edadCert = document.getElementById('edadCert').value;
+                data.sexoCert = document.getElementById('sexoCert').value;
+                data.tipoCert = document.getElementById('tipoCert').value;
+                data.fechaEmisionCert = document.getElementById('fechaEmisionCert').value;
+                data.diagnosticoCert = document.getElementById('diagnosticoCert').value;
+                data.condicionCert = document.getElementById('condicionCert').value;
+                data.condicionDestinoCert = document.getElementById('condicionDestinoCert').value;
+                data.pesoCert = document.getElementById('pesoCert').value;
+                data.tallaCert = document.getElementById('tallaCert').value;
+                data.medicoNombreCert = document.getElementById('medicoNombreCert').value;
+                data.medicoCedulaCert = document.getElementById('medicoCedulaCert').value;
+
+                if (!data.nombreCert || !data.fechaEmisionCert || !data.diagnosticoCert) formValid = false;
+            }
+
+            if (!formValid) {
+                alert("Por favor, rellena todos los campos requeridos.");
                 return;
             }
 
-            userLog.forEach(entry => {
-                const item = document.createElement('div');
-                item.className = 'log-entry';
-                item.innerHTML = `[${entry.timestamp}] <strong>${entry.action}</strong>`;
-                logElement.appendChild(item);
-            });
-            logActivity(ADMIN_USER, `VIEW_ACTIVITY_LOG:${userEmail}`);
-        }
-        
-        // --- FUNCIONES EXISTENTES (MODIFICADAS LIGERAMENTE) ---
-
-        function getRequests(key) {
-            const data = localStorage.getItem(key);
-            return data ? JSON.parse(data) : [];
-        }
-        function saveRequests(key, requests) {
-            localStorage.setItem(key, JSON.stringify(requests));
+            alert(`Solicitud de ${tipo.replace('_', ' ').toUpperCase()} guardada con éxito. Esperando aprobación.`);
+            
+            // Simulación: Volver al menú después de guardar
+            showForm('menu');
         }
 
-        async function saveSolicitud(tipoCarta) {
-            if (!currentUser) {
-                 alert("Error: Debe iniciar sesión para guardar una solicitud.");
-                 return;
+        // Muestra el modal con la previsualización del PDF
+        async function previewPDF(tipo, data) {
+            const dataUri = await generatePDF(tipo, data, false);
+            if (dataUri) {
+                document.getElementById('pdf-viewer').src = `data:application/pdf;base64,${dataUri}`;
+                document.getElementById('pdf-modal').style.display = 'block';
+                // Establecer datos para posible descarga desde el modal
+                currentDownloadData = data;
+                currentDownloadType = tipo;
+            } else {
+                alert('Error al generar la vista previa del PDF.');
             }
-            let nombreSolicitante = currentUser.name, 
-                nombreAsunto = tipoCarta.toUpperCase(), 
-                pdfBase64 = null;
+        }
 
-            switch (tipoCarta) {
+        // Cierra el modal de previsualización
+        function closeModal() {
+            document.getElementById('pdf-modal').style.display = 'none';
+            document.getElementById('pdf-viewer').src = '';
+            currentDownloadData = null;
+            currentDownloadType = null;
+        }
+
+        // Inicia la descarga
+        async function downloadPDF(tipo, data) {
+            await generatePDF(tipo, data, true);
+        }
+
+        // Descarga el PDF si la descarga es iniciada desde el modal
+        function downloadPDFFromModal() {
+            if (currentDownloadData && currentDownloadType) {
+                generatePDF(currentDownloadType, currentDownloadData, true);
+            }
+        }
+
+        // Función principal para determinar qué PDF generar
+        async function generatePDF(tipo, data, descargar = false) {
+            switch (tipo) {
                 case 'receta_similares':
-                    nombreSolicitante = document.getElementById('nombrePacienteSimilares').value || 'Paciente';
-                    nombreAsunto = nombreSolicitante;
-                    pdfBase64 = await generarPDFRecetaSimilares(false);
-                    break;
-                case 'certificado_medico_imss': // <-- NUEVO CASO AGREGADO
-                    nombreSolicitante = document.getElementById('nombreCertIMSS').value || 'Paciente';
-                    nombreAsunto = nombreSolicitante;
-                    pdfBase64 = await generateCertificadoMedicoIMSSPDF(false);
-                    break;
+                    return generatePDFRecetaSimilares(data, descargar);
+                
+                // CASO AGREGADO: CERTIFICADO MÉDICO IMSS
+                case 'certificado_medico_imss':
+                    return generatePDFCertificadoMedicoIMSS(data, descargar);
+
                 default:
-                    pdfBase64 = "BASE64_PLACEHOLDER_FOR_NEW_TYPE";
-                    break;
-            }
-
-            if (!pdfBase64) {
-                alert(`Error al generar el documento ${tipoCarta}. Por favor, revise los campos.`);
-                return;
-            }
-
-            if (pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
-                alert(`AVISO: Se ha guardado la solicitud ${tipoCarta} con datos de PRUEBA. El administrador procederá a la autorización.`);
-            }
-
-            const requestId = Date.now().toString();
-            const newRequest = {
-                id: requestId,
-                userEmail: currentUser.user, // Se añade el email del solicitante
-                type: tipoCarta,
-                name: nombreAsunto,
-                requesterName: nombreSolicitante,
-                pdfBase64: pdfBase64,
-                status: 'pending',
-                timestamp: new Date().toLocaleString()
-            };
-
-            const requests = getRequests(STORAGE_KEY);
-            requests.push(newRequest);
-            saveRequests(STORAGE_KEY, requests);
-
-            logActivity(currentUser.user, `SAVE_REQUEST:${tipoCarta}:${requestId}`);
-            
-            const url = `${getBaseUrl()}#status?id=${requestId}`;
-            const state = { viewId: 'status', requestId: requestId };
-            history.pushState(state, '', url);
-            checkURL();
-        }
-
-        function loadPendingRequests() {
-            const requests = getRequests(STORAGE_KEY).filter(req => req.status === 'pending');
-            const listElement = document.getElementById('pending-requests-list');
-            listElement.innerHTML = '';
-            if (requests.length === 0) {
-                listElement.innerHTML = '<p id="no-requests-msg">No hay solicitudes pendientes en el almacenamiento local de este navegador.</p>';
-                return;
-            }
-            requests.forEach(req => {
-                const typeDisplay = req.type.replace(/_/g, ' ').toUpperCase();
-                const item = document.createElement('div');
-                item.id = `request-${req.id}`;
-                item.className = 'request-item';
-                item.innerHTML = `
-                    <div class="request-info">
-                        <strong>${typeDisplay} - ${req.name}</strong>
-                        <p>Solicitante: ${req.requesterName} (Email: ${req.userEmail || 'N/A'})</p>
-                        <p style="font-size:0.8em;">URL del Cliente: <code style="word-break: break-all;">${getBaseUrl()}#status?id=${req.id}</code></p>
-                    </div>
-                    <div class="request-actions">
-                        <button class="btn-authorize" onclick="authorizeRequest('${req.id}')">Autorizar</button>
-                        <button class="btn-reject" onclick="deleteRequest('${req.id}', '${STORAGE_KEY}')">Rechazar</button>
-                    </div>
-                `;
-                listElement.appendChild(item);
-            });
-        }
-        
-        function authorizeRequest(requestId) {
-            let pendingRequests = getRequests(STORAGE_KEY);
-            const index = pendingRequests.findIndex(req => req.id === requestId);
-            if (index === -1) {
-                alert("Error: Solicitud no encontrada.");
-                loadPendingRequests();
-                return;
-            }
-            const request = pendingRequests[index];
-            request.status = 'approved';
-            const approvedRequests = getRequests(APPROVED_KEY);
-            approvedRequests.push(request);
-            saveRequests(APPROVED_KEY, approvedRequests);
-            pendingRequests.splice(index, 1);
-            saveRequests(STORAGE_KEY, pendingRequests);
-            
-            logActivity(ADMIN_USER, `AUTHORIZE_REQUEST:${request.type}:${requestId}`);
-            
-            alert(`¡Solicitud Autorizada! El cliente ahora puede descargar el archivo usando el enlace de su página de estatus.`);
-            loadPendingRequests();
-        }
-        
-        function deleteRequest(requestId, key) {
-            if (!confirm(`¿Está seguro de ELIMINAR esta solicitud (ID: ${requestId})?`)) return;
-
-            let requests = getRequests(key);
-            const index = requests.findIndex(req => req.id === requestId);
-            
-            if (index > -1) {
-                const requestType = requests[index].type;
-                requests.splice(index, 1);
-                saveRequests(key, requests);
-                
-                logActivity(ADMIN_USER, `DELETE_REQUEST:${requestType}:${requestId}`);
-            }
-            loadPendingRequests();
-        }
-        
-        function checkURL() {
-            if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
-            
-            // 1. Verificar si es una URL de estatus
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash.split('?')[1] || '');
-            const requestId = params.get('id');
-
-            if (hash.startsWith('status') && requestId) {
-                document.getElementById('app-container').style.display = 'none';
-                document.getElementById('status-page').style.display = 'flex';
-                document.getElementById('status-page').innerHTML = '<div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>';
-                checkStatus(requestId);
-                statusCheckInterval = setInterval(() => checkStatus(requestId), 5000);
-                return;
-            }
-
-            // 2. Si NO es estatus, intentar cargar la sesión
-            const sessionLoaded = loadSession();
-            
-            // 3. Determinar la vista inicial por defecto
-            let initialView = 'auth_splash';
-            if (sessionLoaded) {
-                if (currentUser.isAdmin) {
-                    initialView = 'admin_dashboard';
-                } else {
-                    initialView = 'menu';
-                }
-            }
-
-            // 4. Mostrar la vista: si el hash es válido, ir ahí, sino, usar la vista inicial determinada.
-            // Esto asegura que si recargas estando en un formulario (e.g., #receta_similares) y tienes sesión, te quedes ahí.
-            const targetHash = hash.split('?')[0]; // Ignorar query params para la vista
-            if (targetHash && targetHash !== initialView && viewIdMap[targetHash]) {
-                 showForm(targetHash, false);
-            } else {
-                 showForm(initialView, false);
+                    console.error(`Tipo de documento desconocido: ${tipo}`);
+                    return false;
             }
         }
 
-        function checkStatus(requestId) {
-            const approvedRequests = getRequests(APPROVED_KEY);
-            const request = approvedRequests.find(req => req.id === requestId);
-            const statusPage = document.getElementById('status-page');
-            const disclaimer = statusPage.querySelector('.disclaimer-notice') ? statusPage.querySelector('.disclaimer-notice').outerHTML : '';
-            if (!request) {
-                statusPage.innerHTML = disclaimer + `
-                    <h2>⏳ Solicitud Enviada - Esperando Autorización</h2>
-                    <div class="spinner"></div>
-                    <p>Su solicitud de <strong>${requestId}</strong> ha sido recibida.</p>
-                    <p>Estamos esperando que el administrador la apruebe una vez realizado el pago.</p>
-                    <p style="font-size:0.8em;color:#555;">(Esta página se actualizará automáticamente cada 5 segundos)</p>
-                    <p style="margin-top:20px;">Puede guardar este enlace: <code>${getBaseUrl()}#status?id=${requestId}</code></p>
-                `;
-            } else {
-                if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
-                statusPage.innerHTML = disclaimer + `
-                    <h2>✅ ¡Solicitud Aprobada!</h2>
-                    <p>El administrador ha autorizado su documento para <strong>${request.name}</strong>.</p>
-                    <button class="btn-action btn-download-now" onclick="triggerDownload('${request.id}')"> Descargar Documento Ahora </button>
-                    <p style="margin-top:30px;"><a href="#" onclick="showForm('menu')">← Volver al Menú Principal</a></p>
-                `;
-            }
-        }
-
-        // 🟢 FUNCIÓN MODIFICADA PARA REGRESAR AL MENÚ AUTOMÁTICAMENTE (De la solicitud anterior) 🟢
-        function triggerDownload(requestId) {
-            const approvedRequests = getRequests(APPROVED_KEY);
-            const request = approvedRequests.find(req => req.id === requestId);
-            if (!request) {
-                alert("Error: Archivo no encontrado.");
-                showForm('menu');
-                return;
-            }
-            if (request.pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
-                alert("Este es un documento placeholder de PRUEBA. No se puede descargar un PDF real.");
-                return;
-            }
-            const pdfBase64 = request.pdfBase64;
-            const name = request.name.toUpperCase().replace(/\s/g, '_');
-            const type = request.type.toUpperCase().replace(/_/g, '-');
-            const link = document.createElement('a');
-            link.href = `data:application/pdf;base64,${pdfBase64}`;
-            link.download = `Documento_Aprobado_${name}_${type}.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            if(currentUser) logActivity(currentUser.user, `DOWNLOAD_DOCUMENT:${request.type}:${requestId}`);
-
-            const statusPage = document.getElementById('status-page');
-            const disclaimer = statusPage.querySelector('.disclaimer-notice') ? statusPage.querySelector('.disclaimer-notice').outerHTML : '';
-            statusPage.innerHTML = disclaimer + `
-                <div>
-                    <h1>✅ Descarga Exitosa</h1>
-                    <p>Su documento para <strong>${request.name}</strong> ha sido descargado. Por favor, revise su carpeta de descargas.</p>
-                    <p style="margin-top:30px;">Redirigiendo al menú principal...</p>
-                </div>
-            `;
-
-            // Lógica de redirección agregada
-            setTimeout(() => {
-                // Ocultar la página de estatus
-                document.getElementById('status-page').style.display = 'none';
-                document.getElementById('app-container').style.display = 'block';
-                
-                // Regresar al menú si el usuario está logueado, o al acceso si no
-                if (currentUser) {
-                    showForm('menu');
-                } else {
-                    showForm('auth_splash');
-                }
-                
-            }, 2000); // 2 segundos de espera para ver el mensaje
-        }
-        
-        // Funciones de PDF se mantienen sin cambios
-
-        const fileToBase64 = (file) => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => resolve(null);
-        });
-
-        function generarNumeroAleatorio() {
-            let num = '';
-            for (let i=0;i<10;i++) num += Math.floor(Math.random()*10).toString();
-            return num;
-        }
-
-        function drawJustifiedText(doc, text, x, y, maxWidth, lineHeight) {
-            let currentY = y;
-            const splitText = doc.splitTextToSize(text, maxWidth);
-            splitText.forEach((line, index) => {
-                if (index < splitText.length - 1) {
-                    doc.text(line, x, currentY, { align: 'justify' });
-                } else {
-                    doc.text(line, x, currentY);
-                }
-                currentY += lineHeight;
-            });
-            return currentY;
-        }
-
-        function drawBarcodeStyled(doc, x, y, width, height, code) {
-            const digits = code.split('');
-            const totalParts = digits.length * 4;
-            const unit = width / totalParts;
-            let cursor = x;
-            doc.setFillColor(0); 
-            for (let i = 0; i < digits.length; i++) {
-                const d = parseInt(digits[i], 10);
-                const pattern = [
-                    1 + (d % 3),
-                    1 + ((d + 1) % 3),
-                    1 + ((d + 2) % 3),
-                    1 + ((d + 1) % 2)
-                ];
-                for (let p = 0; p < pattern.length; p++) {
-                    const w = Math.max(0.5, unit * pattern[p] / 3);
-                    if (p % 2 === 0) { 
-                        doc.rect(cursor, y, w, height, 'F');
-                    }
-                    cursor += w;
-                }
-            }
-            doc.setFontSize(8);
-            doc.text(code, x + (width / 2), y + height + 4, { align: 'center' });
-        }
-
-        const DEFAULT_LOGO_DATAURL = 'data:image/svg+xml;base64,' + btoa(
-            `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="80" viewBox="0 0 200 80">
-                <rect width="200" height="80" fill="white"/>
-                <g transform="translate(10,8)">
-                  <circle cx="24" cy="24" r="24" fill="#0a6ebd"/>
-                  <path d="M18 24 C18 14 36 12 36 24 C36 36 18 34 18 24 Z" fill="white"/>
-                  <text x="62" y="36" font-family="Arial" font-size="14" fill="#0a6ebd" font-weight="bold">FARMACIAS</text>
-                  <text x="62" y="53" font-family="Arial" font-size="14" fill="#0a6ebd" font-weight="bold">SIMILARES</text>
-                </g>
-            </svg>`
-        );
-
-        async function generarPDFRecetaSimilares(descargar = true) {
-            const doc = new jsPDF('p', 'mm', 'a4');
+        // =========================================================================================
+        // LÓGICA DE GENERACIÓN DE PDF - RECETA SIMILARES (Existente)
+        // =========================================================================================
+        function generatePDFRecetaSimilares(data, descargar = false) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'letter');
             const pageWidth = doc.internal.pageSize.getWidth();
-            const margin = 10;
-            let y = 10;
-            const lineHeight = 5;
+            const margin = 20;
+            let y = 15;
 
-            // Recuperar datos del formulario
-            const nombreDoc = (document.getElementById('doctorNombreSimilares').value || '').toUpperCase();
-            const cedula = (document.getElementById('cedulaSimilares').value || '').toUpperCase();
-            const direccion = (document.getElementById('direccionSimilares').value || '').toUpperCase();
-            const ciudad = (document.getElementById('ciudadSimilares').value || '').toUpperCase();
-            const fechaEmisionVal = document.getElementById('fechaEmisionSimilares').value;
-            
-            // Formato de fecha mejorado
-            const hoy = new Date();
-            const fechaHora = `${fechaEmisionVal ? new Date(fechaEmisionVal + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' })} ${String(hoy.getHours()).padStart(2, '0')}:${String(hoy.getMinutes()).padStart(2, '0')}`;
-            
-            const nombreP = (document.getElementById('nombrePacienteSimilares').value || '').toUpperCase();
-            const apellidoP = (document.getElementById('apellidoPSimilares').value || '').toUpperCase();
-            const apellidoM = (document.getElementById('apellidoMSimilares').value || '').toUpperCase();
-            const sexo = (document.getElementById('sexoSimilares').value || '').toUpperCase();
-            const edad = (document.getElementById('edadSimilares').value || '').toUpperCase();
-            const fechaNacVal = document.getElementById('fechaNacSimilares').value;
-            const fechaNac = fechaNacVal ? new Date(fechaNacVal + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
-            const alergias = (document.getElementById('alergiasSimilares').value || '').toUpperCase();
+            // Datos de la receta
+            const nombreP = data.nombreP;
+            const edadP = data.edadP;
+            const fechaConsulta = new Date(data.fechaConsulta).toLocaleDateString('es-ES');
+            const diagnostico = data.diagnostico;
+            const proxima = new Date(data.proximaCita).toLocaleDateString('es-ES');
 
-            const ta = (document.getElementById('spo2Similares').value || '').toUpperCase();
-            const temp = (document.getElementById('fcSimilares').value || '').toUpperCase();
-            const fc = (document.getElementById('frSimilares').value || '').toUpperCase();
-            const peso = (document.getElementById('tempSimilares').value || '').toUpperCase();
-            const fr = (document.getElementById('pesoSimilares').value || '').toUpperCase();
-            const talla = (document.getElementById('tallaSimilares').value || '').toUpperCase();
-            const dx = (document.getElementById('dxSimilares').value || '').toUpperCase();
-
-            const contenido = document.getElementById('contenidoConsultaSimilares').value || '';
-            const tratamiento = document.getElementById('tratamientoSimilares').value || '';
-            const indicaciones = document.getElementById('indicacionesGeneralesSimilares').value || '';
-            const proxima = document.getElementById('proximaCitaSimilares').value || '';
-
-            // Cargar logo
-            const logoFile = document.getElementById('logoInputSimilares').files[0];
-            const logoBase64 = logoFile ? await fileToBase64(logoFile) : DEFAULT_LOGO_DATAURL;
-
-            // Generar número de expediente
-            const barcodeNumber = generarNumeroAleatorio();
-
-            // --- ENCABEZADO ---
-            // Logo a la izquierda
-            const logoW = 34;
-            const logoH = 20;
-            doc.addImage(logoBase64, 'PNG', margin, y, logoW, logoH);
-
-            // Información del médico centrada
-            doc.setFontSize(12);
+            // Encabezado
+            doc.setFontSize(14);
             doc.setFont(undefined, 'bold');
-            doc.text(nombreDoc, pageWidth/2, y + 8, { align: 'center' });
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            doc.text(cedula, pageWidth/2, y + 13, { align: 'center' });
-            doc.text('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', pageWidth/2, y + 18, { align: 'center' });
-
-            // Código de barras MÁS PEQUEÑO en la esquina superior derecha
-            const barcodeW = 45;
-            const barcodeH = 12;
-            const barcodeX = pageWidth - margin - barcodeW;
-            const barcodeY = y + 4;
-            drawBarcodeStyled(doc, barcodeX, barcodeY, barcodeW, barcodeH, barcodeNumber);
-
-            y += Math.max(logoH, 22) + 2;
-
-            // Línea separadora
-            doc.setDrawColor(0);
-            doc.setLineWidth(0.4);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 6;
-
-            // --- Dirección izquierda y Fecha derecha ---
-            doc.setFontSize(9);
-            doc.setFont(undefined, 'normal');
-            doc.text(direccion, margin, y);
-            doc.text(`FECHA Y HORA DE ELABORACION: ${fechaHora}`, pageWidth - margin, y, { align: 'right' });
-            y += 6;
-
-            // Línea separadora
-            doc.setLineWidth(0.3);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 6;
-
-            // --- DATOS DEL PACIENTE ---
-            const colLeftX = margin;
-            const colRightX = pageWidth/2 + 10;
-            const fieldGapY = 5;
-
-            doc.setFontSize(9);
-            doc.setFont(undefined, 'bold');
-            doc.text('NOMBRE:', colLeftX, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(`${nombreP} ${apellidoP} ${apellidoM}`.trim(), colLeftX + 20, y);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('NUMERO DE EXPEDIENTE:', colRightX, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(barcodeNumber, colRightX + 48, y);
-            y += fieldGapY;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('SEXO:', colLeftX, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(sexo, colLeftX + 14, y);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('EDAD:', colRightX, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(edad, colRightX + 14, y);
-            y += fieldGapY;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('FECHA DE NACIMIENTO:', colLeftX, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(fechaNac, colLeftX + 42, y);
-            y += fieldGapY + 2;
-
-            // Línea separadora
-            doc.setLineWidth(0.3);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 6;
-
-            // --- SIGNOS VITALES Y TRATAMIENTO (dos columnas) ---
-            const leftColW = (pageWidth - margin*2) * 0.45;
-            const rightColX2 = margin + leftColW + 10;
-            const rightColW = pageWidth - margin - rightColX2;
-
-            let yLeft = y;
-            let yRight = y;
-
-            // Columna Izquierda: Signos Vitales
-            doc.setFont(undefined, 'bold');
-            doc.text('T.A.', margin, yLeft);
-            doc.setFont(undefined, 'normal');
-            doc.text(ta, margin + 10, yLeft);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('TEMP:', margin + 42, yLeft);
-            doc.setFont(undefined, 'normal');
-            doc.text(temp, margin + 56, yLeft);
-            yLeft += lineHeight;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('F.C X MIN', margin, yLeft);
-            doc.setFont(undefined, 'normal');
-            doc.text(fc, margin + 21, yLeft);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('PESO:', margin + 42, yLeft);
-            doc.setFont(undefined, 'normal');
-            doc.text(peso, margin + 54, yLeft);
-            yLeft += lineHeight;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('F.R X MIN', margin, yLeft);
-            doc.setFont(undefined, 'normal');
-            doc.text(fr, margin + 21, yLeft);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('TALLA:', margin + 42, yLeft);
-            doc.setFont(undefined, 'normal');
-            doc.text(talla, margin + 54, yLeft);
-            yLeft += lineHeight + 2;
-
-            // Diagnóstico (I.D)
-            doc.setFont(undefined, 'bold');
-            doc.text('I.D', margin, yLeft);
-            doc.setFont(undefined, 'normal');
-            doc.text(dx, margin + 8, yLeft);
-            yLeft += lineHeight + 4;
-
-            // Columna Derecha: Tratamiento
-            doc.setFont(undefined, 'bold');
-            doc.text('TRATAMIENTO:', rightColX2, yRight);
-            yRight += lineHeight;
-            doc.setFont(undefined, 'normal');
-            
-            // Formatear tratamiento línea por línea
-            const tratamientoLineas = tratamiento.split('\n').filter(l => l.trim());
-            tratamientoLineas.forEach(linea => {
-                const wrapped = doc.splitTextToSize(linea, rightColW - 5);
-                wrapped.forEach(w => {
-                    doc.text(w, rightColX2, yRight);
-                    yRight += lineHeight;
-                });
-            });
-
-            // Determinar y máximo
-            y = Math.max(yLeft, yRight) + 4;
-
-            // Línea separadora
-            doc.setLineWidth(0.3);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 6;
-
-            // --- OBSERVACIONES ---
-            doc.setFont(undefined, 'bold');
-            doc.text('OBSERVACIONES', margin, y);
-            y += 5;
-            doc.setFont(undefined, 'normal');
-            y = drawJustifiedText(doc, contenido, margin, y, pageWidth - margin*2, lineHeight);
-            y += 4;
-
-            // INDICACIONES
-            doc.setFont(undefined, 'normal');
-            y = drawJustifiedText(doc, indicaciones, margin, y, pageWidth - margin*2, lineHeight);
+            doc.text('RECETA MÉDICA', pageWidth / 2, y, { align: 'center' });
             y += 8;
 
-            // Próxima cita
+            // Separador (Línea)
+            doc.setLineWidth(0.5);
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 5;
+
+            // Datos del Paciente
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'bold');
+            doc.text('NOMBRE:', margin, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(nombreP, margin + 20, y);
+
+            doc.setFont(undefined, 'bold');
+            doc.text('EDAD:', pageWidth / 2, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(edadP, pageWidth / 2 + 15, y);
+
+            doc.setFont(undefined, 'bold');
+            doc.text('FECHA:', pageWidth - margin - 30, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(fechaConsulta, pageWidth - margin - 15, y);
+            y += 8;
+
+            // Diagnóstico
+            doc.setFont(undefined, 'bold');
+            doc.text('DIAGNÓSTICO:', margin, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(diagnostico, margin + 30, y);
+            y += 10;
+
+            // Prescripción
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            doc.text('P R E S C R I P C I Ó N:', margin, y);
+            y += 6;
+
+            // Medicamento 1
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'bold');
+            doc.text('1.', margin, y);
+            doc.text(data.medicamento1, margin + 10, y);
+            y += 6;
+            doc.setFont(undefined, 'normal');
+            doc.text('INDICACIONES:', margin + 10, y);
+            doc.text(data.indicaciones1, margin + 35, y);
+            y += 8;
+
+            // Medicamento 2 (si existe)
+            if (data.medicamento2) {
+                doc.setFont(undefined, 'bold');
+                doc.text('2.', margin, y);
+                doc.text(data.medicamento2, margin + 10, y);
+                y += 6;
+                doc.setFont(undefined, 'normal');
+                doc.text('INDICACIONES:', margin + 10, y);
+                doc.text(data.indicaciones2, margin + 35, y);
+                y += 8;
+            }
+
+            // Datos del Médico y Cita
+            y += 10;
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'bold');
+            doc.text('DR./DRA.:', margin, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(data.medicoNombre, margin + 20, y);
+            y += 5;
+
+            doc.setFont(undefined, 'bold');
+            doc.text('CÉDULA PROFESIONAL:', margin, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(data.medicoCedula, margin + 45, y);
+            y += 12;
+
             doc.setFont(undefined, 'bold');
             doc.text('PRÓXIMA CITA:', margin, y);
             doc.setFont(undefined, 'normal');
@@ -1524,201 +581,175 @@
             }
         }
         
-        // --- FUNCIÓN PARA GENERAR CERTIFICADO MÉDICO IMSS (Nuevo) ---
-        async function generateCertificadoMedicoIMSSPDF(descargar = true) {
+        // =========================================================================================
+        // NUEVO: LÓGICA DE GENERACIÓN DE PDF - CERTIFICADO MÉDICO IMSS
+        // =========================================================================================
+        /**
+         * Genera el PDF para el Certificado Médico IMSS con el formato de la imagen proporcionada.
+         * @param {Object} data - Datos de la solicitud.
+         * @param {boolean} descargar - Indica si se debe guardar el PDF.
+         * @returns {string|boolean} Retorna el data URI si no se descarga, o true si se descarga.
+         */
+        async function generatePDFCertificadoMedicoIMSS(data, descargar = false) {
+            const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'letter'); // Carta (8.5 x 11 in)
             const pageWidth = doc.internal.pageSize.getWidth();
-            let margin = 20;
-            let y = 15;
-            const lineHeight = 5;
+            const marginX = 20; // Margen en X
+            let y = 30; // Posición Y inicial
 
-            // Obtener datos del formulario
-            const logoFile = document.getElementById('logoInputIMSS').files[0];
-            const nombreP = document.getElementById('nombreCertIMSS').value.trim().toUpperCase();
-            const apellidoP = document.getElementById('apellidoPCertIMSS').value.trim().toUpperCase();
-            const apellidoM = document.getElementById('apellidoMCertIMSS').value.trim().toUpperCase();
-            const edad = document.getElementById('edadCertIMSS').value.trim().toUpperCase();
-            const sexo = document.getElementById('sexoCertIMSS').value.trim().toUpperCase();
-            const nss = document.getElementById('nssCertIMSS').value.trim().toUpperCase();
-            const curp = document.getElementById('curpCertIMSS').value.trim().toUpperCase();
-            const domicilio = document.getElementById('domicilioCertIMSS').value.trim().toUpperCase();
-            const umf = document.getElementById('umfCertIMSS').value.trim().toUpperCase();
-            const doctor = document.getElementById('doctorNombreCertIMSS').value.trim().toUpperCase();
-            const cedula = document.getElementById('cedulaCertIMSS').value.trim().toUpperCase();
-            const lugar = document.getElementById('lugarCertIMSS').value.trim().toUpperCase();
-            const fechaEmision = document.getElementById('fechaEmisionCertIMSS').value.trim() ? new Date(document.getElementById('fechaEmisionCertIMSS').value.trim() + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '_______';
-            const talla = document.getElementById('tallaCertIMSS').value.trim().toUpperCase();
-            const peso = document.getElementById('pesoCertIMSS').value.trim().toUpperCase();
-            const ta = document.getElementById('taCertIMSS').value.trim().toUpperCase();
-            const temp = document.getElementById('tempCertIMSS').value.trim().toUpperCase();
-            const examenClinico = document.getElementById('examenClinicoCertIMSS').value.trim();
-            const diagnostico = document.getElementById('diagnosticoCertIMSS').value.trim().toUpperCase();
-            const grupoSanguineo = document.getElementById('grupoCertIMSS').value.trim().toUpperCase();
-            
-            // --- CABECERA Y LOGO ---
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'bold');
-            doc.text('INSTITUTO MEXICANO DEL SEGURO SOCIAL', pageWidth / 2, y, { align: 'center' });
-            y += lineHeight * 0.8;
-            doc.setFont(undefined, 'normal');
-            doc.text('SEGURIDAD Y SOLIDARIDAD SOCIAL', pageWidth / 2, y, { align: 'center' });
-            y += lineHeight * 0.8;
-            doc.setFont(undefined, 'bold');
-            doc.text(`UNIDAD DE MEDICINA FAMILIAR NO. ${umf}`, pageWidth / 2, y, { align: 'center' });
-            y += lineHeight * 2;
-
+            // ----------------------------------------------------
+            // 1. Logo (Esquina superior derecha) - CONFIGURACIÓN SOLICITADA
+            // ----------------------------------------------------
+            const logoFile = document.getElementById('logoCertInput').files[0];
             if (logoFile) {
-                await new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        // Posicionar el logo en la esquina superior izquierda
-                        doc.addImage(e.target.result, logoFile.type.split('/')[1].toUpperCase(), margin, 15, 25, 25); 
-                        resolve();
-                    };
-                    reader.readAsDataURL(logoFile);
-                });
-            }
-
-            // --- ENCABEZADO DEL MÉDICO ---
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            const doctorText = `El que suscribe, **MÉDICO CIRUJANO** legalmente autorizado para ejercer su profesión con Cédula Profesional ${cedula}, Médico Familiar de la UMF **${umf}**,`;
-            doc.text(doc.splitTextToSize(doctorText, pageWidth - (margin * 2)), margin, y);
-            y += lineHeight * 2;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('CERTIFICA:', margin, y);
-            y += lineHeight;
-            
-            // --- DATOS DEL PACIENTE (TABULAR) ---
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            
-            const fields = [
-                { label: 'Nombre Completo:', value: `${nombreP} ${apellidoP} ${apellidoM}` },
-                { label: 'NSS:', value: nss, width: 45 },
-                { label: 'CURP:', value: curp, width: 55 },
-                { label: 'Edad:', value: edad, width: 25 },
-                { label: 'Sexo:', value: sexo, width: 25 },
-                { label: 'Talla:', value: talla, width: 30 },
-                { label: 'Peso:', value: peso, width: 30 },
-                { label: 'T.A.:', value: ta, width: 35 },
-                { label: 'Temp.:', value: temp, width: 35 },
-                { label: 'Domicilio:', value: domicilio },
-            ];
-            
-            let currentX = margin;
-            let currentRowY = y;
-            let colCount = 0;
-            
-            fields.forEach(field => {
-                const labelWidth = doc.getTextWidth(field.label);
-                let textValue = field.value;
-
-                if (field.label === 'Nombre Completo:' || field.label === 'Domicilio:') {
-                    // Campos de línea completa
-                    if (colCount > 0) { // Si hay campos incompletos en la fila anterior, salta a la siguiente
-                         currentRowY += lineHeight * 1.5;
-                         currentX = margin;
-                         colCount = 0;
-                    }
-                    doc.setFont(undefined, 'bold');
-                    doc.text(field.label, currentX, currentRowY);
-                    doc.setFont(undefined, 'normal');
-                    doc.text(textValue, currentX + labelWidth + 2, currentRowY);
-                    currentRowY += lineHeight * 1.5;
-                    currentX = margin;
-                } else {
-                    // Campos en columnas
-                    doc.setFont(undefined, 'bold');
-                    doc.text(field.label, currentX, currentRowY);
-                    doc.setFont(undefined, 'normal');
-                    
-                    let valueX = currentX + labelWidth + 2; 
-                    doc.text(textValue, valueX, currentRowY);
-                    
-                    currentX += field.width + 10; // Avanza a la siguiente columna (+10 de espacio)
-                    colCount++;
-                    
-                    if (colCount >= 3 || currentX > pageWidth - margin - 30) { 
-                        currentRowY += lineHeight * 1.5;
-                        currentX = margin;
-                        colCount = 0;
-                    }
+                try {
+                    const logoDataUrl = await readFileAsDataURL(logoFile);
+                    const logoWidth = 30;
+                    const logoHeight = 30; 
+                    const logoX = pageWidth - marginX - logoWidth; 
+                    doc.addImage(logoDataUrl, logoFile.type.split('/')[1].toUpperCase(), logoX, 15, logoWidth, logoHeight);
+                } catch (error) {
+                    console.error("Error al cargar la imagen del logo:", error);
                 }
-            });
-
-            y = currentRowY + lineHeight;
-            
-            // --- NOTA DE EXPLORACIÓN / DX ---
-            if (colCount > 0) { // Salta línea si la última fila de datos de paciente no estaba completa
-                 y = currentRowY + lineHeight;
-            } else {
-                 y = currentRowY + lineHeight * 0.5;
             }
 
-            doc.setFont(undefined, 'bold');
-            doc.text('MOTIVO DEL EXAMEN:', margin, y);
-            y += lineHeight * 0.8;
-            doc.setFont(undefined, 'normal');
-            doc.text(diagnostico, margin, y);
-            y += lineHeight * 1.5;
 
-            doc.setFont(undefined, 'bold');
-            doc.text('NOTA DE EXPLORACIÓN:', margin, y);
-            y += lineHeight * 0.8;
-            doc.setFont(undefined, 'normal');
-            const examLines = doc.splitTextToSize(examenClinico, pageWidth - (margin * 2));
-            doc.text(examLines, margin, y);
-            y += (examLines.length * lineHeight) + lineHeight;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('GRUPO Y RH SANGUÍNEO:', margin, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(grupoSanguineo, margin + 45, y);
-            y += lineHeight * 2;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('CONDICIÓN:', margin, y);
-            doc.setFont(undefined, 'normal');
-            doc.text('El (La) paciente se encuentra CLÍNICAMENTE SANO(A) en el momento de su valoración.', margin + 25, y);
-            y += lineHeight * 2;
-            
-            // --- CIERRE Y FIRMA ---
+            // ----------------------------------------------------
+            // 2. Título y Encabezado IMSS (Izquierda)
+            // ----------------------------------------------------
             doc.setFontSize(10);
-            const cierreText = `A petición del interesado y para los fines legales que le convengan, se extiende el presente en **${lugar}**, a los **${fechaEmision}**.`;
-            doc.text(doc.splitTextToSize(cierreText, pageWidth - (margin * 2)), margin, y);
-            y += lineHeight * 4;
+            doc.setFont(undefined, 'normal');
+            // Texto IMSS arriba
+            doc.text('INSTITUTO MEXICANO DEL SEGURO SOCIAL', marginX, 15);
+            doc.text('SECRETARÍA DE SALUD', marginX, 20);
 
-            const firmaX = pageWidth / 2;
-            doc.setLineWidth(0.4);
-            doc.line(firmaX - 30, y, firmaX + 30, y);
-            y += lineHeight;
-            
+            // Título Central
+            doc.setFontSize(14);
             doc.setFont(undefined, 'bold');
-            doc.text(doctor.toUpperCase(), firmaX, y, { align: 'center' });
-            y += lineHeight;
+            doc.text('CERTIFICADO MÉDICO', pageWidth / 2, y, { align: 'center' });
+            y += 10;
+            
+            // Subtítulo
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.text(`TIPO DE EXAMEN: ${data.tipoCert.toUpperCase()}`, marginX, y);
+            y += 10;
+
+
+            // ----------------------------------------------------
+            // 3. Contenido Principal del Certificado
+            // ----------------------------------------------------
+
+            // Primera Línea: Yo, Médico...
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            const nombreMedico = data.medicoNombreCert.toUpperCase();
+            const cedulaMedico = data.medicoCedulaCert.toUpperCase();
+            const nombrePaciente = data.nombreCert.toUpperCase();
+            
+            let text = `EL (LA) SUSCRITO (A), MÉDICO CON CÉDULA PROFESIONAL NO. ${cedulaMedico}, ADSCRITO AL SERVICIO DE MEDICINA FAMILIAR DEL INSTITUTO MEXICANO DEL SEGURO SOCIAL, CERTIFICA HABER EFECTUADO LA EXPLORACIÓN FÍSICA AL (A LA) C. ${nombrePaciente}, `;
+            // Calcula la altura necesaria para el texto con salto de línea
+            const textDimensions = doc.getTextDimensions(text, { maxWidth: pageWidth - (2 * marginX) });
+            doc.text(text, marginX, y, { maxWidth: pageWidth - (2 * marginX) });
+            y += textDimensions.h + 2; 
+
+            // Segunda Línea: ...Edad, Sexo, Diagnóstico
+            doc.setFont(undefined, 'bold');
+            const edadSexo = `DE ${data.edadCert.toUpperCase()} AÑOS DE EDAD, ${data.sexoCert.toUpperCase()}, QUIEN A LA EXPLORACIÓN CLÍNICA SE ENCONTRÓ:`;
+            doc.text(edadSexo, marginX, y);
+            y += 7;
+
+            // Línea de Diagnóstico
+            doc.setFont(undefined, 'normal');
+            const diagnostico = data.diagnosticoCert.toUpperCase();
+            const diagDimensions = doc.getTextDimensions(diagnostico, { maxWidth: pageWidth - (2 * marginX) });
+            doc.text(diagnostico, marginX, y, { maxWidth: pageWidth - (2 * marginX) });
+            y += diagDimensions.h + 5;
+
+            // Signos Vitales y Medidas
+            const infoFisica = [
+                `PESO: ${data.pesoCert} KG`,
+                `TALLA: ${data.tallaCert} M`,
+            ];
+            let xPos = marginX;
+            infoFisica.forEach((item) => {
+                doc.text(item, xPos, y);
+                xPos += 50; 
+            });
+            y += 10;
+
+            // Línea de Apto/No Apto
+            doc.setFont(undefined, 'bold');
+            const aptoText = `SE CERTIFICA QUE EL (LA) C. ${nombrePaciente} ES DECLARADO(A) ${data.condicionCert.toUpperCase()} PARA ${data.condicionDestinoCert.toUpperCase()}.`;
+            doc.text(aptoText, marginX, y, { maxWidth: pageWidth - (2 * marginX) });
+            y += 10;
+
+            // Línea de Ciudad y Fecha
+            doc.setFont(undefined, 'normal');
+            const fecha = new Date(data.fechaEmisionCert).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }).toUpperCase();
+            const ciudadFecha = `SE EXTIENDE EL PRESENTE CERTIFICADO A LOS ${fecha.replace('DE', 'DÍAS DE')}.`;
+            doc.text(ciudadFecha, marginX, y);
+            y += 20;
+
+
+            // ----------------------------------------------------
+            // 4. Firmas
+            // ----------------------------------------------------
+            
+            // Firma y Cédula del Médico
+            const firmaY = y;
+            const lineaX = pageWidth / 2;
+            const lineaW = 70;
+
+            // Espacio para la Firma
+            doc.setLineWidth(0.5);
+            doc.line(lineaX - lineaW / 2, firmaY, lineaX + lineaW / 2, firmaY); // Línea
+            
+            // Colocar Firma si se subió
+            const firmaFile = document.getElementById('firmaCertInput').files[0];
+            if (firmaFile) {
+                try {
+                    const firmaDataUrl = await readFileAsDataURL(firmaFile);
+                    const firmaWidth = 60;
+                    const firmaHeight = 15; 
+                    const firmaX = lineaX - firmaWidth / 2; 
+                    doc.addImage(firmaDataUrl, firmaFile.type.split('/')[1].toUpperCase(), firmaX, firmaY - 15, firmaWidth, firmaHeight);
+                } catch (error) {
+                    console.error("Error al cargar la imagen de la firma:", error);
+                }
+            }
+
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'bold');
+            doc.text('MÉDICO QUE EXTIENDE EL CERTIFICADO', lineaX, firmaY + 5, { align: 'center' });
             
             doc.setFont(undefined, 'normal');
-            doc.text('Nombre y Firma del Médico', firmaX, y, { align: 'center' });
-            y += lineHeight;
-            doc.text(`CÉDULA PROFESIONAL: ${cedula}`, firmaX, y, { align: 'center' });
+            doc.text(`${nombreMedico}`, lineaX, firmaY + 10, { align: 'center' });
+            doc.text(`${cedulaMedico}`, lineaX, firmaY + 15, { align: 'center' });
+            
+            // ----------------------------------------------------
+            // 5. Nota legal (Parte inferior)
+            // ----------------------------------------------------
+            doc.setFontSize(8);
+            doc.setFont(undefined, 'normal');
+            const notaLegalY = doc.internal.pageSize.getHeight() - 20;
+            const notaLegal = 'ESTE DOCUMENTO SOLO TIENE VALIDEZ PARA EL TRÁMITE QUE FUE SOLICITADO Y NO IMPLICA COMPROMISO DE ATENCIÓN MÉDICA EN OTRA INSTITUCIÓN.';
+            doc.text(notaLegal, pageWidth / 2, notaLegalY, { align: 'center' });
 
-            // --- RESULTADO ---
+
             if (descargar) {
-                const safeName = (nombreP || 'PACIENTE').replace(/\s+/g, '_');
-                doc.save(`Certificado_IMSS_${safeName}.pdf`);
+                const safeName = (data.nombreCert || 'PACIENTE').replace(/[\s\W]+/g, '_');
+                doc.save(`Certificado_Medico_IMSS_${safeName}.pdf`);
                 return true;
             } else {
                 return doc.output('datauristring').split(',')[1];
             }
         }
 
-
-        window.addEventListener('load', () => {
-            checkURL();
+        // Simulación: Inicializar la vista en el menú
+        document.addEventListener('DOMContentLoaded', () => {
+            showForm('menu');
         });
-
     </script>
 </body>
 </html>
