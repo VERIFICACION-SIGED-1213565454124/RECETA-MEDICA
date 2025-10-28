@@ -54,8 +54,6 @@
         .form-section, #main-menu { display:none; }
         #app-container { min-height: 500px; } /* Asegura espacio para la vista inicial */
         
-        /* ELIMINADO: #btn-go-admin */
-        
         .status-page { text-align:center; padding:50px; background-color:#fff; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); min-height:250px; display:flex; flex-direction:column; justify-content:center; }
         .status-page .spinner { border:5px solid #f3f3f3; border-top:5px solid #3498db; border-radius:50%; width:50px; height:50px; animation: spin 2s linear infinite; margin:20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -449,6 +447,104 @@
             </div>
             <button class="btn-action" onclick="saveSolicitud('incapacidad_imss')">💾 Guardar Solicitud</button>
         </div>
+
+        <!-- 🔵 FORMULARIO CERTIFICADO MÉDICO IMSS (INTEGRADO) -->
+        <div id="form-certificado_medico_imss" class="form-section">
+            <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
+
+            <div class="disclaimer-notice">
+                *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
+            </div>
+            <div class="payment-notice">
+                *PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*
+            </div>
+
+            <h2>🩺 Certificado Médico IMSS</h2>
+
+            <div class="input-group">
+                <h3>👨‍⚕️ Datos del Médico</h3>
+                <label for="medicoCert">Nombre del Médico:</label>
+                <input type="text" id="medicoCert" value="DRA. YESSICA MEJÍA CARRANZA">
+                <label for="cedulaCert">Cédula Profesional:</label>
+                <input type="text" id="cedulaCert" value="C.P. 5866652">
+                <label for="unidadCert">Unidad Médica (encabezado):</label>
+                <input type="text" id="unidadCert" value="UNIDAD MÉDICA FAMILIAR NO. UMF 67, SANTA CLARA ECATEPEC, ESTADO DE MÉXICO">
+                <label for="consultorioCert">Consultorio:</label>
+                <input type="text" id="consultorioCert" value="5">
+                <label for="turnoCert">Turno:</label>
+                <input type="text" id="turnoCert" value="VESPERTINO">
+            </div>
+
+            <div class="input-group">
+                <h3>👤 Datos del Paciente</h3>
+                <label for="pacienteCert">Nombre Completo:</label>
+                <input type="text" id="pacienteCert" value="CARMEN MORELOS HERNÁNDEZ">
+                <label for="nssCert">Número de Seguro Social:</label>
+                <input type="text" id="nssCert" value="1715950626-4">
+                <label for="edadCert">Edad:</label>
+                <input type="text" id="edadCert" value="30">
+                <label for="sexoCert">Sexo:</label>
+                <input type="text" id="sexoCert" value="FEMENINO">
+            </div>
+
+            <div class="input-group">
+                <h3>📋 Antecedentes Médicos</h3>
+                <label for="alergiasCert">Alergias:</label>
+                <textarea id="alergiasCert">No presenta alergias de ningún tipo.</textarea>
+                <label for="cirugiasCert">Cirugías:</label>
+                <textarea id="cirugiasCert">No ha sido sometida a intervenciones quirúrgicas.</textarea>
+                <label for="cronicasCert">Enfermedades Crónicas:</label>
+                <textarea id="cronicasCert">Ninguna.</textarea>
+                <label for="vacunasCert">Vacunas:</label>
+                <textarea id="vacunasCert">Esquema de vacunación al día conforme a las normativas vigentes.</textarea>
+            </div>
+
+            <div class="input-group">
+                <h3>🩺 Examen Físico General</h3>
+                <textarea id="fisicoCert">Peso: 90.00kg
+Talla: 1.40 mts
+Frecuencia Cardiaca: 78 lpm
+Presión Arterial: 110/76 mmHg
+Frecuencia Respiratoria: 16 rpm
+Temperatura Corporal: 36.7°C
+Tipo de sangre: O+</textarea>
+            </div>
+
+            <div class="input-group">
+                <h3>🫁 Sistemas</h3>
+                <label for="respiratorioCert">Sistema Respiratorio:</label>
+                <textarea id="respiratorioCert">Pulmones: Sin murmullo vesicular presente, sin ruidos agregados.</textarea>
+                <label for="cardioCert">Sistema Cardiovascular:</label>
+                <textarea id="cardioCert">Corazón: Rítmico, sin soplos ni ruidos patológicos.</textarea>
+                <label for="digestivoCert">Sistema Digestivo:</label>
+                <textarea id="digestivoCert">Abdomen: Blando, depresible, sin dolor a la palpación.</textarea>
+                <label for="neuroCert">Sistema Neurológico:</label>
+                <textarea id="neuroCert">Reflejos: Conservados. Conciencia: Orientada en tiempo, espacio y persona.</textarea>
+                <label for="osteoCert">Sistema Osteomuscular:</label>
+                <textarea id="osteoCert">Columna: Sin desviaciones, postura adecuada. Extremidades: Con mucha fuerza y movilidad.</textarea>
+                <label for="vistaCert">Examen de la Vista:</label>
+                <textarea id="vistaCert">Agudeza Visual: 20/20 en ambos ojos sin corrección.
+Visión de Colores: Normal, sin evidencia de daltonismo.
+Campo Visual: Completo en ambos ojos.
+Reflejo Pupilar: Reactivo a la luz, sin anormalidades.</textarea>
+            </div>
+
+            <div class="input-group">
+                <h3>🧾 Conclusión</h3>
+                <textarea id="conclusionCert">El paciente se encuentra en buenas condiciones de salud general, sin signos de enfermedades infecciosas, crónicas o agudas que comprometen su bienestar en la actualidad. Es apta para realizar actividades físicas sin restricciones.</textarea>
+
+                <label for="firmaCert">Firma del Médico (opcional):</label>
+                <input type="file" id="firmaCert" accept="image/*">
+
+                <label for="fechaCert">Fecha de Expedición:</label>
+                <input type="date" id="fechaCert">
+
+            </div>
+
+            <button class="btn-action" onclick="saveSolicitud('certificado_medico_imss')">💾 Guardar Solicitud (Esperar Aprobación)</button>
+        </div>
+        <!-- 🔵 FIN FORMULARIO CERTIFICADO -->
+
     </div>
 
     <div id="status-page" class="status-page" style="display:none;">
@@ -489,7 +585,6 @@
             'menu': 'main-menu',
             'laboral': 'form-laboral',
             'personal': 'form-personal',
-            // 'admin_login': 'admin-login', // Reemplazado por 'auth-splash' para simplificar
             'admin_dashboard': 'admin-dashboard',
             'incapacidad_imss': 'form-incapacidad_imss',
             'receta_similares': 'form-receta_similares',
@@ -503,7 +598,8 @@
             'metodo_temu': 'form-metodo_temu',
             'cv_desde_cero': 'form-cv_desde_cero',
             'sellos_personales': 'form-sellos_personales',
-            'formato_solicitud_pdf': 'formato_solicitud_pdf'
+            'formato_solicitud_pdf': 'formato_solicitud_pdf',
+            'certificado_medico_imss': 'form-certificado_medico_imss'
         };
 
         function showForm(viewId, pushHistory = true) {
@@ -663,7 +759,7 @@
                 user: user, 
                 pass: pass, 
                 status: 'pending', // Clave: debe ser autorizado
-                timestamp: new Date().toLocaleString()
+                timestamp: new Date().toLocaleDateString()
             }; 
             users.push(newUser);
             saveRegisteredUsers(users);
@@ -837,240 +933,7 @@
             localStorage.setItem(key, JSON.stringify(requests));
         }
 
-        async function saveSolicitud(tipoCarta) {
-            if (!currentUser) {
-                 alert("Error: Debe iniciar sesión para guardar una solicitud.");
-                 return;
-            }
-            let nombreSolicitante = currentUser.name, 
-                nombreAsunto = tipoCarta.toUpperCase(), 
-                pdfBase64 = null;
-
-            if (tipoCarta === 'receta_similares') {
-                nombreSolicitante = document.getElementById('nombrePacienteSimilares').value || 'Paciente';
-                nombreAsunto = nombreSolicitante;
-                pdfBase64 = await generarPDFRecetaSimilares(false);
-            } else {
-                pdfBase64 = "BASE64_PLACEHOLDER_FOR_NEW_TYPE";
-            }
-
-            if (!pdfBase64) {
-                alert(`Error al generar el documento ${tipoCarta}. Por favor, revise los campos.`);
-                return;
-            }
-
-            if (pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
-                alert(`AVISO: Se ha guardado la solicitud ${tipoCarta} con datos de PRUEBA. El administrador procederá a la autorización.`);
-            }
-
-            const requestId = Date.now().toString();
-            const newRequest = {
-                id: requestId,
-                userEmail: currentUser.user, // Se añade el email del solicitante
-                type: tipoCarta,
-                name: nombreAsunto,
-                requesterName: nombreSolicitante,
-                pdfBase64: pdfBase64,
-                status: 'pending',
-                timestamp: new Date().toLocaleString()
-            };
-
-            const requests = getRequests(STORAGE_KEY);
-            requests.push(newRequest);
-            saveRequests(STORAGE_KEY, requests);
-
-            logActivity(currentUser.user, `SAVE_REQUEST:${tipoCarta}:${requestId}`);
-            
-            const url = `${getBaseUrl()}#status?id=${requestId}`;
-            const state = { viewId: 'status', requestId: requestId };
-            history.pushState(state, '', url);
-            checkURL();
-        }
-
-        function loadPendingRequests() {
-            const requests = getRequests(STORAGE_KEY).filter(req => req.status === 'pending');
-            const listElement = document.getElementById('pending-requests-list');
-            listElement.innerHTML = '';
-            if (requests.length === 0) {
-                listElement.innerHTML = '<p id="no-requests-msg">No hay solicitudes pendientes en el almacenamiento local de este navegador.</p>';
-                return;
-            }
-            requests.forEach(req => {
-                const typeDisplay = req.type.replace(/_/g, ' ').toUpperCase();
-                const item = document.createElement('div');
-                item.id = `request-${req.id}`;
-                item.className = 'request-item';
-                item.innerHTML = `
-                    <div class="request-info">
-                        <strong>${typeDisplay} - ${req.name}</strong>
-                        <p>Solicitante: ${req.requesterName} (Email: ${req.userEmail || 'N/A'})</p>
-                        <p style="font-size:0.8em;">URL del Cliente: <code style="word-break: break-all;">${getBaseUrl()}#status?id=${req.id}</code></p>
-                    </div>
-                    <div class="request-actions">
-                        <button class="btn-authorize" onclick="authorizeRequest('${req.id}')">Autorizar</button>
-                        <button class="btn-reject" onclick="deleteRequest('${req.id}', '${STORAGE_KEY}')">Rechazar</button>
-                    </div>
-                `;
-                listElement.appendChild(item);
-            });
-        }
-        
-        function authorizeRequest(requestId) {
-            let pendingRequests = getRequests(STORAGE_KEY);
-            const index = pendingRequests.findIndex(req => req.id === requestId);
-            if (index === -1) {
-                alert("Error: Solicitud no encontrada.");
-                loadPendingRequests();
-                return;
-            }
-            const request = pendingRequests[index];
-            request.status = 'approved';
-            const approvedRequests = getRequests(APPROVED_KEY);
-            approvedRequests.push(request);
-            saveRequests(APPROVED_KEY, approvedRequests);
-            pendingRequests.splice(index, 1);
-            saveRequests(STORAGE_KEY, pendingRequests);
-            
-            logActivity(ADMIN_USER, `AUTHORIZE_REQUEST:${request.type}:${requestId}`);
-            
-            alert(`¡Solicitud Autorizada! El cliente ahora puede descargar el archivo usando el enlace de su página de estatus.`);
-            loadPendingRequests();
-        }
-        
-        function deleteRequest(requestId, key) {
-            if (!confirm(`¿Está seguro de ELIMINAR esta solicitud (ID: ${requestId})?`)) return;
-
-            let requests = getRequests(key);
-            const index = requests.findIndex(req => req.id === requestId);
-            
-            if (index > -1) {
-                const requestType = requests[index].type;
-                requests.splice(index, 1);
-                saveRequests(key, requests);
-                
-                logActivity(ADMIN_USER, `DELETE_REQUEST:${requestType}:${requestId}`);
-            }
-            loadPendingRequests();
-        }
-        
-        function checkURL() {
-            if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
-            
-            // 1. Verificar si es una URL de estatus
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash.split('?')[1] || '');
-            const requestId = params.get('id');
-
-            if (hash.startsWith('status') && requestId) {
-                document.getElementById('app-container').style.display = 'none';
-                document.getElementById('status-page').style.display = 'flex';
-                document.getElementById('status-page').innerHTML = '<div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>';
-                checkStatus(requestId);
-                statusCheckInterval = setInterval(() => checkStatus(requestId), 5000);
-                return;
-            }
-
-            // 2. Si NO es estatus, intentar cargar la sesión
-            const sessionLoaded = loadSession();
-            
-            // 3. Determinar la vista inicial por defecto
-            let initialView = 'auth_splash';
-            if (sessionLoaded) {
-                if (currentUser.isAdmin) {
-                    initialView = 'admin_dashboard';
-                } else {
-                    initialView = 'menu';
-                }
-            }
-
-            // 4. Mostrar la vista: si el hash es válido, ir ahí, sino, usar la vista inicial determinada.
-            // Esto asegura que si recargas estando en un formulario (e.g., #receta_similares) y tienes sesión, te quedes ahí.
-            const targetHash = hash.split('?')[0]; // Ignorar query params para la vista
-            if (targetHash && targetHash !== initialView && viewIdMap[targetHash]) {
-                 showForm(targetHash, false);
-            } else {
-                 showForm(initialView, false);
-            }
-        }
-
-        function checkStatus(requestId) {
-            const approvedRequests = getRequests(APPROVED_KEY);
-            const request = approvedRequests.find(req => req.id === requestId);
-            const statusPage = document.getElementById('status-page');
-            const disclaimer = statusPage.querySelector('.disclaimer-notice') ? statusPage.querySelector('.disclaimer-notice').outerHTML : '';
-            if (!request) {
-                statusPage.innerHTML = disclaimer + `
-                    <h2>⏳ Solicitud Enviada - Esperando Autorización</h2>
-                    <div class="spinner"></div>
-                    <p>Su solicitud de <strong>${requestId}</strong> ha sido recibida.</p>
-                    <p>Estamos esperando que el administrador la apruebe una vez realizado el pago.</p>
-                    <p style="font-size:0.8em;color:#555;">(Esta página se actualizará automáticamente cada 5 segundos)</p>
-                    <p style="margin-top:20px;">Puede guardar este enlace: <code>${getBaseUrl()}#status?id=${requestId}</code></p>
-                `;
-            } else {
-                if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
-                statusPage.innerHTML = disclaimer + `
-                    <h2>✅ ¡Solicitud Aprobada!</h2>
-                    <p>El administrador ha autorizado su documento para <strong>${request.name}</strong>.</p>
-                    <button class="btn-action btn-download-now" onclick="triggerDownload('${request.id}')"> Descargar Documento Ahora </button>
-                    <p style="margin-top:30px;"><a href="#" onclick="showForm('menu')">← Volver al Menú Principal</a></p>
-                `;
-            }
-        }
-
-        // 🟢 FUNCIÓN MODIFICADA PARA REGRESAR AL MENÚ AUTOMÁTICAMENTE (De la solicitud anterior) 🟢
-        function triggerDownload(requestId) {
-            const approvedRequests = getRequests(APPROVED_KEY);
-            const request = approvedRequests.find(req => req.id === requestId);
-            if (!request) {
-                alert("Error: Archivo no encontrado.");
-                showForm('menu');
-                return;
-            }
-            if (request.pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
-                alert("Este es un documento placeholder de PRUEBA. No se puede descargar un PDF real.");
-                return;
-            }
-            const pdfBase64 = request.pdfBase64;
-            const name = request.name.toUpperCase().replace(/\s/g, '_');
-            const type = request.type.toUpperCase().replace(/_/g, '-');
-            const link = document.createElement('a');
-            link.href = `data:application/pdf;base64,${pdfBase64}`;
-            link.download = `Documento_Aprobado_${name}_${type}.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            if(currentUser) logActivity(currentUser.user, `DOWNLOAD_DOCUMENT:${request.type}:${requestId}`);
-
-            const statusPage = document.getElementById('status-page');
-            const disclaimer = statusPage.querySelector('.disclaimer-notice') ? statusPage.querySelector('.disclaimer-notice').outerHTML : '';
-            statusPage.innerHTML = disclaimer + `
-                <div>
-                    <h1>✅ Descarga Exitosa</h1>
-                    <p>Su documento para <strong>${request.name}</strong> ha sido descargado. Por favor, revise su carpeta de descargas.</p>
-                    <p style="margin-top:30px;">Redirigiendo al menú principal...</p>
-                </div>
-            `;
-
-            // Lógica de redirección agregada
-            setTimeout(() => {
-                // Ocultar la página de estatus
-                document.getElementById('status-page').style.display = 'none';
-                document.getElementById('app-container').style.display = 'block';
-                
-                // Regresar al menú si el usuario está logueado, o al acceso si no
-                if (currentUser) {
-                    showForm('menu');
-                } else {
-                    showForm('auth_splash');
-                }
-                
-            }, 2000); // 2 segundos de espera para ver el mensaje
-        }
-        
-        // Funciones de PDF se mantienen sin cambios
-
+        // Conversión de archivo a Base64 (reutilizable)
         const fileToBase64 = (file) => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -1136,6 +999,7 @@
             </svg>`
         );
 
+        // --- Función para generar PDF de Receta SIMILARES (existente) ---
         async function generarPDFRecetaSimilares(descargar = true) {
             const doc = new jsPDF('p', 'mm', 'a4');
             const pageWidth = doc.internal.pageSize.getWidth();
@@ -1391,7 +1255,386 @@
             }
         }
 
+        // --- NUEVA FUNCIÓN: generarPDFCertificadoIMSS (formato carta, tipografía Times) ---
+        async function generarPDFCertificadoIMSS(descargar = true) {
+            // Carta completa (letter)
+            const doc = new jsPDF('p', 'mm', 'letter');
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const margin = 15;
+            let y = 18;
+            const lineHeight = 6;
 
+            // Datos del formulario
+            const medico = (document.getElementById('medicoCert').value || '').trim();
+            const cedula = (document.getElementById('cedulaCert').value || '').trim();
+            const unidad = (document.getElementById('unidadCert').value || '').trim();
+            const consultorio = (document.getElementById('consultorioCert').value || '').trim();
+            const turno = (document.getElementById('turnoCert').value || '').trim();
+
+            const paciente = (document.getElementById('pacienteCert').value || '').trim();
+            const nss = (document.getElementById('nssCert').value || '').trim();
+            const edad = (document.getElementById('edadCert').value || '').trim();
+            const sexo = (document.getElementById('sexoCert').value || '').trim();
+
+            const alergias = (document.getElementById('alergiasCert').value || '').trim();
+            const cirugias = (document.getElementById('cirugiasCert').value || '').trim();
+            const cronicas = (document.getElementById('cronicasCert').value || '').trim();
+            const vacunas = (document.getElementById('vacunasCert').value || '').trim();
+
+            const fisico = (document.getElementById('fisicoCert').value || '').trim();
+            const resp = (document.getElementById('respiratorioCert').value || '').trim();
+            const cardio = (document.getElementById('cardioCert').value || '').trim();
+            const digest = (document.getElementById('digestivoCert').value || '').trim();
+            const neuro = (document.getElementById('neuroCert').value || '').trim();
+            const osteo = (document.getElementById('osteoCert').value || '').trim();
+            const vista = (document.getElementById('vistaCert').value || '').trim();
+            const conclusion = (document.getElementById('conclusionCert').value || '').trim();
+
+            const fechaVal = document.getElementById('fechaCert').value;
+            const fechaTexto = fechaVal ? new Date(fechaVal + 'T12:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }) : new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            // Encabezado (Times, centrado)
+            doc.setFont("Times", "bold");
+            doc.setFontSize(14);
+            doc.text("INSTITUTO MEXICANO DEL SEGURO SOCIAL", pageWidth / 2, y, { align: "center" });
+            y += 7;
+            doc.setFontSize(11);
+            doc.text("DIRECCIÓN DE PRESTACIONES MÉDICAS", pageWidth / 2, y, { align: "center" });
+            y += 6;
+            doc.setFontSize(10);
+            doc.setFont("Times", "normal");
+            // Unidad médica centrada
+            const unidadLines = doc.splitTextToSize(unidad, pageWidth - margin * 2);
+            doc.text(unidadLines, pageWidth / 2, y, { align: "center" });
+            y += unidadLines.length * 6 + 6;
+
+            // Título del certificado
+            doc.setFont("Times", "bold");
+            doc.setFontSize(14);
+            doc.text("CERTIFICADO MÉDICO", pageWidth / 2, y, { align: "center" });
+            y += 9;
+
+            doc.setFontSize(11);
+            doc.setFont("Times", "normal");
+            doc.text("ASUNTO: CERTIFICADO MÉDICO", margin, y);
+            y += lineHeight;
+            doc.text("I. Num.09 55 29/3409/171/F-009", margin, y);
+            y += lineHeight + 4;
+
+            // Cuerpo inicial (tomando formato del Word)
+            const intro = `Por medio del presente el que suscribe ${medico} ${cedula} hago constar que el paciente ${paciente} con número de seguro social: ${nss}. Paciente ${sexo} de ${edad} años de edad:`;
+            const introLines = doc.splitTextToSize(intro, pageWidth - margin * 2);
+            doc.text(introLines, margin, y);
+            y += introLines.length * lineHeight + 6;
+
+            // Función auxiliar para secciones (titulo + texto)
+            const seccion = (titulo, texto) => {
+                doc.setFont("Times", "bold");
+                doc.text(titulo, margin, y);
+                y += 6;
+                doc.setFont("Times", "normal");
+                const lines = doc.splitTextToSize(texto, pageWidth - margin * 2 - 5);
+                doc.text(lines, margin + 5, y);
+                y += lines.length * lineHeight + 6;
+            };
+
+            seccion("Antecedentes Médicos:", `Alergias: ${alergias}\n\nCirugías: ${cirugias}\n\nEnfermedades Crónicas: ${cronicas}\n\nVacunas: ${vacunas}`);
+
+            seccion("Examen Físico General:", fisico);
+            seccion("Sistema Respiratorio:", resp);
+            seccion("Sistema Cardiovascular:", cardio);
+            seccion("Sistema Digestivo:", digest);
+            seccion("Sistema Neurológico:", neuro);
+            seccion("Sistema Osteomuscular:", osteo);
+            seccion("Examen de la Vista:", vista);
+
+            seccion("Conclusión:", conclusion);
+
+            // Fecha y firma
+            y += 4;
+            doc.text(`A seis días del Mes de ${fechaTexto}`, margin, y); // Mantuve la línea tal como en tu Word pero usando la fecha completa
+            y += 14;
+
+            // Firma (si se sube)
+            const firmaFile = document.getElementById('firmaCert').files[0];
+            if (firmaFile) {
+                try {
+                    const firmaBase64 = await fileToBase64(firmaFile);
+                    // Agregar firma centrada
+                    const firmaW = 60;
+                    const firmaH = 25;
+                    const firmaX = (pageWidth / 2) - (firmaW / 2);
+                    doc.addImage(firmaBase64, 'PNG', firmaX, y, firmaW, firmaH);
+                    y += firmaH + 6;
+                } catch (e) {
+                    console.warn("No se pudo agregar la firma:", e);
+                }
+            } else {
+                // Línea de firma si no hay imagen
+                const firmaLineX = (pageWidth / 2) - 30;
+                doc.setLineWidth(0.4);
+                doc.line(firmaLineX, y, firmaLineX + 60, y);
+                y += 8;
+            }
+
+            // Datos del médico al final
+            doc.setFont("Times", "bold");
+            doc.text(`DR. (A) ${medico}`, pageWidth / 2, y, { align: 'center' });
+            y += 6;
+            doc.setFont("Times", "normal");
+            doc.text(cedula, pageWidth / 2, y, { align: 'center' });
+            y += 6;
+            doc.text(`Medicina Familiar. Consultorio: ${consultorio} Turno: ${turno}.`, pageWidth / 2, y, { align: 'center' });
+
+            // Si se requiere descargar ahora
+            if (descargar) {
+                const fileNameSafe = `Certificado_Medico_IMSS_${(paciente || 'PACIENTE').replace(/\s+/g, '_')}.pdf`;
+                doc.save(fileNameSafe);
+                return true;
+            } else {
+                return doc.output('datauristring').split(',')[1];
+            }
+        }
+
+        // --- saveSolicitud MODIFICADA para integrar el certificado ---
+        async function saveSolicitud(tipoCarta) {
+            if (!currentUser) {
+                 alert("Error: Debe iniciar sesión para guardar una solicitud.");
+                 return;
+            }
+            let nombreSolicitante = currentUser.name, 
+                nombreAsunto = tipoCarta.toUpperCase(), 
+                pdfBase64 = null;
+
+            if (tipoCarta === 'receta_similares') {
+                nombreSolicitante = document.getElementById('nombrePacienteSimilares').value || 'Paciente';
+                nombreAsunto = nombreSolicitante;
+                pdfBase64 = await generarPDFRecetaSimilares(false);
+            } else if (tipoCarta === 'certificado_medico_imss') {
+                // Tomar nombre del paciente del formulario del certificado
+                nombreSolicitante = document.getElementById('pacienteCert').value || currentUser.name || 'Paciente';
+                nombreAsunto = nombreSolicitante;
+                pdfBase64 = await generarPDFCertificadoIMSS(false);
+            } else {
+                pdfBase64 = "BASE64_PLACEHOLDER_FOR_NEW_TYPE";
+            }
+
+            if (!pdfBase64) {
+                alert(`Error al generar el documento ${tipoCarta}. Por favor, revise los campos.`);
+                return;
+            }
+
+            if (pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
+                alert(`AVISO: Se ha guardado la solicitud ${tipoCarta} con datos de PRUEBA. El administrador procederá a la autorización.`);
+            }
+
+            const requestId = Date.now().toString();
+            const newRequest = {
+                id: requestId,
+                userEmail: currentUser.user, // Se añade el email del solicitante
+                type: tipoCarta,
+                name: nombreAsunto,
+                requesterName: nombreSolicitante,
+                pdfBase64: pdfBase64,
+                status: 'pending',
+                timestamp: new Date().toLocaleString()
+            };
+
+            const requests = getRequests(STORAGE_KEY);
+            requests.push(newRequest);
+            saveRequests(STORAGE_KEY, requests);
+
+            logActivity(currentUser.user, `SAVE_REQUEST:${tipoCarta}:${requestId}`);
+            
+            const url = `${getBaseUrl()}#status?id=${requestId}`;
+            const state = { viewId: 'status', requestId: requestId };
+            history.pushState(state, '', url);
+            checkURL();
+        }
+
+        function loadPendingRequests() {
+            const requests = getRequests(STORAGE_KEY).filter(req => req.status === 'pending');
+            const listElement = document.getElementById('pending-requests-list');
+            listElement.innerHTML = '';
+            if (requests.length === 0) {
+                listElement.innerHTML = '<p id="no-requests-msg">No hay solicitudes pendientes en el almacenamiento local de este navegador.</p>';
+                return;
+            }
+            requests.forEach(req => {
+                const typeDisplay = req.type.replace(/_/g, ' ').toUpperCase();
+                const item = document.createElement('div');
+                item.id = `request-${req.id}`;
+                item.className = 'request-item';
+                item.innerHTML = `
+                    <div class="request-info">
+                        <strong>${typeDisplay} - ${req.name}</strong>
+                        <p>Solicitante: ${req.requesterName} (Email: ${req.userEmail || 'N/A'})</p>
+                        <p style="font-size:0.8em;">URL del Cliente: <code style="word-break: break-all;">${getBaseUrl()}#status?id=${req.id}</code></p>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn-authorize" onclick="authorizeRequest('${req.id}')">Autorizar</button>
+                        <button class="btn-reject" onclick="deleteRequest('${req.id}', '${STORAGE_KEY}')">Rechazar</button>
+                    </div>
+                `;
+                listElement.appendChild(item);
+            });
+        }
+        
+        function authorizeRequest(requestId) {
+            let pendingRequests = getRequests(STORAGE_KEY);
+            const index = pendingRequests.findIndex(req => req.id === requestId);
+            if (index === -1) {
+                alert("Error: Solicitud no encontrada.");
+                loadPendingRequests();
+                return;
+            }
+            const request = pendingRequests[index];
+            request.status = 'approved';
+            const approvedRequests = getRequests(APPROVED_KEY);
+            approvedRequests.push(request);
+            saveRequests(APPROVED_KEY, approvedRequests);
+            pendingRequests.splice(index, 1);
+            saveRequests(STORAGE_KEY, pendingRequests);
+            
+            logActivity(ADMIN_USER, `AUTHORIZE_REQUEST:${request.type}:${requestId}`);
+            
+            alert(`¡Solicitud Autorizada! El cliente ahora puede descargar el archivo usando el enlace de su página de estatus.`);
+            loadPendingRequests();
+        }
+        
+        function deleteRequest(requestId, key) {
+            if (!confirm(`¿Está seguro de ELIMINAR esta solicitud (ID: ${requestId})?`)) return;
+
+            let requests = getRequests(key);
+            const index = requests.findIndex(req => req.id === requestId);
+            
+            if (index > -1) {
+                const requestType = requests[index].type;
+                requests.splice(index, 1);
+                saveRequests(key, requests);
+                
+                logActivity(ADMIN_USER, `DELETE_REQUEST:${requestType}:${requestId}`);
+            }
+            loadPendingRequests();
+        }
+        
+        function checkURL() {
+            if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
+            
+            // 1. Verificar si es una URL de estatus
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash.split('?')[1] || '');
+            const requestId = params.get('id');
+
+            if (hash.startsWith('status') && requestId) {
+                document.getElementById('app-container').style.display = 'none';
+                document.getElementById('status-page').style.display = 'flex';
+                document.getElementById('status-page').innerHTML = '<div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>';
+                checkStatus(requestId);
+                statusCheckInterval = setInterval(() => checkStatus(requestId), 5000);
+                return;
+            }
+
+            // 2. Si NO es estatus, intentar cargar la sesión
+            const sessionLoaded = loadSession();
+            
+            // 3. Determinar la vista inicial por defecto
+            let initialView = 'auth_splash';
+            if (sessionLoaded) {
+                if (currentUser.isAdmin) {
+                    initialView = 'admin_dashboard';
+                } else {
+                    initialView = 'menu';
+                }
+            }
+
+            // 4. Mostrar la vista: si el hash es válido, ir ahí, sino, usar la vista inicial determinada.
+            // Esto asegura que si recargas estando en un formulario (e.g., #receta_similares) y tienes sesión, te quedes ahí.
+            const targetHash = hash.split('?')[0]; // Ignorar query params para la vista
+            if (targetHash && targetHash !== initialView && viewIdMap[targetHash]) {
+                 showForm(targetHash, false);
+            } else {
+                 showForm(initialView, false);
+            }
+        }
+
+        function checkStatus(requestId) {
+            const approvedRequests = getRequests(APPROVED_KEY);
+            const request = approvedRequests.find(req => req.id === requestId);
+            const statusPage = document.getElementById('status-page');
+            const disclaimer = statusPage.querySelector('.disclaimer-notice') ? statusPage.querySelector('.disclaimer-notice').outerHTML : '';
+            if (!request) {
+                statusPage.innerHTML = disclaimer + `
+                    <h2>⏳ Solicitud Enviada - Esperando Autorización</h2>
+                    <div class="spinner"></div>
+                    <p>Su solicitud de <strong>${requestId}</strong> ha sido recibida.</p>
+                    <p>Estamos esperando que el administrador la apruebe una vez realizado el pago.</p>
+                    <p style="font-size:0.8em;color:#555;">(Esta página se actualizará automáticamente cada 5 segundos)</p>
+                    <p style="margin-top:20px;">Puede guardar este enlace: <code>${getBaseUrl()}#status?id=${requestId}</code></p>
+                `;
+            } else {
+                if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
+                statusPage.innerHTML = disclaimer + `
+                    <h2>✅ ¡Solicitud Aprobada!</h2>
+                    <p>El administrador ha autorizado su documento para <strong>${request.name}</strong>.</p>
+                    <button class="btn-action btn-download-now" onclick="triggerDownload('${request.id}')"> Descargar Documento Ahora </button>
+                    <p style="margin-top:30px;"><a href="#" onclick="showForm('menu')">← Volver al Menú Principal</a></p>
+                `;
+            }
+        }
+
+        // 🟢 FUNCIÓN MODIFICADA PARA REGRESAR AL MENÚ AUTOMÁTICAMENTE (De la solicitud anterior) 🟢
+        function triggerDownload(requestId) {
+            const approvedRequests = getRequests(APPROVED_KEY);
+            const request = approvedRequests.find(req => req.id === requestId);
+            if (!request) {
+                alert("Error: Archivo no encontrado.");
+                showForm('menu');
+                return;
+            }
+            if (request.pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
+                alert("Este es un documento placeholder de PRUEBA. No se puede descargar un PDF real.");
+                return;
+            }
+            const pdfBase64 = request.pdfBase64;
+            const name = request.name.toUpperCase().replace(/\s/g, '_');
+            const type = request.type.toUpperCase().replace(/_/g, '-');
+            const link = document.createElement('a');
+            link.href = `data:application/pdf;base64,${pdfBase64}`;
+            link.download = `Documento_Aprobado_${name}_${type}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            if(currentUser) logActivity(currentUser.user, `DOWNLOAD_DOCUMENT:${request.type}:${requestId}`);
+
+            const statusPage = document.getElementById('status-page');
+            const disclaimer = statusPage.querySelector('.disclaimer-notice') ? statusPage.querySelector('.disclaimer-notice').outerHTML : '';
+            statusPage.innerHTML = disclaimer + `
+                <div>
+                    <h1>✅ Descarga Exitosa</h1>
+                    <p>Su documento para <strong>${request.name}</strong> ha sido descargado. Por favor, revise su carpeta de descargas.</p>
+                    <p style="margin-top:30px;">Redirigiendo al menú principal...</p>
+                </div>
+            `;
+
+            // Lógica de redirección agregada
+            setTimeout(() => {
+                // Ocultar la página de estatus
+                document.getElementById('status-page').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
+                
+                // Regresar al menú si el usuario está logueado, o al acceso si no
+                if (currentUser) {
+                    showForm('menu');
+                } else {
+                    showForm('auth_splash');
+                }
+                
+            }, 2000); // 2 segundos de espera para ver el mensaje
+        }
+        
         window.addEventListener('load', () => {
             checkURL();
         });
