@@ -477,6 +477,7 @@
         // 🔑 Estado de la sesión
         let statusCheckInterval = null;
         let currentUser = null; // Variable global para el usuario logueado
+        const CURRENT_USER_SESSION_KEY = 'current_user_session'; // CLAVE DE SESIÓN AÑADIDA
 
         function getBaseUrl() {
             return window.location.href.split('#')[0];
@@ -553,6 +554,29 @@
                     loadAdminDashboard();
                 }
             }
+        }
+
+        // --- MANEJO DE SESIÓN PERSISTENTE (NUEVAS FUNCIONES) ---
+
+        function saveSession(userObj) {
+            try {
+                localStorage.setItem(CURRENT_USER_SESSION_KEY, JSON.stringify(userObj));
+            } catch (e) {
+                console.error("Error saving session to localStorage", e);
+            }
+        }
+
+        function loadSession() {
+            try {
+                const storedUser = localStorage.getItem(CURRENT_USER_SESSION_KEY);
+                if (storedUser) {
+                    currentUser = JSON.parse(storedUser);
+                    return true;
+                }
+            } catch (e) {
+                console.error("Error loading session from localStorage", e);
+            }
+            return false;
         }
 
         // --- CONFIRMACIÓN AL SALIR O VOLVER ATRÁS ---
@@ -661,6 +685,7 @@
             // 1. Check against hardcoded ADMIN
             if (user === ADMIN_USER && pass === ADMIN_PASS) {
                 currentUser = { user: user, name: 'ADMIN', status: 'authorized', isAdmin: true };
+                saveSession(currentUser); // <--- SESIÓN GUARDADA
                 logActivity(user, 'ADMIN_LOGIN_SUCCESS');
                 alert("¡Bienvenido, Administrador! Accediendo al Panel de Control.");
                 showForm('admin_dashboard');
@@ -680,6 +705,7 @@
                 
                 // Usuario autorizado
                 currentUser = foundUser;
+                saveSession(currentUser); // <--- SESIÓN GUARDADA
                 logActivity(user, 'USER_LOGIN_SUCCESS');
                 alert(`¡Bienvenido, ${foundUser.name}! Acceso completado.`);
                 showForm('menu');
@@ -696,6 +722,7 @@
                 logActivity(currentUser.user, 'LOGOUT');
             }
             currentUser = null;
+            localStorage.removeItem(CURRENT_USER_SESSION_KEY); // <--- SESIÓN ELIMINADA
             document.getElementById('loginUser').value = '';
             document.getElementById('loginPass').value = '';
             showForm('auth_splash');
@@ -926,13 +953,14 @@
             loadPendingRequests();
         }
         
-        // El resto de funciones (checkURL, checkStatus, triggerDownload, generarPDFRecetaSimilares, etc.) se mantienen igual
-        
         function checkURL() {
             if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
+            
+            // 1. Verificar si es una URL de estatus
             const hash = window.location.hash.substring(1);
             const params = new URLSearchParams(hash.split('?')[1] || '');
             const requestId = params.get('id');
+
             if (hash.startsWith('status') && requestId) {
                 document.getElementById('app-container').style.display = 'none';
                 document.getElementById('status-page').style.display = 'flex';
@@ -941,11 +969,27 @@
                 statusCheckInterval = setInterval(() => checkStatus(requestId), 5000);
                 return;
             }
-            // Si no hay hash de estatus y no hay sesión, ir al splash
-            if (!currentUser) {
-                showForm('auth_splash', false);
+
+            // 2. Si NO es estatus, intentar cargar la sesión
+            const sessionLoaded = loadSession();
+            
+            // 3. Determinar la vista inicial por defecto
+            let initialView = 'auth_splash';
+            if (sessionLoaded) {
+                if (currentUser.isAdmin) {
+                    initialView = 'admin_dashboard';
+                } else {
+                    initialView = 'menu';
+                }
+            }
+
+            // 4. Mostrar la vista: si el hash es válido, ir ahí, sino, usar la vista inicial determinada.
+            // Esto asegura que si recargas estando en un formulario (e.g., #receta_similares) y tienes sesión, te quedes ahí.
+            const targetHash = hash.split('?')[0]; // Ignorar query params para la vista
+            if (targetHash && targetHash !== initialView && viewIdMap[targetHash]) {
+                 showForm(targetHash, false);
             } else {
-                showForm('menu', false);
+                 showForm(initialView, false);
             }
         }
 
@@ -974,7 +1018,7 @@
             }
         }
 
-        // 🟢 FUNCIÓN MODIFICADA PARA REGRESAR AL MENÚ AUTOMÁTICAMENTE 🟢
+        // 🟢 FUNCIÓN MODIFICADA PARA REGRESAR AL MENÚ AUTOMÁTICAMENTE (De la solicitud anterior) 🟢
         function triggerDownload(requestId) {
             const approvedRequests = getRequests(APPROVED_KEY);
             const request = approvedRequests.find(req => req.id === requestId);
