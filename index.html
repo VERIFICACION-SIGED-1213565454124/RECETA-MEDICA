@@ -23,7 +23,7 @@
         .input-group, .form-section { background-color: #ffffff; padding: 20px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         h2 { color: #34495e; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-bottom: 15px; }
         label { display: block; margin-top: 10px; font-weight: bold; color: #555; }
-        input[type="text"], input[type="date"], textarea, input[type="file"], input[type="password"], input[type="email"], select {
+        input[type="text"], input[type="date"], textarea, input[type="file"], input[type="password"], input[type="email"] {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -33,7 +33,7 @@
             box-sizing: border-box;
         }
         .date-container { display:flex; justify-content:space-between; gap:10px; }
-        .date-container input, .date-container select { width:100%; }
+        .date-container input { width:100%; }
         textarea { height:120px; resize:vertical; }
         .btn-action {
             background-color: #e67e22;
@@ -50,19 +50,12 @@
         .btn-action:hover { background-color: #d35400; }
         .back-button { background-color: #95a5a6; width:auto; padding:10px 15px; font-size:1em; }
         
-        /* Estilos para Transiciones Fluidas */
-        .form-section, #main-menu {
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            pointer-events: none;
-            display: none; 
-        }
-        .form-section.active, #main-menu.active {
-            opacity: 1;
-            pointer-events: auto;
-            display: block !important;
-        }
-
+        /* Estilos de Control de Vistas */
+        .form-section, #main-menu { display:none; }
+        #app-container { min-height: 500px; } /* Asegura espacio para la vista inicial */
+        
+        /* ELIMINADO: #btn-go-admin */
+        
         .status-page { text-align:center; padding:50px; background-color:#fff; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); min-height:250px; display:flex; flex-direction:column; justify-content:center; }
         .status-page .spinner { border:5px solid #f3f3f3; border-top:5px solid #3498db; border-radius:50%; width:50px; height:50px; animation: spin 2s linear infinite; margin:20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -128,14 +121,19 @@
         .category-certificado i { color: #3498db; }
         .category-especializado i { color: #9b59b6; }
         
-        /* Estilos para el log de actividad y settings */
+        .category-social:hover i { color: #128c7e; }
+        .category-carta:hover i { color: #d35400; }
+        .category-receta:hover i { color: #1e8449; }
+        .category-certificado:hover i { color: #2980b9; }
+        .category-especializado:hover i { color: #8e44ad; }
+        
+        /* Estilos para el log de actividad */
         #activity-log-display {
             max-height: 300px;
             overflow-y: scroll;
             border: 1px solid #ddd;
             padding: 10px;
             background-color: #f9f9f9;
-            margin-bottom: 25px;
         }
         .log-entry {
             border-bottom: 1px dashed #eee;
@@ -144,19 +142,6 @@
         }
         .log-entry:last-child {
             border-bottom: none;
-        }
-        .admin-setting-item {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 15px;
-            background-color: #f9f9f9;
-        }
-        .admin-setting-item img {
-            max-width: 100px;
-            max-height: 100px;
-            border: 1px solid #eee;
-            display: block;
-            margin-top: 5px;
         }
     </style>
 </head>
@@ -170,7 +155,7 @@
 
     <div id="app-container">
 
-        <div id="auth-splash" class="form-section active">
+        <div id="auth-splash" class="form-section" style="display:block;">
             <h2>👤 Acceso Requerido</h2>
             <p>Inicie sesión para acceder al menú de servicios, o regístrese si es un usuario nuevo.</p>
 
@@ -305,29 +290,6 @@
             <button class="back-button" onclick="logOut()">← Cerrar Sesión</button>
             <h2>⚙️ Panel de Administrador</h2>
 
-            <div id="admin-settings" class="input-group">
-                <h3>🖼️ Configuración Global de Imágenes (Default)</h3>
-                <p style="font-size: 0.9em; color: #c0392b; font-weight: bold;">⚠️ Las imágenes subidas aquí serán usadas por defecto en los PDF de Certificado Médico IMSS y Receta Similares, sobreescribiendo las opciones del cliente.</p>
-
-                <div class="admin-setting-item">
-                    <h4>Logo / Membrete por Defecto (IMSS / Similares)</h4>
-                    <label for="defaultLogoInput">Subir Nuevo Logo/Membrete (PNG/JPG):</label>
-                    <input type="file" id="defaultLogoInput" accept="image/*">
-                    <button class="btn-action" style="background-color: #1abc9c; width: auto; padding: 10px 15px;" onclick="uploadDefaultImage('logo')">Guardar Logo por Defecto</button>
-                    <p style="margin-top: 10px;">Logo Actual:</p>
-                    <img id="defaultLogoPreview" src="" alt="Logo no configurado" style="display: none; max-width: 150px;"/>
-                </div>
-
-                <div class="admin-setting-item">
-                    <h4>Firma del Médico por Defecto (Similares / IMSS)</h4>
-                    <label for="defaultSignatureInput">Subir Nueva Firma (PNG/JPG):</label>
-                    <input type="file" id="defaultSignatureInput" accept="image/*">
-                    <button class="btn-action" style="background-color: #1abc9c; width: auto; padding: 10px 15px;" onclick="uploadDefaultImage('signature')">Guardar Firma por Defecto</button>
-                    <p style="margin-top: 10px;">Firma Actual:</p>
-                    <img id="defaultSignaturePreview" src="" alt="Firma no configurada" style="display: none; max-width: 150px; height: auto;"/>
-                </div>
-            </div>
-
             <h3>Clientes Registrados (Autorización)</h3>
             <div id="client-authorization-list" class="input-group">
                 <p id="no-clients-msg">Cargando lista de clientes...</p>
@@ -343,130 +305,6 @@
             <div id="pending-requests-list" class="input-group">
                 <p id="no-requests-msg">No hay solicitudes pendientes.</p>
             </div>
-        </div>
-        
-        <div id="form-certificado_medico_imss" class="form-section">
-            <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
-            <div class="disclaimer-notice">
-                *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
-            </div>
-            <div class="payment-notice">
-                *PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*
-            </div>
-            <h2>🏥 Certificado Médico IMSS</h2>
-            
-            <div class="input-group">
-                <h2>🖼️ Logo / Membrete (Opcional)</h2>
-                <p style="font-size: 0.9em; color: #2980b9; font-weight: bold;">*Nota: Se usará la imagen por defecto del administrador si está configurada, ignorando esta opción.*</p>
-                <label for="certImssLogoInput">Seleccionar Imagen para Logo/Membrete (PNG/JPG):</label>
-                <input type="file" id="certImssLogoInput" accept="image/*">
-            </div>
-
-            <div class="input-group">
-                <h2>👨‍⚕️ Datos del Médico</h2>
-                <label for="certImssDoctorNombre">Nombre del Médico (Ej: DRA. YESSICA MEJÍA CARRANZA):</label>
-                <input type="text" id="certImssDoctorNombre" value="DRA. YESSICA MEJÍA CARRANZA" required>
-                
-                <label for="certImssDoctorCedula">Cédula Profesional (Ej: C.P. 5866652):</label>
-                <input type="text" id="certImssDoctorCedula" value="C.P. 5866652" required>
-
-                <label for="certImssDoctorEspecialidad">Especialidad (Ej: Medicina Familiar):</label>
-                <input type="text" id="certImssDoctorEspecialidad" value="Medicina Familiar" required>
-
-                <div class="date-container">
-                    <div>
-                        <label for="certImssUmf">UMF No. (Ej: 67):</label>
-                        <input type="text" id="certImssUmf" value="UMF 67" required>
-                    </div>
-                    <div>
-                        <label for="certImssDoctorConsultorio">Consultorio (Ej: 5):</label>
-                        <input type="text" id="certImssDoctorConsultorio" value="5" required>
-                    </div>
-                    <div>
-                        <label for="certImssDoctorTurno">Turno (Ej: Vespertino):</label>
-                        <input type="text" id="certImssDoctorTurno" value="Vespertino" required>
-                    </div>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <h2>👤 Datos del Paciente</h2>
-                <label for="certImssNombre">Nombre Completo del Paciente:</label>
-                <input type="text" id="certImssNombre" value="CARMEN MORELOS HERNÁNDEZ" required>
-
-                <label for="certImssNss">Número de Seguridad Social (NSS):</label>
-                <input type="text" id="certImssNss" value="1715950626-4" required>
-
-                <div class="date-container">
-                    <div>
-                        <label for="certImssEdad">Edad (Años):</label>
-                        <input type="number" id="certImssEdad" value="30" required>
-                    </div>
-                    <div>
-                        <label for="certImssSexo">Sexo:</label>
-                        <select id="certImssSexo" required>
-                            <option value="Femenino">Femenino</option>
-                            <option value="Masculino">Masculino</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="date-container">
-                    <div>
-                        <label for="certImssFechaNac">Fecha de Nacimiento:</label>
-                        <input type="date" id="certImssFechaNac" value="1995-01-01" required>
-                    </div>
-                    <div>
-                        <label for="certImssTipoSangre">Tipo de Sangre (Ej: O+):</label>
-                        <input type="text" id="certImssTipoSangre" value="O+" required>
-                    </div>
-                </div>
-                
-                <label for="certImssDireccion">Dirección/Localidad (Ej: SANTA CLARA ECATEPEC ESTADO DE MÉXICO):</label>
-                <input type="text" id="certImssDireccion" value="SANTA CLARA ECATEPEC ESTADO DE MÉXICO" required>
-            </div>
-
-            <div class="input-group">
-                <h2>📈 Examen Físico y Conclusión</h2>
-                <div class="date-container">
-                    <div>
-                        <label for="certImssPeso">Peso (Ej: 90.00kg):</label>
-                        <input type="text" id="certImssPeso" value="90.00kg" required>
-                    </div>
-                    <div>
-                        <label for="certImssTalla">Talla (Ej: 1.65 mts):</label>
-                        <input type="text" id="certImssTalla" value="1.65 mts" required>
-                    </div>
-                </div>
-                <div class="date-container">
-                    <div>
-                        <label for="certImssPA">Presión Arterial (Ej: 110/76 mmHg):</label>
-                        <input type="text" id="certImssPA" value="110/76 mmHg" required>
-                    </div>
-                    <div>
-                        <label for="certImssFC">Frecuencia Cardíaca (Ej: 78 lpm):</label>
-                        <input type="text" id="certImssFC" value="78 lpm" required>
-                    </div>
-                </div>
-                <div class="date-container">
-                    <div>
-                        <label for="certImssFR">Frecuencia Respiratoria (Ej: 16 rpm):</label>
-                        <input type="text" id="certImssFR" value="16 rpm" required>
-                    </div>
-                    <div>
-                        <label for="certImssTemp">Temperatura Corporal (Ej: 36.7°C):</label>
-                        <input type="text" id="certImssTemp" value="36.7°C" required>
-                    </div>
-                </div>
-
-                <label for="certImssConclusion">Conclusión (Recomendación de Aptitud):</label>
-                <textarea id="certImssConclusion" required>Es apto/apta para realizar actividades físicas sin restricciones.</textarea>
-
-                <label for="certImssFechaEmision">Fecha de Emisión del Certificado:</label>
-                <input type="date" id="certImssFechaEmision" value="2025-10-06" required>
-            </div>
-
-            <button class="btn-action" style="background-color:#2980b9;" onclick="saveSolicitud('certificado_medico_imss')">💾 Guardar Solicitud (Generar PDF y Esperar Aprobación)</button>
         </div>
         <div id="form-receta_similares" class="form-section">
             <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
@@ -496,12 +334,8 @@
                 <label for="fechaEmisionSimilares">Fecha de Emisión de la Receta:</label>
                 <input type="date" id="fechaEmisionSimilares" value="">
 
-                <h2>🖼️ Logo / Firma (Opcional)</h2>
-                <p style="font-size: 0.9em; color: #2980b9; font-weight: bold;">*Nota: Se usarán las imágenes por defecto del administrador si están configuradas.*</p>
                 <label for="logoInputSimilares">Insertar Logo de la Institución/Receta (Opcional):</label>
                 <input type="file" id="logoInputSimilares" accept="image/*">
-                <label for="firmaInputSimilares">Firma del Médico (Opcional):</label>
-                <input type="file" id="firmaInputSimilares" accept="image/*">
             </div>
 
             <div class="input-group">
@@ -595,6 +429,9 @@
 
                 <label for="proximaCitaSimilares">Próxima Cita (Fecha):</label>
                 <input type="text" id="proximaCitaSimilares" value="27/03/2021">
+
+                <label for="firmaInputSimilares">Firma del Médico (Opcional, NO colocada automáticamente si la sube):</label>
+                <input type="file" id="firmaInputSimilares" accept="image/*">
             </div>
 
             <button class="btn-action" onclick="saveSolicitud('receta_similares')">💾 Guardar Solicitud (Esperar Aprobación)</button>
@@ -615,9 +452,7 @@
     </div>
 
     <div id="status-page" class="status-page" style="display:none;">
-        <div class="disclaimer-notice">
-            *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
-        </div>
+        <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>
     </div>
 
     <a href="https://wa.me/message/AZLK65CETSPQL1" class="whatsapp-float" target="_blank" title="Soporte WhatsApp">
@@ -633,38 +468,32 @@
         const { jsPDF } = window.jspdf;
         const STORAGE_KEY = 'pending_requests_list';
         const APPROVED_KEY = 'approved_requests_list';
+        // 🔑 Nuevas claves para usuarios y actividad
         const REGISTERED_USERS_KEY = 'registered_app_users';
         const USER_ACTIVITY_KEY = 'user_activity_log';
-        const ADMIN_SETTINGS_KEY = 'admin_default_settings'; 
-        
         // 🔑 Credenciales de administrador fijas (Solo para el Admin)
         const ADMIN_USER = 'trollgaga999@gmail.com';
         const ADMIN_PASS = 'Johan207';
-        
-        // 🔑 CONSTANTES DE SESIÓN
-        const SESSION_KEY = 'user_session_v1';
-        const SESSION_EXPIRY_MS = 60 * 60 * 1000; // 1 hora en milisegundos
-        
         // 🔑 Estado de la sesión
         let statusCheckInterval = null;
-        let currentUser = null; 
+        let currentUser = null; // Variable global para el usuario logueado
 
         function getBaseUrl() {
             return window.location.href.split('#')[0];
         }
 
         const viewIdMap = {
-            'auth_splash': 'auth-splash', 
-            'register': 'form-register', 
+            'auth_splash': 'auth-splash', // Nueva pantalla de inicio
+            'register': 'form-register', // Nuevo formulario de registro
             'menu': 'main-menu',
             'laboral': 'form-laboral',
             'personal': 'form-personal',
+            // 'admin_login': 'admin-login', // Reemplazado por 'auth-splash' para simplificar
             'admin_dashboard': 'admin-dashboard',
             'incapacidad_imss': 'form-incapacidad_imss',
             'receta_similares': 'form-receta_similares',
             'receta_ahorro': 'form-receta_ahorro',
             'receta_imss': 'form-receta_imss',
-            'certificado_medico_imss': 'form-certificado_medico_imss',
             'cert_primaria': 'form-cert_primaria',
             'cert_secundaria': 'form-cert_secundaria',
             'cert_prepa': 'form-cert_prepa',
@@ -676,99 +505,12 @@
             'formato_solicitud_pdf': 'formato_solicitud_pdf'
         };
 
-        // 🔑 CONFIGURACIÓN GLOBAL DE ADMIN
-        function getDefaultSettings() {
-            const data = localStorage.getItem(ADMIN_SETTINGS_KEY);
-            return data ? JSON.parse(data) : { logoBase64: null, signatureBase64: null };
-        }
-        function saveDefaultSettings(settings) {
-            localStorage.setItem(ADMIN_SETTINGS_KEY, JSON.stringify(settings));
-        }
-
-        async function uploadDefaultImage(type) {
-            const inputId = type === 'logo' ? 'defaultLogoInput' : 'defaultSignatureInput';
-            const fileInput = document.getElementById(inputId);
-            const file = fileInput.files[0];
-
-            if (!file) {
-                alert(`Por favor, seleccione un archivo para el ${type}.`);
-                return;
-            }
-
-            const base64Data = await fileToBase64(file);
-            if (!base64Data) {
-                alert("Error al convertir el archivo a Base64.");
-                return;
-            }
-
-            const settings = getDefaultSettings();
-            if (type === 'logo') {
-                settings.logoBase64 = base64Data;
-                alert("Logo por defecto guardado exitosamente. Se aplicará a los PDFs.");
-            } else {
-                settings.signatureBase64 = base64Data;
-                alert("Firma por defecto guardada exitosamente. Se aplicará a los PDFs.");
-            }
-            
-            saveDefaultSettings(settings);
-            logActivity(ADMIN_USER, `UPDATE_DEFAULT_IMAGE:${type.toUpperCase()}`);
-            
-            // Actualizar la vista previa y limpiar input
-            loadAdminDashboard(); 
-            fileInput.value = '';
-        }
-
-        function updateAdminSettingsPreview() {
-            const settings = getDefaultSettings();
-            
-            const logoPreview = document.getElementById('defaultLogoPreview');
-            if (settings.logoBase64) {
-                logoPreview.src = settings.logoBase64;
-                logoPreview.style.display = 'block';
-                logoPreview.alt = 'Logo configurado';
-            } else {
-                logoPreview.style.display = 'none';
-                logoPreview.alt = 'Logo no configurado';
-            }
-
-            const signaturePreview = document.getElementById('defaultSignaturePreview');
-            if (settings.signatureBase64) {
-                signaturePreview.src = settings.signatureBase64;
-                signaturePreview.style.display = 'block';
-                signaturePreview.alt = 'Firma configurada';
-            } else {
-                signaturePreview.style.display = 'none';
-                signaturePreview.alt = 'Firma no configurada';
-            }
-        }
-        // FIN DE CONFIGURACIÓN GLOBAL DE ADMIN
-
-        function refreshSessionTimestamp() {
-            if (currentUser) {
-                const storedSession = localStorage.getItem(SESSION_KEY);
-                if (storedSession) {
-                    try {
-                        const sessionData = JSON.parse(storedSession);
-                        if (sessionData.user.user === currentUser.user) {
-                            sessionData.timestamp = Date.now();
-                            localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
-                        }
-                    } catch (e) {
-                        console.error("Error al refrescar la sesión:", e);
-                    }
-                }
-            }
-        }
-
         function showForm(viewId, pushHistory = true) {
+            // Verifica el estado de autenticación para todas las vistas que no son de auth/register
             const requiresAuth = !['auth_splash', 'register', 'status', 'whatsapp_group'].includes(viewId);
             const isMenuOrService = viewId === 'menu' || viewIdMap[viewId]?.startsWith('form-');
             const isDashboard = viewId === 'admin_dashboard';
             
-            if (currentUser) {
-                refreshSessionTimestamp();
-            }
-
             if (requiresAuth && !currentUser) {
                 alert("Debe iniciar sesión para acceder a este contenido.");
                 viewId = 'auth_splash';
@@ -777,54 +519,67 @@
                 viewId = 'menu';
             }
 
+            const sections = Object.values(viewIdMap);
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+
             const targetId = viewIdMap[viewId] || viewId;
-            const targetElement = document.getElementById(targetId);
-            
+            const viewElement = document.getElementById(targetId);
+
             if (viewId === 'whatsapp_group') {
                 window.open('https://chat.whatsapp.com/GbkvIbPwCRX1JacpJJOS9D', '_blank');
                 logActivity(currentUser?.user || 'anon', 'VIEW_WHATSAPP_GROUP');
                 return;
             }
 
-            const currentActive = document.querySelector('.form-section.active, #main-menu.active');
-
-            const transitionToNext = () => {
-                const sections = Object.values(viewIdMap);
-                sections.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el && el !== targetElement) {
-                        el.classList.remove('active');
-                    }
-                });
-
-                if (targetElement) {
-                    targetElement.classList.add('active'); 
-                    
-                    window.scrollTo(0, 0);
-                    if (pushHistory) {
-                        let url = getBaseUrl();
-                        let state = { viewId: viewId };
-                        if (viewId !== 'menu') { url += `#${viewId}`; } else { url = getBaseUrl(); }
-                        history.pushState(state, '', url);
-                    }
-                    
-                    if (isMenuOrService && currentUser) {
-                        logActivity(currentUser.user, viewId === 'menu' ? 'ACCESS_MENU' : `VIEW_FORM:${viewId}`);
-                    }
-                    if (isDashboard && currentUser) {
-                        logActivity(currentUser.user, 'ACCESS_ADMIN_DASHBOARD');
-                        loadAdminDashboard(); 
-                    }
+            if (viewElement) {
+                viewElement.style.display = 'block';
+                window.scrollTo(0, 0);
+                if (pushHistory) {
+                    let url = getBaseUrl();
+                    let state = { viewId: viewId };
+                    if (viewId !== 'menu') { url += `#${viewId}`; } else { url = getBaseUrl(); }
+                    history.pushState(state, '', url);
+                }
+                
+                // Registro de actividad (solo si no es auth/register/status)
+                if (isMenuOrService) {
+                    logActivity(currentUser.user, viewId === 'menu' ? 'ACCESS_MENU' : `VIEW_FORM:${viewId}`);
+                }
+                if (isDashboard) {
+                    logActivity(currentUser.user, 'ACCESS_ADMIN_DASHBOARD');
+                    loadAdminDashboard();
                 }
             }
-
-            if (currentActive && currentActive !== targetElement) {
-                currentActive.classList.remove('active');
-                setTimeout(transitionToNext, 300); 
-            } else {
-                transitionToNext();
-            }
         }
+
+        // --- CONFIRMACIÓN AL SALIR O VOLVER ATRÁS ---
+        window.addEventListener('popstate', (e) => {
+            const state = history.state;
+            // Solo preguntar si hay sesión activa y se intenta salir del menú o formularios
+            if (currentUser && (!state || !state.viewId || state.viewId === 'auth_splash')) {
+                const salir = confirm("⚠️ ¿Está seguro de que desea cerrar sesión y salir de los servicios?");
+                if (salir) {
+                    logOut();
+                } else {
+                    // Mantener la vista actual si cancela
+                    history.pushState({ viewId: 'menu' }, '', '#menu');
+                    showForm('menu', false);
+                }
+                return;
+            }
+
+            // Si no hay sesión activa, ir al acceso normal
+            if (!state) { 
+                showForm('auth_splash', false); 
+                return; 
+            }
+
+            // Si hay estado previo, mostrar esa vista
+            showForm(state.viewId || 'auth_splash', false);
+        });
 
         // --- FUNCIONES DE ALMACENAMIENTO (USERS & ACTIVITY) ---
 
@@ -837,7 +592,7 @@
         }
         
         function getActivityLog() {
-            const data = localStorage.getItem(USER_ACTIVITY_KEY); 
+            const data = localStorage.getItem(USER_ACTIVITY_KEY);
             return data ? JSON.parse(data) : [];
         }
         function saveActivityLog(log) {
@@ -857,29 +612,62 @@
             saveActivityLog(log);
         }
 
-        // --- FUNCIONES DE AUTENTICACIÓN, REGISTRO Y ADMIN ---
+        // --- FUNCIONES DE AUTENTICACIÓN Y REGISTRO ---
 
-        function loadAdminDashboard() {
-            loadPendingRequests();
-            loadRegisteredClients();
-            updateAdminSettingsPreview(); 
-            document.getElementById('activity-log-display').innerHTML = '<p>Seleccione un cliente para ver su actividad detallada.</p>';
+        function registerUser() {
+            const name = document.getElementById('regName').value.trim();
+            const user = document.getElementById('regUser').value.trim();
+            const pass = document.getElementById('regPass').value;
+
+            if (!name || !user || !pass) {
+                alert("Por favor, complete todos los campos.");
+                return;
+            }
+            if (!user.includes('@') || user.length < 5) {
+                alert("Ingrese un correo electrónico válido.");
+                return;
+            }
+
+            const users = getRegisteredUsers();
+            if (users.some(u => u.user === user)) {
+                alert("Error: El correo electrónico ya está registrado o en proceso de autorización.");
+                return;
+            }
+
+            const newUser = { 
+                name: name, 
+                user: user, 
+                pass: pass, 
+                status: 'pending', // Clave: debe ser autorizado
+                timestamp: new Date().toLocaleString()
+            }; 
+            users.push(newUser);
+            saveRegisteredUsers(users);
+
+            // Limpiar campos
+            document.getElementById('regName').value = '';
+            document.getElementById('regUser').value = '';
+            document.getElementById('regPass').value = '';
+
+            logActivity(user, 'REGISTER_REQUESTED');
+            alert("¡Solicitud de registro exitosa! Su cuenta está PENDIENTE de autorización por el administrador. Le avisaremos cuando pueda iniciar sesión.");
+            showForm('auth_splash');
         }
-        
+
         function authenticateUser() {
             const user = document.getElementById('loginUser').value;
             const pass = document.getElementById('loginPass').value;
 
+            // 1. Check against hardcoded ADMIN
             if (user === ADMIN_USER && pass === ADMIN_PASS) {
                 currentUser = { user: user, name: 'ADMIN', status: 'authorized', isAdmin: true };
-                const sessionData = { user: currentUser, timestamp: Date.now() };
-                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
                 logActivity(user, 'ADMIN_LOGIN_SUCCESS');
                 alert("¡Bienvenido, Administrador! Accediendo al Panel de Control.");
                 showForm('admin_dashboard');
                 return;
             }
 
+            // 2. Check against registered standard users
             const registeredUsers = getRegisteredUsers();
             const foundUser = registeredUsers.find(u => u.user === user && u.pass === pass);
 
@@ -890,367 +678,409 @@
                     return;
                 }
                 
+                // Usuario autorizado
                 currentUser = foundUser;
-                const sessionData = { user: currentUser, timestamp: Date.now() };
-                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
-
                 logActivity(user, 'USER_LOGIN_SUCCESS');
                 alert(`¡Bienvenido, ${foundUser.name}! Acceso completado.`);
                 showForm('menu');
                 return;
             }
             
+            // If neither is found
             logActivity(user, 'LOGIN_FAIL:INVALID_CREDENTIALS');
             alert("Usuario o Contraseña incorrectos. Si no tiene cuenta, por favor regístrese.");
         }
-
-        function registerUser() {
-            const name = document.getElementById('regName').value;
-            const user = document.getElementById('regUser').value;
-            const pass = document.getElementById('regPass').value;
-
-            if (!name || !user || !pass) {
-                alert("Por favor, complete todos los campos de registro.");
-                return;
-            }
-
-            let users = getRegisteredUsers();
-            if (users.find(u => u.user === user)) {
-                alert("Este correo electrónico ya está registrado. Intente iniciar sesión.");
-                return;
-            }
-
-            const newUser = { name, user, pass, status: 'pending', id: Date.now().toString() };
-            users.push(newUser);
-            saveRegisteredUsers(users);
-            logActivity(user, 'USER_REGISTER_REQUEST');
-            alert("Solicitud de registro enviada. Su cuenta será activada por el administrador.");
-            showForm('auth_splash');
-        }
         
         function logOut() {
-            if (currentUser) {
+            if(currentUser) {
                 logActivity(currentUser.user, 'LOGOUT');
-                currentUser = null;
-                localStorage.removeItem(SESSION_KEY);
-                clearInterval(statusCheckInterval); // Detener el chequeo de estado
             }
+            currentUser = null;
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
             showForm('auth_splash');
-            window.location.hash = '';
+        }
+
+        // --- FUNCIONES DEL ADMINISTRADOR ---
+
+        function loadAdminDashboard() {
+            // Cargar solicitudes pendientes (lógica existente)
+            loadPendingRequests();
+            
+            // Cargar clientes registrados (nueva lógica)
+            loadRegisteredClients();
+            
+            // Limpiar log de actividad al cargar
+            document.getElementById('activity-log-display').innerHTML = '<p>Seleccione un cliente para ver su actividad detallada.</p>';
         }
 
         function loadRegisteredClients() {
+            const users = getRegisteredUsers();
             const listElement = document.getElementById('client-authorization-list');
             listElement.innerHTML = '';
-            
-            const users = getRegisteredUsers().filter(u => u.user !== ADMIN_USER);
+
             if (users.length === 0) {
-                listElement.innerHTML = '<p id="no-clients-msg">No hay clientes registrados.</p>';
+                listElement.innerHTML = '<p>No hay clientes registrados.</p>';
                 return;
             }
 
             users.forEach(user => {
+                const statusColor = user.status === 'authorized' ? '#27ae60' : '#e67e22';
                 const item = document.createElement('div');
+                item.id = `client-${user.user.replace(/[^a-zA-Z0-9]/g, '-')}`;
                 item.className = 'client-item';
                 item.innerHTML = `
-                    <div>
-                        <strong>${user.name}</strong> (${user.user})<br>
-                        <small>Estado: <span style="color:${user.status === 'authorized' ? '#27ae60' : '#e67e22'};">${user.status.toUpperCase()}</span></small>
+                    <div class="client-info">
+                        <strong>${user.name}</strong>
+                        <p>Email: ${user.user}</p>
+                        <p style="font-size:0.9em;">Estado: <strong style="color:${statusColor};">${user.status.toUpperCase()}</strong></p>
                     </div>
-                    <div class="request-actions">
-                        <button class="btn-authorize" onclick="authorizeUser('${user.user}')" ${user.status === 'authorized' ? 'disabled' : ''}>${user.status === 'authorized' ? 'AUTORIZADO' : 'AUTORIZAR'}</button>
-                        <button class="btn-reject" onclick="deleteUser('${user.user}')">ELIMINAR</button>
-                        <button class="btn-action back-button" onclick="displayUserActivity('${user.user}')" style="background-color: #3498db; margin-top: 0;">Ver Log</button>
+                    <div class="client-actions request-actions">
+                        <button class="btn-authorize" ${user.status === 'authorized' ? 'disabled' : ''} onclick="authorizeUser('${user.user}')">Autorizar</button>
+                        <button class="back-button" onclick="viewUserActivity('${user.user}')">Ver Actividad</button>
+                        <button class="btn-reject" onclick="deleteUser('${user.user}')">Eliminar</button>
                     </div>
                 `;
                 listElement.appendChild(item);
             });
         }
-        
-        function displayUserActivity(user) {
-            const logDisplay = document.getElementById('activity-log-display');
-            const allLog = getActivityLog();
-            const userLog = allLog.filter(entry => entry.user === user);
-            
-            logDisplay.innerHTML = `<h4>Actividad de ${user}</h4>`;
-            
-            if (userLog.length === 0) {
-                logDisplay.innerHTML += '<p>No hay actividad registrada para este usuario.</p>';
-                return;
-            }
-            
-            userLog.slice(-20).reverse().forEach(entry => { // Mostrar las últimas 20
-                const logEntry = document.createElement('div');
-                logEntry.className = 'log-entry';
-                logEntry.textContent = `[${entry.timestamp}] - ${entry.action}`;
-                logDisplay.appendChild(logEntry);
-            });
-            logDisplay.scrollTop = 0; // Mostrar lo más reciente arriba
-        }
 
-        function authorizeUser(user) {
-            let users = getRegisteredUsers();
-            const index = users.findIndex(u => u.user === user);
-            if (index !== -1) {
+        function authorizeUser(userEmail) {
+            if (!confirm(`¿Está seguro de AUTORIZAR al usuario ${userEmail}?`)) return;
+            
+            const users = getRegisteredUsers();
+            const index = users.findIndex(u => u.user === userEmail);
+            
+            if (index > -1) {
                 users[index].status = 'authorized';
                 saveRegisteredUsers(users);
-                logActivity(ADMIN_USER, `USER_AUTHORIZED:${user}`);
-                alert(`Usuario ${user} autorizado.`);
+                logActivity(ADMIN_USER, `AUTHORIZE_USER:${userEmail}`);
+                alert(`Usuario ${userEmail} autorizado. Ya puede iniciar sesión.`);
                 loadRegisteredClients();
+            } else {
+                alert("Error: Usuario no encontrado.");
             }
         }
-
-        function deleteUser(user) {
-            if (confirm(`¿Está seguro de eliminar al usuario ${user}? Esto no se puede deshacer.`)) {
-                let users = getRegisteredUsers();
-                users = users.filter(u => u.user !== user);
+        
+        function deleteUser(userEmail) {
+            if (!confirm(`¿Está seguro de ELIMINAR al usuario ${userEmail}? Esto es irreversible.`)) return;
+            
+            let users = getRegisteredUsers();
+            const initialLength = users.length;
+            users = users.filter(u => u.user !== userEmail);
+            
+            if (users.length < initialLength) {
                 saveRegisteredUsers(users);
-                logActivity(ADMIN_USER, `USER_DELETED:${user}`);
-                alert(`Usuario ${user} eliminado.`);
+                logActivity(ADMIN_USER, `DELETE_USER:${userEmail}`);
+                alert(`Usuario ${userEmail} eliminado.`);
                 loadRegisteredClients();
+            } else {
+                alert("Error: Usuario no encontrado.");
             }
         }
 
-        function checkSession() {
-            const storedSession = localStorage.getItem(SESSION_KEY);
-            if (!storedSession) return false;
+        function viewUserActivity(userEmail) {
+            const logElement = document.getElementById('activity-log-display');
+            const fullLog = getActivityLog();
+            const userLog = fullLog.filter(entry => entry.user === userEmail).reverse(); // Mostrar lo más reciente primero
 
-            try {
-                const sessionData = JSON.parse(storedSession);
-                const now = Date.now();
-                
-                if (now - sessionData.timestamp > SESSION_EXPIRY_MS) {
-                    console.log("Session expired. Logging out.");
-                    localStorage.removeItem(SESSION_KEY);
-                    return false;
-                }
+            logElement.innerHTML = `<h4>Actividad de: ${userEmail}</h4>`;
 
-                currentUser = sessionData.user;
-                if (currentUser.user === ADMIN_USER) {
-                    currentUser.isAdmin = true;
-                }
-
-                sessionData.timestamp = now;
-                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
-                
-                return true;
-            } catch (e) {
-                console.error("Error restoring session:", e);
-                localStorage.removeItem(SESSION_KEY);
-                return false;
-            }
-        }
-        
-        // --- FUNCIONES DE DOCUMENTOS PENDIENTES ---
-        function getPendingRequests() {
-            const data = localStorage.getItem(STORAGE_KEY);
-            return data ? JSON.parse(data) : [];
-        }
-
-        function savePendingRequests(requests) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(requests));
-        }
-
-        function getApprovedRequests() {
-            const data = localStorage.getItem(APPROVED_KEY);
-            return data ? JSON.parse(data) : [];
-        }
-
-        function saveApprovedRequests(requests) {
-            localStorage.setItem(APPROVED_KEY, JSON.stringify(requests));
-        }
-        
-        function loadPendingRequests() {
-            const listElement = document.getElementById('pending-requests-list');
-            listElement.innerHTML = '';
-            
-            const pendingRequests = getPendingRequests();
-            
-            if (pendingRequests.length === 0) {
-                listElement.innerHTML = '<p id="no-requests-msg">No hay solicitudes pendientes.</p>';
+            if (userLog.length === 0) {
+                logElement.innerHTML += '<p>No se encontró actividad registrada para este cliente.</p>';
                 return;
             }
 
-            pendingRequests.forEach(request => {
+            userLog.forEach(entry => {
                 const item = document.createElement('div');
+                item.className = 'log-entry';
+                item.innerHTML = `[${entry.timestamp}] <strong>${entry.action}</strong>`;
+                logElement.appendChild(item);
+            });
+            logActivity(ADMIN_USER, `VIEW_ACTIVITY_LOG:${userEmail}`);
+        }
+        
+        // --- FUNCIONES EXISTENTES (MODIFICADAS LIGERAMENTE) ---
+
+        function getRequests(key) {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : [];
+        }
+        function saveRequests(key, requests) {
+            localStorage.setItem(key, JSON.stringify(requests));
+        }
+
+        async function saveSolicitud(tipoCarta) {
+            if (!currentUser) {
+                 alert("Error: Debe iniciar sesión para guardar una solicitud.");
+                 return;
+            }
+            let nombreSolicitante = currentUser.name, 
+                nombreAsunto = tipoCarta.toUpperCase(), 
+                pdfBase64 = null;
+
+            if (tipoCarta === 'receta_similares') {
+                nombreSolicitante = document.getElementById('nombrePacienteSimilares').value || 'Paciente';
+                nombreAsunto = nombreSolicitante;
+                pdfBase64 = await generarPDFRecetaSimilares(false);
+            } else {
+                pdfBase64 = "BASE64_PLACEHOLDER_FOR_NEW_TYPE";
+            }
+
+            if (!pdfBase64) {
+                alert(`Error al generar el documento ${tipoCarta}. Por favor, revise los campos.`);
+                return;
+            }
+
+            if (pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
+                alert(`AVISO: Se ha guardado la solicitud ${tipoCarta} con datos de PRUEBA. El administrador procederá a la autorización.`);
+            }
+
+            const requestId = Date.now().toString();
+            const newRequest = {
+                id: requestId,
+                userEmail: currentUser.user, // Se añade el email del solicitante
+                type: tipoCarta,
+                name: nombreAsunto,
+                requesterName: nombreSolicitante,
+                pdfBase64: pdfBase64,
+                status: 'pending',
+                timestamp: new Date().toLocaleString()
+            };
+
+            const requests = getRequests(STORAGE_KEY);
+            requests.push(newRequest);
+            saveRequests(STORAGE_KEY, requests);
+
+            logActivity(currentUser.user, `SAVE_REQUEST:${tipoCarta}:${requestId}`);
+            
+            const url = `${getBaseUrl()}#status?id=${requestId}`;
+            const state = { viewId: 'status', requestId: requestId };
+            history.pushState(state, '', url);
+            checkURL();
+        }
+
+        function loadPendingRequests() {
+            const requests = getRequests(STORAGE_KEY).filter(req => req.status === 'pending');
+            const listElement = document.getElementById('pending-requests-list');
+            listElement.innerHTML = '';
+            if (requests.length === 0) {
+                listElement.innerHTML = '<p id="no-requests-msg">No hay solicitudes pendientes en el almacenamiento local de este navegador.</p>';
+                return;
+            }
+            requests.forEach(req => {
+                const typeDisplay = req.type.replace(/_/g, ' ').toUpperCase();
+                const item = document.createElement('div');
+                item.id = `request-${req.id}`;
                 item.className = 'request-item';
                 item.innerHTML = `
-                    <div>
-                        <strong>${request.type.replace(/_/g, ' ').toUpperCase()}</strong> de ${request.user}<br>
-                        <small>Fecha: ${request.timestamp}</small>
+                    <div class="request-info">
+                        <strong>${typeDisplay} - ${req.name}</strong>
+                        <p>Solicitante: ${req.requesterName} (Email: ${req.userEmail || 'N/A'})</p>
+                        <p style="font-size:0.8em;">URL del Cliente: <code style="word-break: break-all;">${getBaseUrl()}#status?id=${req.id}</code></p>
                     </div>
                     <div class="request-actions">
-                        <button class="btn-authorize" onclick="authorizeRequest('${request.id}')">Autorizar (Descarga)</button>
-                        <button class="btn-reject" onclick="rejectRequest('${request.id}')">Rechazar</button>
+                        <button class="btn-authorize" onclick="authorizeRequest('${req.id}')">Autorizar</button>
+                        <button class="btn-reject" onclick="deleteRequest('${req.id}', '${STORAGE_KEY}')">Rechazar</button>
                     </div>
                 `;
                 listElement.appendChild(item);
             });
         }
-
-        async function saveSolicitud(type) {
-            if (!currentUser) {
-                alert("Debe iniciar sesión para guardar una solicitud.");
+        
+        function authorizeRequest(requestId) {
+            let pendingRequests = getRequests(STORAGE_KEY);
+            const index = pendingRequests.findIndex(req => req.id === requestId);
+            if (index === -1) {
+                alert("Error: Solicitud no encontrada.");
+                loadPendingRequests();
                 return;
             }
-
-            // 1. Generar PDF y obtener Base64
-            let pdfBase64 = null;
-            let success = false;
+            const request = pendingRequests[index];
+            request.status = 'approved';
+            const approvedRequests = getRequests(APPROVED_KEY);
+            approvedRequests.push(request);
+            saveRequests(APPROVED_KEY, approvedRequests);
+            pendingRequests.splice(index, 1);
+            saveRequests(STORAGE_KEY, pendingRequests);
             
-            try {
-                if (type === 'certificado_medico_imss') {
-                    pdfBase64 = await generarPDFCertificadoIMSS(false);
-                } else if (type === 'receta_similares') {
-                    pdfBase64 = await generarPDFRecetaSimilares(false);
-                } else {
-                    alert("Tipo de solicitud no implementado para generación de PDF.");
-                    return;
-                }
-                if (pdfBase64) {
-                    success = true;
-                }
-            } catch (e) {
-                console.error(`Error al generar el PDF para ${type}:`, e);
-                alert(`Error al generar el documento. Revise la consola. El error puede ser en la función ${type}.`);
-                return;
-            }
-
-            if (!success) {
-                 alert("Error: El generador de PDF no devolvió el contenido.");
-                 return;
-            }
-
-            // 2. Crear y guardar solicitud
-            const newRequest = {
-                id: Date.now().toString(),
-                user: currentUser.user,
-                type: type,
-                timestamp: new Date().toLocaleString(),
-                pdfContent: pdfBase64
-            };
-
-            let pending = getPendingRequests();
-            pending.push(newRequest);
-            savePendingRequests(pending);
-            logActivity(currentUser.user, `REQUEST_SENT:${type}`);
-
-            alert("Solicitud guardada. Está pendiente de aprobación por el administrador.");
-            // 3. Mostrar página de estado
-            showStatusPage(newRequest.id, newRequest.type);
-        }
-
-        function authorizeRequest(id) {
-            const pending = getPendingRequests();
-            const requestIndex = pending.findIndex(r => r.id === id);
-
-            if (requestIndex !== -1) {
-                const request = pending.splice(requestIndex, 1)[0];
-                
-                let approved = getApprovedRequests();
-                approved.push(request);
-                
-                savePendingRequests(pending);
-                saveApprovedRequests(approved);
-                logActivity(ADMIN_USER, `REQUEST_AUTHORIZED:${request.type}:${request.user}`);
-                alert(`Solicitud ${id} autorizada. El cliente puede descargar el PDF.`);
-                loadPendingRequests();
-                // Opcional: Notificar al cliente (ej. por websocket o forzando un chequeo de estado)
-            }
-        }
-
-        function rejectRequest(id) {
-            if (confirm(`¿Está seguro de rechazar la solicitud ${id}? El PDF se eliminará.`)) {
-                let pending = getPendingRequests();
-                pending = pending.filter(r => r.id !== id);
-                savePendingRequests(pending);
-                logActivity(ADMIN_USER, `REQUEST_REJECTED:${id}`);
-                alert(`Solicitud ${id} rechazada y eliminada.`);
-                loadPendingRequests();
-            }
+            logActivity(ADMIN_USER, `AUTHORIZE_REQUEST:${request.type}:${requestId}`);
+            
+            alert(`¡Solicitud Autorizada! El cliente ahora puede descargar el archivo usando el enlace de su página de estatus.`);
+            loadPendingRequests();
         }
         
-        function showStatusPage(requestId, requestType) {
+        function deleteRequest(requestId, key) {
+            if (!confirm(`¿Está seguro de ELIMINAR esta solicitud (ID: ${requestId})?`)) return;
+
+            let requests = getRequests(key);
+            const index = requests.findIndex(req => req.id === requestId);
+            
+            if (index > -1) {
+                const requestType = requests[index].type;
+                requests.splice(index, 1);
+                saveRequests(key, requests);
+                
+                logActivity(ADMIN_USER, `DELETE_REQUEST:${requestType}:${requestId}`);
+            }
+            loadPendingRequests();
+        }
+        
+        // El resto de funciones (checkURL, checkStatus, triggerDownload, generarPDFRecetaSimilares, etc.) se mantienen igual
+        
+        function checkURL() {
+            if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash.split('?')[1] || '');
+            const requestId = params.get('id');
+            if (hash.startsWith('status') && requestId) {
+                document.getElementById('app-container').style.display = 'none';
+                document.getElementById('status-page').style.display = 'flex';
+                document.getElementById('status-page').innerHTML = '<div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>';
+                checkStatus(requestId);
+                statusCheckInterval = setInterval(() => checkStatus(requestId), 5000);
+                return;
+            }
+            // Si no hay hash de estatus y no hay sesión, ir al splash
+            if (!currentUser) {
+                showForm('auth_splash', false);
+            } else {
+                showForm('menu', false);
+            }
+        }
+
+        function checkStatus(requestId) {
+            const approvedRequests = getRequests(APPROVED_KEY);
+            const request = approvedRequests.find(req => req.id === requestId);
             const statusPage = document.getElementById('status-page');
-            const container = document.getElementById('app-container');
-            container.style.display = 'none';
-            statusPage.style.display = 'flex';
-            statusPage.innerHTML = `
-                <h2>⏳ Solicitud Enviada - ${requestType.replace(/_/g, ' ').toUpperCase()}</h2>
-                <div class="spinner"></div>
-                <p>Su solicitud ha sido enviada al administrador y está en estado **PENDIENTE**.</p>
-                <p>ID de Solicitud: <strong>${requestId}</strong></p>
-                <p>Esta página se actualizará automáticamente cuando el administrador autorice su descarga.</p>
-                <button class="btn-action back-button" onclick="logOut()">Cerrar Sesión</button>
-                <div id="download-link-box" style="display:none;">
-                    <p>✅ **¡SU DESCARGA HA SIDO AUTORIZADA!**</p>
-                    <button class="btn-action btn-download-now" id="btn-download-now">⬇️ Descargar Ahora</button>
-                    <button class="btn-action back-button" onclick="showForm('menu')" style="width: 50%; margin: 10px auto;">Volver al Menú</button>
-                </div>
-                <div class="disclaimer-notice" style="margin-top: 20px;">
-                    *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
+            const disclaimer = statusPage.querySelector('.disclaimer-notice') ? statusPage.querySelector('.disclaimer-notice').outerHTML : '';
+            if (!request) {
+                statusPage.innerHTML = disclaimer + `
+                    <h2>⏳ Solicitud Enviada - Esperando Autorización</h2>
+                    <div class="spinner"></div>
+                    <p>Su solicitud de <strong>${requestId}</strong> ha sido recibida.</p>
+                    <p>Estamos esperando que el administrador la apruebe una vez realizado el pago.</p>
+                    <p style="font-size:0.8em;color:#555;">(Esta página se actualizará automáticamente cada 5 segundos)</p>
+                    <p style="margin-top:20px;">Puede guardar este enlace: <code>${getBaseUrl()}#status?id=${requestId}</code></p>
+                `;
+            } else {
+                if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
+                statusPage.innerHTML = disclaimer + `
+                    <h2>✅ ¡Solicitud Aprobada!</h2>
+                    <p>El administrador ha autorizado su documento para <strong>${request.name}</strong>.</p>
+                    <button class="btn-action btn-download-now" onclick="triggerDownload('${request.id}')"> Descargar Documento Ahora </button>
+                    <p style="margin-top:30px;"><a href="#" onclick="showForm('menu')">← Volver al Menú Principal</a></p>
+                `;
+            }
+        }
+
+        // 🟢 FUNCIÓN MODIFICADA PARA REGRESAR AL MENÚ AUTOMÁTICAMENTE 🟢
+        function triggerDownload(requestId) {
+            const approvedRequests = getRequests(APPROVED_KEY);
+            const request = approvedRequests.find(req => req.id === requestId);
+            if (!request) {
+                alert("Error: Archivo no encontrado.");
+                showForm('menu');
+                return;
+            }
+            if (request.pdfBase64 === "BASE64_PLACEHOLDER_FOR_NEW_TYPE") {
+                alert("Este es un documento placeholder de PRUEBA. No se puede descargar un PDF real.");
+                return;
+            }
+            const pdfBase64 = request.pdfBase64;
+            const name = request.name.toUpperCase().replace(/\s/g, '_');
+            const type = request.type.toUpperCase().replace(/_/g, '-');
+            const link = document.createElement('a');
+            link.href = `data:application/pdf;base64,${pdfBase64}`;
+            link.download = `Documento_Aprobado_${name}_${type}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            if(currentUser) logActivity(currentUser.user, `DOWNLOAD_DOCUMENT:${request.type}:${requestId}`);
+
+            const statusPage = document.getElementById('status-page');
+            const disclaimer = statusPage.querySelector('.disclaimer-notice') ? statusPage.querySelector('.disclaimer-notice').outerHTML : '';
+            statusPage.innerHTML = disclaimer + `
+                <div>
+                    <h1>✅ Descarga Exitosa</h1>
+                    <p>Su documento para <strong>${request.name}</strong> ha sido descargado. Por favor, revise su carpeta de descargas.</p>
+                    <p style="margin-top:30px;">Redirigiendo al menú principal...</p>
                 </div>
             `;
-            
-            // Iniciar chequeo de estado
-            clearInterval(statusCheckInterval); // Limpiar cualquier intervalo anterior
-            statusCheckInterval = setInterval(() => checkRequestStatus(requestId), 5000); 
-        }
 
-        function checkRequestStatus(requestId) {
-            const approvedRequests = getApprovedRequests();
-            const request = approvedRequests.find(r => r.id === requestId);
-            
-            if (request) {
-                clearInterval(statusCheckInterval); // Detener el chequeo
-                const downloadBox = document.getElementById('download-link-box');
-                const spinner = document.querySelector('.spinner');
+            // Lógica de redirección agregada
+            setTimeout(() => {
+                // Ocultar la página de estatus
+                document.getElementById('status-page').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
                 
-                if (spinner) spinner.style.display = 'none';
-                downloadBox.style.display = 'block';
+                // Regresar al menú si el usuario está logueado, o al acceso si no
+                if (currentUser) {
+                    showForm('menu');
+                } else {
+                    showForm('auth_splash');
+                }
                 
-                const downloadBtn = document.getElementById('btn-download-now');
-                downloadBtn.onclick = () => {
-                    const base64Data = request.pdfContent;
-                    const link = document.createElement('a');
-                    link.href = 'data:application/pdf;base64,' + base64Data;
-                    link.download = `${request.type}_${request.user}_${request.id}.pdf`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    
-                    // Opcional: Eliminar la solicitud aprobada después de la descarga (para evitar abusos)
-                    // removeApprovedRequest(requestId);
-                };
-            }
+            }, 2000); // 2 segundos de espera para ver el mensaje
         }
         
-        // --- FUNCIONES DE PDF (ACTUALIZADAS) ---
+        // Funciones de PDF se mantienen sin cambios
 
         const fileToBase64 = (file) => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => resolve(reader.result);
-            reader.onerror = error => {
-                console.error("Error al leer archivo:", error);
-                resolve(null);
-            };
+            reader.onerror = error => resolve(null);
         });
 
-        // SVG de IMSS para fallback
-        const IMSS_LOGO_SVG = `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-                <rect width="100" height="100" fill="white"/>
-                <path d="M50 0 C75 0 95 20 95 45 C95 70 50 100 50 100 C50 100 5 70 5 45 C5 20 25 0 50 0 Z" fill="#006c59"/>
-                <path d="M50 6 L88 45 C88 64 50 90 50 90 C50 90 12 64 12 45 L50 6 Z" fill="#008c7c"/>
-                <path d="M50 15 C69 15 84 30 84 49 C84 64 50 82 50 82 C50 82 16 64 16 49 C16 30 31 15 50 15 Z" fill="#ffffff"/>
-                <path d="M50 25 C60 25 70 30 70 40 C70 50 50 65 50 65 C50 65 30 50 30 40 C30 30 40 25 50 25 Z" fill="#006c59"/>
-                <text x="50" y="98" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#006c59" text-anchor="middle">IMSS</text>
-            </svg>
-        `;
-        const IMSS_LOGO_DATAURL = 'data:image/svg+xml;base64,' + btoa(IMSS_LOGO_SVG);
-        
-        const DEFAULT_SIMILARES_LOGO = 'data:image/svg+xml;base64,' + btoa(
+        function generarNumeroAleatorio() {
+            let num = '';
+            for (let i=0;i<10;i++) num += Math.floor(Math.random()*10).toString();
+            return num;
+        }
+
+        function drawJustifiedText(doc, text, x, y, maxWidth, lineHeight) {
+            let currentY = y;
+            const splitText = doc.splitTextToSize(text, maxWidth);
+            splitText.forEach((line, index) => {
+                if (index < splitText.length - 1) {
+                    doc.text(line, x, currentY, { align: 'justify' });
+                } else {
+                    doc.text(line, x, currentY);
+                }
+                currentY += lineHeight;
+            });
+            return currentY;
+        }
+
+        function drawBarcodeStyled(doc, x, y, width, height, code) {
+            const digits = code.split('');
+            const totalParts = digits.length * 4;
+            const unit = width / totalParts;
+            let cursor = x;
+            doc.setFillColor(0); 
+            for (let i = 0; i < digits.length; i++) {
+                const d = parseInt(digits[i], 10);
+                const pattern = [
+                    1 + (d % 3),
+                    1 + ((d + 1) % 3),
+                    1 + ((d + 2) % 3),
+                    1 + ((d + 1) % 2)
+                ];
+                for (let p = 0; p < pattern.length; p++) {
+                    const w = Math.max(0.5, unit * pattern[p] / 3);
+                    if (p % 2 === 0) { 
+                        doc.rect(cursor, y, w, height, 'F');
+                    }
+                    cursor += w;
+                }
+            }
+            doc.setFontSize(8);
+            doc.text(code, x + (width / 2), y + height + 4, { align: 'center' });
+        }
+
+        const DEFAULT_LOGO_DATAURL = 'data:image/svg+xml;base64,' + btoa(
             `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="80" viewBox="0 0 200 80">
                 <rect width="200" height="80" fill="white"/>
                 <g transform="translate(10,8)">
@@ -1261,298 +1091,28 @@
                 </g>
             </svg>`
         );
-        
-        // **NUEVA FUNCIÓN** - Función auxiliar para generar un número para el código de barras
-        function generarNumeroAleatorio() {
-            return String(Math.floor(100000000 + Math.random() * 900000000));
-        }
 
-        // **NUEVA FUNCIÓN** - Función auxiliar para simular un código de barras
-        function drawBarcodeStyled(doc, x, y, w, h, text) {
-            doc.setDrawColor(0);
-            doc.setFillColor(0);
-            doc.rect(x, y, w, h, 'F'); 
-            doc.setTextColor(255);
-            doc.setFontSize(7);
-            doc.setFont('helvetica', 'normal');
-            doc.text(text, x + w / 2, y + h + 2, { align: 'center' }); // Texto abajo del bloque
-            doc.setTextColor(0);
-        }
-
-        // Función de imagen robusta
-        function addImageToPdf(doc, base64Data, x, y, w, h) {
-            if (!base64Data || typeof base64Data !== 'string') return;
-            const match = base64Data.match(/^data:image\/(\w+);base64/);
-            const format = match ? match[1].toUpperCase() : 'JPEG'; 
-            
-            // Mapeo de formatos para jsPDF
-            let jsPDFFormat = 'JPEG';
-            if (format.includes('PNG')) {
-                jsPDFFormat = 'PNG';
-            } else if (format.includes('SVG')) {
-                jsPDFFormat = 'SVG';
-            } else if (format.includes('JPEG') || format.includes('JPG')) {
-                jsPDFFormat = 'JPEG';
-            }
-            
-            try {
-                doc.addImage(base64Data, jsPDFFormat, x, y, w, h, '', 'FAST');
-            } catch (e) {
-                console.error(`Error al añadir imagen Base64 (Formato: ${jsPDFFormat}, Header: ${format}) al PDF:`, e);
-                // Si la imagen falla, intentamos colocar un placeholder para que el PDF no se rompa
-                doc.setFontSize(8);
-                doc.text('ERROR IMAGEN', x + 5, y + h / 2);
-            }
-        }
-
-        function drawJustifiedText(doc, text, x, y, maxWidth, lineHeight) {
-            let currentY = y;
-            const splitText = doc.splitTextToSize(text, maxWidth);
-            splitText.forEach((line) => {
-                doc.text(line, x, currentY);
-                currentY += lineHeight;
-            });
-            return currentY;
-        }
-
-        // --- FUNCIÓN ACTUALIZADA: Certificado Médico IMSS (Nuevo Diseño) ---
-        async function generarPDFCertificadoIMSS(descargar = true) {
-            const doc = new jsPDF('p', 'mm', 'a4');
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const margin = 20;
-            let y = 15;
-            const lineHeight = 5;
-            
-            // Cargar configuración de Admin
-            const adminSettings = getDefaultSettings();
-
-            // Determinar Logo y Firma
-            const logoFile = document.getElementById('certImssLogoInput').files[0];
-            const logoBase64 = adminSettings.logoBase64 || (logoFile ? await fileToBase64(logoFile) : IMSS_LOGO_DATAURL);
-            const signatureBase64 = adminSettings.signatureBase64; // Firma de Admin
-
-            // 1. Datos del Formulario
-            const doctorNombre = (document.getElementById('certImssDoctorNombre').value || 'MÉDICO EN TURNO').toUpperCase();
-            const doctorCedula = (document.getElementById('certImssDoctorCedula').value || 'C.P. XXXXXXX').toUpperCase();
-            const doctorEspecialidad = (document.getElementById('certImssDoctorEspecialidad').value || 'MEDICINA GENERAL').toUpperCase();
-            const doctorConsultorio = document.getElementById('certImssDoctorConsultorio').value || 'N/A';
-            const doctorTurno = document.getElementById('certImssDoctorTurno').value || 'N/A';
-            const umf = (document.getElementById('certImssUmf').value || 'UMF N/A').toUpperCase();
-
-            const nombreP = (document.getElementById('certImssNombre').value || 'PACIENTE').toUpperCase();
-            const nss = document.getElementById('certImssNss').value || 'N/A';
-            const edad = document.getElementById('certImssEdad').value || 'N/A';
-            const sexo = document.getElementById('certImssSexo').value || 'N/A';
-            const fechaNacVal = document.getElementById('certImssFechaNac').value;
-            const fechaNac = fechaNacVal ? new Date(fechaNacVal + 'T12:00:00').toLocaleDateString('es-MX') : 'N/A';
-            const tipoSangre = document.getElementById('certImssTipoSangre').value || 'N/A';
-            const direccion = (document.getElementById('certImssDireccion').value || 'ESTADO DE MÉXICO').toUpperCase();
-
-            const peso = document.getElementById('certImssPeso').value || 'N/A';
-            const talla = document.getElementById('certImssTalla').value || 'N/A';
-            const pa = document.getElementById('certImssPA').value || 'N/A';
-            const fc = document.getElementById('certImssFC').value || 'N/A';
-            const fr = document.getElementById('certImssFR').value || 'N/A';
-            const temp = document.getElementById('certImssTemp').value || 'N/A';
-            const conclusion = document.getElementById('certImssConclusion').value || '';
-
-            const fechaEmisionVal = document.getElementById('certImssFechaEmision').value;
-            if (!fechaEmisionVal) {
-                alert("Por favor, ingrese la fecha de emisión.");
-                return null;
-            }
-            const fecha = new Date(fechaEmisionVal + 'T12:00:00');
-            const fechaLarga = fecha.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
-            
-            // --- INICIO DE DISEÑO DEL PDF ---
-
-            // 2. Encabezado y Logo
-            const logoW = 20; 
-            const logoH = 20; 
-            addImageToPdf(doc, logoBase64, margin, y, logoW, logoH);
-
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(14);
-            doc.text('INSTITUTO MEXICANO DEL SEGURO SOCIAL', pageWidth - margin, y + 2, { align: 'right' });
-            y += 7;
-            doc.setFontSize(12);
-            doc.text('DIRECCIÓN DE PRESTACIONES MÉDICAS', pageWidth - margin, y, { align: 'right' });
-            y += 6;
-            doc.setFontSize(11);
-            doc.text(`${umf} - ${direccion}`, pageWidth - margin, y, { align: 'right' });
-            y += 10;
-            
-            // Título Principal
-            doc.setFontSize(18);
-            doc.setDrawColor(0, 108, 89); // Color verde IMSS
-            doc.setLineWidth(0.8);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 5;
-
-            doc.text('CERTIFICADO MÉDICO DE APTITUD FÍSICA', pageWidth / 2, y, { align: 'center' });
-            y += 5;
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 10;
-            
-            // 3. Introducción y Datos del Paciente (en una sola sección)
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'normal');
-
-            // Párrafo de Certificación
-            const introText = `El Dr./Dra. ${doctorNombre}, con Cédula Profesional ${doctorCedula} y Especialidad en ${doctorEspecialidad}, adscrito(a) a la ${umf}, del turno ${doctorTurno} y con domicilio laboral en ${direccion}, CERTIFICA QUE:`;
-            y = drawJustifiedText(doc, introText, margin, y, pageWidth - 2 * margin, lineHeight);
-            y += 8;
-
-            // Datos en tabla/estructura
-            doc.setFontSize(10);
-            const dataTableY = y;
-            const column1X = margin;
-            const column3X = margin + 100;
-
-            doc.setFillColor(230);
-            doc.rect(column1X - 2, dataTableY - 0.5, pageWidth - 2 * margin + 4, 30, 'F'); // Fondo gris claro para datos
-            doc.setDrawColor(0);
-            doc.rect(column1X - 2, dataTableY - 0.5, pageWidth - 2 * margin + 4, 30, 'S'); // Borde
-
-            y = dataTableY + 4;
-            doc.setFont('helvetica', 'bold');
-            doc.text('NOMBRE COMPLETO:', column1X, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(nombreP, column1X + 40, y);
-            
-            doc.setFont('helvetica', 'bold');
-            doc.text('NSS:', column3X, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(nss, column3X + 15, y);
-            y += 6;
-            
-            doc.setFont('helvetica', 'bold');
-            doc.text('FECHA DE NACIMIENTO:', column1X, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(fechaNac, column1X + 45, y);
-            
-            doc.setFont('helvetica', 'bold');
-            doc.text('EDAD:', column3X, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`${edad} años`, column3X + 15, y);
-            y += 6;
-
-            doc.setFont('helvetica', 'bold');
-            doc.text('SEXO:', column1X, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(sexo, column1X + 15, y);
-
-            doc.setFont('helvetica', 'bold');
-            doc.text('TIPO DE SANGRE:', column3X, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(tipoSangre, column3X + 35, y);
-            y = dataTableY + 32; // Ajuste final de Y después de la tabla
-
-            // 4. Signos Vitales
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.text('SIGNOS VITALES Y SOMATOMETRÍA:', margin, y);
-            y += 6;
-            
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Peso: ${peso}`, margin, y);
-            doc.text(`Talla: ${talla}`, margin + 40, y);
-            doc.text(`T.A.: ${pa}`, margin + 80, y);
-            doc.text(`F.C.: ${fc}`, margin + 120, y);
-            y += 5;
-            
-            doc.text(`F.R.: ${fr}`, margin, y);
-            doc.text(`Temperatura: ${temp}`, margin + 40, y);
-            y += 8;
-
-            // 5. Aptitud y Conclusión
-            doc.setFont('helvetica', 'bold');
-            doc.text('CONCLUSIÓN Y APTITUD:', margin, y);
-            y += 6;
-
-            doc.setFont('helvetica', 'normal');
-            const conclusionText = `Después de realizar el examen físico, se concluye que el paciente ${nombreP} ${conclusion}`;
-            y = drawJustifiedText(doc, conclusionText, margin, y, pageWidth - 2 * margin, lineHeight);
-            y += 15;
-            
-            // 6. Fechado y Firma
-            doc.setFont('helvetica', 'normal');
-            doc.text('Se extiende el presente Certificado Médico en:', margin, y);
-            doc.setFont('helvetica', 'bold');
-            doc.text(direccion, margin + 70, y);
-            y += 5;
-
-            doc.setFont('helvetica', 'normal');
-            doc.text('a los', pageWidth/2 - 50, y);
-            doc.setFont('helvetica', 'bold');
-            doc.text(fechaLarga, pageWidth/2, y, { align: 'center' });
-            y += 20;
-
-            // Firma (Centro)
-            const firmaX = pageWidth / 2;
-            doc.setLineWidth(0.4);
-            doc.line(firmaX - 35, y, firmaX + 35, y);
-            
-            // Insertar Firma de Administrador (si existe)
-            if (signatureBase64) {
-                const firmaW = 40; 
-                const firmaH = 15; 
-                // Posicionar la firma para que quede centrada en la línea
-                addImageToPdf(doc, signatureBase64, firmaX - firmaW / 2, y - firmaH - 2, firmaW, firmaH);
-            }
-            
-            y += 4;
-            doc.setFont('helvetica', 'bold');
-            doc.text(doctorNombre, firmaX, y, { align: 'center' });
-            y += 4;
-            doc.setFontSize(9);
-            doc.text(doctorCedula, firmaX, y, { align: 'center' });
-            y += 4;
-            doc.text(`${doctorEspecialidad}. CONSULTORIO ${doctorConsultorio}`, firmaX, y, { align: 'center' });
-
-            // --- FIN DE DISEÑO DEL PDF ---
-
-            if (descargar) {
-                const safeName = (nombreP || 'PACIENTE').replace(/\s+/g, '_');
-                doc.save(`Certificado_IMSS_${safeName}.pdf`);
-                return true;
-            } else {
-                return doc.output('datauristring').split(',')[1];
-            }
-        }
-        
-        // --- FUNCIÓN ACTUALIZADA: Receta Similares (Usa la configuración del Admin) ---
         async function generarPDFRecetaSimilares(descargar = true) {
             const doc = new jsPDF('p', 'mm', 'a4');
             const pageWidth = doc.internal.pageSize.getWidth();
             const margin = 10;
             let y = 10;
             const lineHeight = 5;
-            
-            // Cargar configuración de Admin
-            const adminSettings = getDefaultSettings();
-            
-            // Determinar Logo y Firma: Prioridad -> Admin > Cliente > Default
-            const logoFile = document.getElementById('logoInputSimilares').files[0];
-            const firmaFile = document.getElementById('firmaInputSimilares').files[0];
 
-            const logoBase64 = adminSettings.logoBase64 || (logoFile ? await fileToBase64(logoFile) : DEFAULT_SIMILARES_LOGO);
-            const signatureBase64 = adminSettings.signatureBase64 || (firmaFile ? await fileToBase64(firmaFile) : null);
-
-            // 1. Obtención de Datos
+            // Recuperar datos del formulario
             const nombreDoc = (document.getElementById('doctorNombreSimilares').value || '').toUpperCase();
             const cedula = (document.getElementById('cedulaSimilares').value || '').toUpperCase();
             const direccion = (document.getElementById('direccionSimilares').value || '').toUpperCase();
             const ciudad = (document.getElementById('ciudadSimilares').value || '').toUpperCase();
             const fechaEmisionVal = document.getElementById('fechaEmisionSimilares').value;
             
+            // Formato de fecha mejorado
             const hoy = new Date();
             const fechaHora = `${fechaEmisionVal ? new Date(fechaEmisionVal + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' })} ${String(hoy.getHours()).padStart(2, '0')}:${String(hoy.getMinutes()).padStart(2, '0')}`;
             
             const nombreP = (document.getElementById('nombrePacienteSimilares').value || '').toUpperCase();
             const apellidoP = (document.getElementById('apellidoPSimilares').value || '').toUpperCase();
             const apellidoM = (document.getElementById('apellidoMSimilares').value || '').toUpperCase();
-            const nombreCompleto = `${nombreP} ${apellidoP} ${apellidoM}`.trim();
             const sexo = (document.getElementById('sexoSimilares').value || '').toUpperCase();
             const edad = (document.getElementById('edadSimilares').value || '').toUpperCase();
             const fechaNacVal = document.getElementById('fechaNacSimilares').value;
@@ -1571,25 +1131,35 @@
             const tratamiento = document.getElementById('tratamientoSimilares').value || '';
             const indicaciones = document.getElementById('indicacionesGeneralesSimilares').value || '';
             const proxima = document.getElementById('proximaCitaSimilares').value || '';
-            
+
+            // Cargar logo
+            const logoFile = document.getElementById('logoInputSimilares').files[0];
+            const logoBase64 = logoFile ? await fileToBase64(logoFile) : DEFAULT_LOGO_DATAURL;
+
+            // Generar número de expediente
             const barcodeNumber = generarNumeroAleatorio();
 
             // --- ENCABEZADO ---
+            // Logo a la izquierda
             const logoW = 34;
             const logoH = 20;
-            addImageToPdf(doc, logoBase64, margin, y, logoW, logoH);
+            doc.addImage(logoBase64, 'PNG', margin, y, logoW, logoH);
 
             // Información del médico centrada
             doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
+            doc.setFont(undefined, 'bold');
             doc.text(nombreDoc, pageWidth/2, y + 8, { align: 'center' });
             doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
+            doc.setFont(undefined, 'normal');
             doc.text(cedula, pageWidth/2, y + 13, { align: 'center' });
             doc.text('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', pageWidth/2, y + 18, { align: 'center' });
 
-            // Código de barras
-            drawBarcodeStyled(doc, pageWidth - margin - 45, y + 4, 45, 12, barcodeNumber);
+            // Código de barras MÁS PEQUEÑO en la esquina superior derecha
+            const barcodeW = 45;
+            const barcodeH = 12;
+            const barcodeX = pageWidth - margin - barcodeW;
+            const barcodeY = y + 4;
+            drawBarcodeStyled(doc, barcodeX, barcodeY, barcodeW, barcodeH, barcodeNumber);
 
             y += Math.max(logoH, 22) + 2;
 
@@ -1601,7 +1171,7 @@
 
             // --- Dirección izquierda y Fecha derecha ---
             doc.setFontSize(9);
-            doc.setFont('helvetica', 'normal');
+            doc.setFont(undefined, 'normal');
             doc.text(direccion, margin, y);
             doc.text(`FECHA Y HORA DE ELABORACION: ${fechaHora}`, pageWidth - margin, y, { align: 'right' });
             y += 6;
@@ -1612,139 +1182,161 @@
             y += 6;
 
             // --- DATOS DEL PACIENTE ---
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            doc.text('PACIENTE:', margin, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(nombreCompleto, margin + 20, y);
-            
-            doc.setFont('helvetica', 'bold');
-            doc.text('SEXO:', margin + 110, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(sexo, margin + 125, y);
-            y += 5;
+            const colLeftX = margin;
+            const colRightX = pageWidth/2 + 10;
+            const fieldGapY = 5;
 
-            doc.setFont('helvetica', 'bold');
-            doc.text('F. NAC:', margin, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(fechaNac, margin + 18, y);
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'bold');
+            doc.text('NOMBRE:', colLeftX, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(`${nombreP} ${apellidoP} ${apellidoM}`.trim(), colLeftX + 20, y);
 
-            doc.setFont('helvetica', 'bold');
-            doc.text('EDAD:', margin + 50, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(edad, margin + 65, y);
+            doc.setFont(undefined, 'bold');
+            doc.text('NUMERO DE EXPEDIENTE:', colRightX, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(barcodeNumber, colRightX + 48, y);
+            y += fieldGapY;
 
-            doc.setFont('helvetica', 'bold');
-            doc.text('ALERGIAS:', margin + 110, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(alergias, margin + 130, y);
-            y += 5;
-            
+            doc.setFont(undefined, 'bold');
+            doc.text('SEXO:', colLeftX, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(sexo, colLeftX + 14, y);
+
+            doc.setFont(undefined, 'bold');
+            doc.text('EDAD:', colRightX, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(edad, colRightX + 14, y);
+            y += fieldGapY;
+
+            doc.setFont(undefined, 'bold');
+            doc.text('FECHA DE NACIMIENTO:', colLeftX, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(fechaNac, colLeftX + 42, y);
+            y += fieldGapY + 2;
+
+            // Línea separadora
             doc.setLineWidth(0.3);
             doc.line(margin, y, pageWidth - margin, y);
-            y += 5;
-
-            // --- SIGNOS VITALES ---
-            doc.setFont('helvetica', 'bold');
-            doc.text(`TA:`, margin, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(ta, margin + 10, y);
-
-            doc.setFont('helvetica', 'bold');
-            doc.text(`TEMP:`, margin + 40, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(temp, margin + 55, y);
-
-            doc.setFont('helvetica', 'bold');
-            doc.text(`FC:`, margin + 90, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(fc, margin + 100, y);
-
-            doc.setFont('helvetica', 'bold');
-            doc.text(`FR:`, margin + 125, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(fr, margin + 135, y);
-
-            doc.setFont('helvetica', 'bold');
-            doc.text(`PESO:`, margin + 160, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(peso, margin + 175, y);
-            y += 5;
-
-            doc.setFont('helvetica', 'bold');
-            doc.text(`TALLA:`, margin, y);
-            doc.setFont('helvetica', 'normal');
-            doc.text(talla, margin + 15, y);
-            y += 5;
-
-            doc.setLineWidth(0.3);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 5;
-
-            // --- DIAGNOSTICO Y CONSULTA ---
-            doc.setFont('helvetica', 'bold');
-            doc.text('DIAGNÓSTICO:', margin, y);
-            doc.setFont('helvetica', 'normal');
-            y = drawJustifiedText(doc, dx, margin + 30, y, pageWidth - margin - 30, lineHeight);
-            y += 2;
-            
-            doc.setFont('helvetica', 'bold');
-            doc.text('CONTENIDO DE LA CONSULTA:', margin, y);
-            doc.setFont('helvetica', 'normal');
-            y = drawJustifiedText(doc, contenido, margin, y + 4, pageWidth - 2 * margin, lineHeight - 1);
             y += 6;
+
+            // --- SIGNOS VITALES Y TRATAMIENTO (dos columnas) ---
+            const leftColW = (pageWidth - margin*2) * 0.45;
+            const rightColX2 = margin + leftColW + 10;
+            const rightColW = pageWidth - margin - rightColX2;
+
+            let yLeft = y;
+            let yRight = y;
+
+            // Columna Izquierda: Signos Vitales
+            doc.setFont(undefined, 'bold');
+            doc.text('T.A.', margin, yLeft);
+            doc.setFont(undefined, 'normal');
+            doc.text(ta, margin + 10, yLeft);
+
+            doc.setFont(undefined, 'bold');
+            doc.text('TEMP:', margin + 42, yLeft);
+            doc.setFont(undefined, 'normal');
+            doc.text(temp, margin + 56, yLeft);
+            yLeft += lineHeight;
+
+            doc.setFont(undefined, 'bold');
+            doc.text('F.C X MIN', margin, yLeft);
+            doc.setFont(undefined, 'normal');
+            doc.text(fc, margin + 21, yLeft);
+
+            doc.setFont(undefined, 'bold');
+            doc.text('PESO:', margin + 42, yLeft);
+            doc.setFont(undefined, 'normal');
+            doc.text(peso, margin + 54, yLeft);
+            yLeft += lineHeight;
+
+            doc.setFont(undefined, 'bold');
+            doc.text('F.R X MIN', margin, yLeft);
+            doc.setFont(undefined, 'normal');
+            doc.text(fr, margin + 21, yLeft);
+
+            doc.setFont(undefined, 'bold');
+            doc.text('TALLA:', margin + 42, yLeft);
+            doc.setFont(undefined, 'normal');
+            doc.text(talla, margin + 54, yLeft);
+            yLeft += lineHeight + 2;
+
+            // Diagnóstico (I.D)
+            doc.setFont(undefined, 'bold');
+            doc.text('I.D', margin, yLeft);
+            doc.setFont(undefined, 'normal');
+            doc.text(dx, margin + 8, yLeft);
+            yLeft += lineHeight + 4;
+
+            // Columna Derecha: Tratamiento
+            doc.setFont(undefined, 'bold');
+            doc.text('TRATAMIENTO:', rightColX2, yRight);
+            yRight += lineHeight;
+            doc.setFont(undefined, 'normal');
             
-            // --- TRATAMIENTO ---
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
-            doc.text('TRATAMIENTO:', margin, y);
+            // Formatear tratamiento línea por línea
+            const tratamientoLineas = tratamiento.split('\n').filter(l => l.trim());
+            tratamientoLineas.forEach(linea => {
+                const wrapped = doc.splitTextToSize(linea, rightColW - 5);
+                wrapped.forEach(w => {
+                    doc.text(w, rightColX2, yRight);
+                    yRight += lineHeight;
+                });
+            });
+
+            // Determinar y máximo
+            y = Math.max(yLeft, yRight) + 4;
+
+            // Línea separadora
+            doc.setLineWidth(0.3);
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 6;
+
+            // --- OBSERVACIONES ---
+            doc.setFont(undefined, 'bold');
+            doc.text('OBSERVACIONES', margin, y);
+            y += 5;
+            doc.setFont(undefined, 'normal');
+            y = drawJustifiedText(doc, contenido, margin, y, pageWidth - margin*2, lineHeight);
             y += 4;
-            
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            y = drawJustifiedText(doc, tratamiento, margin, y, pageWidth - 2 * margin, lineHeight);
-            y += 6;
 
-            // --- INDICACIONES ---
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            doc.text('INDICACIONES GENERALES:', margin, y);
-            doc.setFont('helvetica', 'normal');
-            y = drawJustifiedText(doc, indicaciones, margin, y + 4, pageWidth - 2 * margin, lineHeight - 1);
-            y += 6;
-            
-            doc.setLineWidth(0.3);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 5;
+            // INDICACIONES
+            doc.setFont(undefined, 'normal');
+            y = drawJustifiedText(doc, indicaciones, margin, y, pageWidth - margin*2, lineHeight);
+            y += 8;
 
-            doc.setFont('helvetica', 'bold');
+            // Próxima cita
+            doc.setFont(undefined, 'bold');
             doc.text('PRÓXIMA CITA:', margin, y);
-            doc.setFont('helvetica', 'normal');
+            doc.setFont(undefined, 'normal');
             doc.text(proxima, margin + 30, y);
             y += 12;
 
             // Línea para firma
             const firmaX = pageWidth - margin - 60;
-            const firmaY = y;
             doc.setLineWidth(0.4);
-            doc.line(firmaX, firmaY, firmaX + 50, firmaY);
-            
-            // Insertar Firma por defecto
-            if (signatureBase64) {
-                const firmaW = 40; 
-                const firmaH = 15; 
-                // Colocar la firma centrada sobre la línea, ligeramente arriba
-                addImageToPdf(doc, signatureBase64, firmaX + 5, firmaY - firmaH, firmaW, firmaH);
+            doc.line(firmaX, y, firmaX + 50, y);
+            doc.setFont(undefined, 'normal');
+            doc.text('COPIA', firmaX - 30, y);
+            doc.setFont(undefined, 'bold');
+            doc.text('FIRMA:', firmaX, y + 4);
+
+            y += 18;
+
+            // Línea punteada inferior
+            const dashY = doc.internal.pageSize.getHeight() - 28;
+            const dashStartX = margin;
+            const dashEndX = pageWidth - margin;
+            const dashLen = 3;
+            const gapLen = 3;
+            let cursor = dashStartX;
+            doc.setDrawColor(0);
+            doc.setLineWidth(0.4);
+            while (cursor < dashEndX) {
+                doc.line(cursor, dashY, Math.min(cursor + dashLen, dashEndX), dashY);
+                cursor += dashLen + gapLen;
             }
-            // Fin de inserción de firma
-
-            doc.setFont('helvetica', 'normal');
-            doc.text('COPIA', firmaX - 30, firmaY);
-            doc.setFont('helvetica', 'bold');
-            doc.text('FIRMA:', firmaX, firmaY + 4);
-
-            y = firmaY + 18;
-
 
             if (descargar) {
                 const safeName = (nombreP || 'PACIENTE').replace(/\s+/g, '_');
@@ -1755,14 +1347,11 @@
             }
         }
 
-        // ... (El resto de funciones, como window.addEventListener('load', ...), se mantienen igual)
+
         window.addEventListener('load', () => {
-            checkSession(); 
             checkURL();
         });
-        
-        // El resto de funciones auxiliares (loadRegisteredClients, checkRequestStatus, etc)
-        // se omiten aquí por espacio, asumiendo que el usuario las tiene en su archivo completo.
+
     </script>
 </body>
 </html>
