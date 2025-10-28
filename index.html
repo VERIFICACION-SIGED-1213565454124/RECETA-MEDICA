@@ -589,7 +589,9 @@
     </div>
 
     <div id="status-page" class="status-page" style="display:none;">
-        <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>
+        <div class="disclaimer-notice">
+            *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
+        </div>
     </div>
 
     <a href="https://wa.me/message/AZLK65CETSPQL1" class="whatsapp-float" target="_blank" title="Soporte WhatsApp">
@@ -605,12 +607,16 @@
         const { jsPDF } = window.jspdf;
         const STORAGE_KEY = 'pending_requests_list';
         const APPROVED_KEY = 'approved_requests_list';
-        // 🔑 Nuevas claves para usuarios y actividad
         const REGISTERED_USERS_KEY = 'registered_app_users';
         const USER_ACTIVITY_KEY = 'user_activity_log';
         // 🔑 Credenciales de administrador fijas (Solo para el Admin)
         const ADMIN_USER = 'trollgaga999@gmail.com';
         const ADMIN_PASS = 'Johan207';
+        
+        // 🔑 CONSTANTES DE SESIÓN AGREGADAS
+        const SESSION_KEY = 'user_session_v1';
+        const SESSION_EXPIRY_MS = 60 * 60 * 1000; // 1 hora en milisegundos
+        
         // 🔑 Estado de la sesión
         let statusCheckInterval = null;
         let currentUser = null; // Variable global para el usuario logueado
@@ -642,12 +648,37 @@
             'formato_solicitud_pdf': 'formato_solicitud_pdf'
         };
 
+        // 🔑 FUNCIÓN PARA REFRESCAR LA MARCA DE TIEMPO DE LA SESIÓN ACTIVA
+        function refreshSessionTimestamp() {
+            if (currentUser) {
+                const storedSession = localStorage.getItem(SESSION_KEY);
+                if (storedSession) {
+                    try {
+                        const sessionData = JSON.parse(storedSession);
+                        // Asegura que los datos coincidan (aunque solo refrescaremos el tiempo)
+                        if (sessionData.user.user === currentUser.user) {
+                            sessionData.timestamp = Date.now();
+                            localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+                            // console.log("Timestamp de sesión refrescado.");
+                        }
+                    } catch (e) {
+                        console.error("Error al refrescar la sesión:", e);
+                    }
+                }
+            }
+        }
+
         function showForm(viewId, pushHistory = true) {
             // Verifica el estado de autenticación para todas las vistas que no son de auth/register
             const requiresAuth = !['auth_splash', 'register', 'status', 'whatsapp_group'].includes(viewId);
             const isMenuOrService = viewId === 'menu' || viewIdMap[viewId]?.startsWith('form-');
             const isDashboard = viewId === 'admin_dashboard';
             
+            // 🔑 REFRESCAR SESIÓN CADA VEZ QUE SE NAVEGA A UNA VISTA
+            if (currentUser) {
+                refreshSessionTimestamp();
+            }
+
             if (requiresAuth && !currentUser) {
                 alert("Debe iniciar sesión para acceder a este contenido.");
                 viewId = 'auth_splash';
@@ -691,10 +722,10 @@
                     }
                     
                     // Registro de actividad
-                    if (isMenuOrService) {
+                    if (isMenuOrService && currentUser) {
                         logActivity(currentUser.user, viewId === 'menu' ? 'ACCESS_MENU' : `VIEW_FORM:${viewId}`);
                     }
-                    if (isDashboard) {
+                    if (isDashboard && currentUser) {
                         logActivity(currentUser.user, 'ACCESS_ADMIN_DASHBOARD');
                         loadAdminDashboard();
                     }
@@ -751,12 +782,10 @@
         }
         
         function getActivityLog() {
-            // ** CORREGIDO: Se usa USER_ACTIVITY_KEY en lugar de USER_ACTIVITY_LOG (undefined)
             const data = localStorage.getItem(USER_ACTIVITY_KEY); 
             return data ? JSON.parse(data) : [];
         }
         function saveActivityLog(log) {
-            // ** CORREGIDO: Se usa USER_ACTIVITY_KEY en lugar de USER_ACTIVITY_LOG (undefined)
             localStorage.setItem(USER_ACTIVITY_KEY, JSON.stringify(log));
         }
 
@@ -822,6 +851,11 @@
             // 1. Check against hardcoded ADMIN
             if (user === ADMIN_USER && pass === ADMIN_PASS) {
                 currentUser = { user: user, name: 'ADMIN', status: 'authorized', isAdmin: true };
+                
+                // 🔑 GUARDAR SESIÓN DE ADMINISTRADOR
+                const sessionData = { user: currentUser, timestamp: Date.now() };
+                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+
                 logActivity(user, 'ADMIN_LOGIN_SUCCESS');
                 alert("¡Bienvenido, Administrador! Accediendo al Panel de Control.");
                 showForm('admin_dashboard');
@@ -841,6 +875,11 @@
                 
                 // Usuario autorizado
                 currentUser = foundUser;
+
+                // 🔑 GUARDAR SESIÓN DE USUARIO
+                const sessionData = { user: currentUser, timestamp: Date.now() };
+                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+
                 logActivity(user, 'USER_LOGIN_SUCCESS');
                 alert(`¡Bienvenido, ${foundUser.name}! Acceso completado.`);
                 showForm('menu');
@@ -857,10 +896,48 @@
                 logActivity(currentUser.user, 'LOGOUT');
             }
             currentUser = null;
+            localStorage.removeItem(SESSION_KEY); // 🔑 LIMPIAR SESIÓN
             document.getElementById('loginUser').value = '';
             document.getElementById('loginPass').value = '';
             showForm('auth_splash');
         }
+
+        // 🔑 FUNCIÓN PARA VERIFICAR Y RESTAURAR LA SESIÓN
+        function checkSession() {
+            const storedSession = localStorage.getItem(SESSION_KEY);
+            if (!storedSession) return false;
+
+            try {
+                const sessionData = JSON.parse(storedSession);
+                const now = Date.now();
+                
+                // Verificar caducidad (1 hora)
+                if (now - sessionData.timestamp > SESSION_EXPIRY_MS) {
+                    console.log("Session expired. Logging out.");
+                    localStorage.removeItem(SESSION_KEY);
+                    return false;
+                }
+
+                // Sesión válida, restaurar currentUser y actualizar timestamp (ventana rodante)
+                currentUser = sessionData.user;
+                
+                // Asegurar que el administrador tenga el flag isAdmin
+                if (currentUser.user === ADMIN_USER) {
+                    currentUser.isAdmin = true;
+                }
+
+                // Actualizar timestamp
+                sessionData.timestamp = now;
+                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+                
+                return true;
+            } catch (e) {
+                console.error("Error restoring session:", e);
+                localStorage.removeItem(SESSION_KEY);
+                return false;
+            }
+        }
+        // --- FIN DE FUNCIONES DE SESIÓN ---
 
         // --- FUNCIONES DEL ADMINISTRADOR ---
 
@@ -976,6 +1053,10 @@
                  alert("Error: Debe iniciar sesión para guardar una solicitud.");
                  return;
             }
+            
+            // 🔑 REFRESCAR SESIÓN ANTE ACTIVIDAD
+            refreshSessionTimestamp();
+            
             let nombreSolicitante = currentUser.name, 
                 nombreAsunto = tipoCarta.toUpperCase(), 
                 pdfBase64 = null;
@@ -1091,13 +1172,14 @@
             loadPendingRequests();
         }
         
-        // El resto de funciones (checkURL, checkStatus, triggerDownload, generarPDFRecetaSimilares, etc.) se mantienen igual
-        
         function checkURL() {
             if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash.split('?')[1] || '');
+            const hashParts = window.location.hash.substring(1).split('?');
+            const hash = hashParts[0];
+            const params = new URLSearchParams(hashParts[1] || '');
             const requestId = params.get('id');
+            
+            // 1. Lógica de página de estatus
             if (hash.startsWith('status') && requestId) {
                 document.getElementById('app-container').style.display = 'none';
                 document.getElementById('status-page').style.display = 'flex';
@@ -1106,11 +1188,23 @@
                 statusCheckInterval = setInterval(() => checkStatus(requestId), 5000);
                 return;
             }
-            // Si no hay hash de estatus y no hay sesión, ir al splash
+
+            // 2. Lógica de navegación principal/sesión
+            const targetView = viewIdMap[hash] || 'auth_splash';
+            
             if (!currentUser) {
+                // Si no hay sesión, siempre va a la pantalla de inicio de sesión
                 showForm('auth_splash', false);
+            } else if (hash === 'admin_dashboard' && currentUser.user === ADMIN_USER) {
+                // Si es admin y el hash es dashboard, va al dashboard
+                showForm('admin_dashboard', false);
+            } else if (hash && hash !== 'auth_splash' && viewIdMap[hash]) {
+                // Si hay sesión y hay un hash de vista, va a esa vista
+                showForm(hash, false);
             } else {
-                showForm('menu', false);
+                // Si hay sesión pero el hash está vacío o es irrelevante, va al menú principal o dashboard
+                const defaultView = currentUser.user === ADMIN_USER ? 'admin_dashboard' : 'menu';
+                showForm(defaultView, false);
             }
         }
 
@@ -1140,6 +1234,9 @@
         }
 
         function triggerDownload(requestId) {
+            // 🔑 REFRESCAR SESIÓN ANTE ACTIVIDAD
+            refreshSessionTimestamp();
+            
             const approvedRequests = getRequests(APPROVED_KEY);
             const request = approvedRequests.find(req => req.id === requestId);
             if (!request) {
@@ -1241,7 +1338,7 @@
             </svg>`
         );
         
-        // --- FUNCIÓN PARA GENERAR EL PDF DEL CERTIFICADO IMSS (CORREGIDA A-1) ---
+        // --- FUNCIÓN PARA GENERAR EL PDF DEL CERTIFICADO IMSS (REVISADA) ---
         const IMSS_LOGO_SVG = `
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
                 <rect width="100" height="100" fill="white"/>
@@ -1303,7 +1400,7 @@
             const logoX = margin;
             const logoY = y;
 
-            // FIX (A-1): Detectar el tipo de imagen del Data URL para jsPDF para evitar fallos de descarga.
+            // FIX REVISADO: Detectar el tipo de imagen del Data URL para jsPDF para evitar fallos de descarga.
             let imageFormat = 'JPEG'; // Fallback por defecto
             if (logoBase64.includes('svg')) {
                 imageFormat = 'SVG';
@@ -1316,13 +1413,12 @@
 
             if (imageFormat === 'SVG') {
                 doc.addImage(logoBase64, 'SVG', logoX, logoY, logoW, logoH);
-            } else if (imageFormat === 'PNG' || imageFormat === 'JPEG') {
-                doc.addImage(logoBase64, imageFormat, logoX, logoY, logoW, logoH, '', 'FAST');
+            } else if (imageFormat === 'PNG') {
+                doc.addImage(logoBase64, 'PNG', logoX, logoY, logoW, logoH, '', 'FAST'); // Usar PNG si se detecta
             } else {
-                // Fallback para tipos desconocidos, manteniendo la lógica original si falla la detección
-                doc.addImage(logoBase64, 'JPEG', logoX, logoY, logoW, logoH, '', 'FAST'); 
+                doc.addImage(logoBase64, 'JPEG', logoX, logoY, logoW, logoH, '', 'FAST'); // Usar JPEG para el resto, incluyendo el fallback
             }
-            // FIN DEL FIX
+            // FIN DEL FIX REVISADO
 
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(14);
@@ -1520,12 +1616,28 @@
             // Logo a la izquierda
             const logoW = 34;
             const logoH = 20;
-            if (logoBase64.startsWith('data:image/svg')) {
-                doc.addImage(logoBase64, 'SVG', margin, y, logoW, logoH);
+            
+            // FIX REVISADO para Similares también
+            let imageFormat = 'JPEG'; 
+            if (logoBase64.includes('svg')) {
+                imageFormat = 'SVG';
             } else {
-                // Se mantiene la lógica original, asumiendo que funciona para esta receta
+                const typeMatch = logoBase64.match(/^data:image\/(\w+);base64/);
+                if (typeMatch) {
+                    imageFormat = typeMatch[1].toUpperCase(); 
+                }
+            }
+
+            if (imageFormat === 'SVG') {
+                doc.addImage(logoBase64, 'SVG', margin, y, logoW, logoH);
+            } else if (imageFormat === 'PNG') {
+                doc.addImage(logoBase64, 'PNG', margin, y, logoW, logoH, '', 'FAST'); 
+            } else {
                 doc.addImage(logoBase64, 'JPEG', margin, y, logoW, logoH, '', 'FAST');
             }
+            // FIN DEL FIX REVISADO
+
+
             // Información del médico centrada
             doc.setFontSize(12);
             doc.setFont(undefined, 'bold');
@@ -1730,9 +1842,14 @@
 
 
         window.addEventListener('load', () => {
+            // 🔑 1. Intentar restaurar la sesión desde localStorage
+            checkSession(); 
+            
+            // 🔑 2. Continuar con la verificación de la URL (usará 'currentUser' si se restauró la sesión)
             checkURL();
         });
     </script>
 </body>
 </html>
+
 
