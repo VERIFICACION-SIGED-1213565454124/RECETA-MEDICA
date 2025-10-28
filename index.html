@@ -51,9 +51,22 @@
         .back-button { background-color: #95a5a6; width:auto; padding:10px 15px; font-size:1em; }
         
         /* Estilos de Control de Vistas */
-        .form-section, #main-menu { display:none; }
+        /* .form-section, #main-menu { display:none; } <-- ELIMINADO PARA TRANSICIÓN */
         #app-container { min-height: 500px; } /* Asegura espacio para la vista inicial */
         
+        /* Estilos para Transiciones Fluidas y corrección de navegación (B-2) */
+        .form-section, #main-menu {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            pointer-events: none; /* Desactiva clics cuando está oculto/fading out */
+            display: none; 
+        }
+        .form-section.active, #main-menu.active {
+            opacity: 1;
+            pointer-events: auto;
+            display: block !important;
+        }
+
         /* ELIMINADO: #btn-go-admin */
         
         .status-page { text-align:center; padding:50px; background-color:#fff; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); min-height:250px; display:flex; flex-direction:column; justify-content:center; }
@@ -155,7 +168,7 @@
 
     <div id="app-container">
 
-        <div id="auth-splash" class="form-section" style="display:block;">
+        <div id="auth-splash" class="form-section active">
             <h2>👤 Acceso Requerido</h2>
             <p>Inicie sesión para acceder al menú de servicios, o regístrese si es un usuario nuevo.</p>
 
@@ -643,40 +656,62 @@
                 viewId = 'menu';
             }
 
-            const sections = Object.values(viewIdMap);
-            sections.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
-
             const targetId = viewIdMap[viewId] || viewId;
-            const viewElement = document.getElementById(targetId);
-
+            const targetElement = document.getElementById(targetId);
+            
             if (viewId === 'whatsapp_group') {
                 window.open('https://chat.whatsapp.com/GbkvIbPwCRX1JacpJJOS9D', '_blank');
                 logActivity(currentUser?.user || 'anon', 'VIEW_WHATSAPP_GROUP');
                 return;
             }
 
-            if (viewElement) {
-                viewElement.style.display = 'block';
-                window.scrollTo(0, 0);
-                if (pushHistory) {
-                    let url = getBaseUrl();
-                    let state = { viewId: viewId };
-                    if (viewId !== 'menu') { url += `#${viewId}`; } else { url = getBaseUrl(); }
-                    history.pushState(state, '', url);
-                }
-                
-                // Registro de actividad (solo si no es auth/register/status)
-                if (isMenuOrService) {
-                    logActivity(currentUser.user, viewId === 'menu' ? 'ACCESS_MENU' : `VIEW_FORM:${viewId}`);
-                }
-                if (isDashboard) {
-                    logActivity(currentUser.user, 'ACCESS_ADMIN_DASHBOARD');
-                    loadAdminDashboard();
+            // --- Lógica de Transición Fluida ---
+            const currentActive = document.querySelector('.form-section.active, #main-menu.active');
+
+            const transitionToNext = () => {
+                // 1. Ocultar todos los formularios inactivos (quitando la clase 'active')
+                const sections = Object.values(viewIdMap);
+                sections.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && el !== targetElement) {
+                        el.classList.remove('active');
+                    }
+                });
+
+                // 2. Mostrar el nuevo elemento
+                if (targetElement) {
+                    targetElement.classList.add('active'); // Aplica display: block y opacity: 1
+                    
+                    window.scrollTo(0, 0);
+                    if (pushHistory) {
+                        let url = getBaseUrl();
+                        let state = { viewId: viewId };
+                        if (viewId !== 'menu') { url += `#${viewId}`; } else { url = getBaseUrl(); }
+                        history.pushState(state, '', url);
+                    }
+                    
+                    // Registro de actividad
+                    if (isMenuOrService) {
+                        logActivity(currentUser.user, viewId === 'menu' ? 'ACCESS_MENU' : `VIEW_FORM:${viewId}`);
+                    }
+                    if (isDashboard) {
+                        logActivity(currentUser.user, 'ACCESS_ADMIN_DASHBOARD');
+                        loadAdminDashboard();
+                    }
                 }
             }
+
+            // Si hay un elemento activo diferente al objetivo, lo desactivamos y esperamos la transición.
+            if (currentActive && currentActive !== targetElement) {
+                currentActive.classList.remove('active');
+                
+                // Esperar el tiempo de la transición CSS (300ms)
+                setTimeout(transitionToNext, 300); 
+            } else {
+                // Si no hay activo o es el mismo (ej. on load/back button), transición inmediata.
+                transitionToNext();
+            }
+            // --- Fin de Lógica Fluida ---
         }
 
         // --- CONFIRMACIÓN AL SALIR O VOLVER ATRÁS ---
@@ -1206,7 +1241,7 @@
             </svg>`
         );
         
-        // --- FUNCIÓN PARA GENERAR EL PDF DEL CERTIFICADO IMSS (CORREGIDA) ---
+        // --- FUNCIÓN PARA GENERAR EL PDF DEL CERTIFICADO IMSS (CORREGIDA A-1) ---
         const IMSS_LOGO_SVG = `
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
                 <rect width="100" height="100" fill="white"/>
@@ -1263,18 +1298,31 @@
             }
 
             // 1. Encabezado IMSS / Logo Personalizado
-            // Si es SVG (el default IMSS), lo dibuja como SVG. Si es dataURL (de fileToBase64), lo dibuja como imagen.
-            
             const logoW = 20; // Ancho del logo/membrete
             const logoH = 20; // Alto del logo/membrete
             const logoX = margin;
             const logoY = y;
 
-            if (logoBase64.startsWith('data:image/svg')) {
-                doc.addImage(logoBase64, 'SVG', logoX, logoY, logoW, logoH);
+            // FIX (A-1): Detectar el tipo de imagen del Data URL para jsPDF para evitar fallos de descarga.
+            let imageFormat = 'JPEG'; // Fallback por defecto
+            if (logoBase64.includes('svg')) {
+                imageFormat = 'SVG';
             } else {
-                doc.addImage(logoBase64, 'JPEG', logoX, logoY, logoW, logoH, '', 'FAST'); // Usar JPEG o PNG
+                const typeMatch = logoBase64.match(/^data:image\/(\w+);base64/);
+                if (typeMatch) {
+                    imageFormat = typeMatch[1].toUpperCase(); // Ej: PNG o JPEG
+                }
             }
+
+            if (imageFormat === 'SVG') {
+                doc.addImage(logoBase64, 'SVG', logoX, logoY, logoW, logoH);
+            } else if (imageFormat === 'PNG' || imageFormat === 'JPEG') {
+                doc.addImage(logoBase64, imageFormat, logoX, logoY, logoW, logoH, '', 'FAST');
+            } else {
+                // Fallback para tipos desconocidos, manteniendo la lógica original si falla la detección
+                doc.addImage(logoBase64, 'JPEG', logoX, logoY, logoW, logoH, '', 'FAST'); 
+            }
+            // FIN DEL FIX
 
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(14);
@@ -1475,6 +1523,7 @@
             if (logoBase64.startsWith('data:image/svg')) {
                 doc.addImage(logoBase64, 'SVG', margin, y, logoW, logoH);
             } else {
+                // Se mantiene la lógica original, asumiendo que funciona para esta receta
                 doc.addImage(logoBase64, 'JPEG', margin, y, logoW, logoH, '', 'FAST');
             }
             // Información del médico centrada
@@ -1683,7 +1732,7 @@
         window.addEventListener('load', () => {
             checkURL();
         });
-
     </script>
 </body>
 </html>
+
