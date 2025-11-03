@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+# Writing the integrated index.html with Carta Laboral & Carta Personal added, using existing functions/flow
+content = r"""<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
@@ -54,8 +55,6 @@
         .form-section, #main-menu { display:none; }
         #app-container { min-height: 500px; } /* Asegura espacio para la vista inicial */
         
-        /* ELIMINADO: #btn-go-admin */
-        
         .status-page { text-align:center; padding:50px; background-color:#fff; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); min-height:250px; display:flex; flex-direction:column; justify-content:center; }
         .status-page .spinner { border:5px solid #f3f3f3; border-top:5px solid #3498db; border-radius:50%; width:50px; height:50px; animation: spin 2s linear infinite; margin:20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -102,27 +101,18 @@
             transform: scale(1.05);
             box-shadow: 0 8px 15px rgba(0,0,0,0.25);
         }
-        .menu-card i {
-            font-size: 2.5em;
-            margin-bottom: 8px;
-            transition: color 0.3s ease;
-        }
         .menu-card strong {
-            font-size: 0.9em;
+            font-size: 0.95em;
             font-weight: bold;
-            display: block;
             line-height: 1.3;
         }
 
-        /* Colores específicos para las categorías */
+        /* Colores por categoría (se mantienen los existentes) */
         .category-social i { color: #25d366; }
-        .category-carta i { color: #e67e22; }
         .category-receta i { color: #27ae60; }
         .category-certificado i { color: #3498db; }
         .category-especializado i { color: #9b59b6; }
-        
         .category-social:hover i { color: #128c7e; }
-        .category-carta:hover i { color: #d35400; }
         .category-receta:hover i { color: #1e8449; }
         .category-certificado:hover i { color: #2980b9; }
         .category-especializado:hover i { color: #8e44ad; }
@@ -174,6 +164,7 @@
                 <button class="btn-action back-button" style="background-color: #3498db;" onclick="showForm('register')">Regístrarme Ahora</button>
             </div>
         </div>
+
         <div id="form-register" class="form-section">
             <button class="back-button" onclick="showForm('auth_splash')">← Volver al Acceso</button>
             <h2>📝 Registro de Nuevo Usuario</h2>
@@ -188,6 +179,7 @@
                 <button class="btn-action" style="background-color:#27ae60;" onclick="registerUser()">Registrar Solicitud de Cuenta</button>
             </div>
         </div>
+
         <div id="main-menu">
             
             <h2>🌐 Acceso a Grupo y Soporte</h2>
@@ -201,13 +193,12 @@
             <hr/>
             <h2>✉️ Cartas de Recomendación</h2>
             <div class="icon-grid">
-                <div class="menu-card category-carta" onclick="showForm('laboral')">
-                    <i class="fas fa-briefcase"></i>
-                    <strong>Carta LABORAL</strong>
+                <!-- SIN ICONOS NI EMOJIS, texto exacto -->
+                <div class="menu-card" onclick="showForm('laboral')">
+                    <strong>Carta Laboral</strong>
                 </div>
-                <div class="menu-card category-carta" onclick="showForm('personal')">
-                    <i class="fas fa-user-friends"></i>
-                    <strong>Carta PERSONAL</strong>
+                <div class="menu-card" onclick="showForm('personal')">
+                    <strong>Carta Personal</strong>
                 </div>
             </div>
 
@@ -286,23 +277,10 @@
             <button class="btn-action back-button" style="margin-top:10px;" onclick="logOut()">Cerrar Sesión</button>
 
         </div>
+
         <div id="admin-dashboard" class="form-section">
             <button class="back-button" onclick="logOut()">← Cerrar Sesión</button>
             <h2>⚙️ Panel de Administrador</h2>
-
-            
-            <h3>🖼️ Configuración de Imágenes Predeterminadas</h3>
-            <div id="default-images-config" class="input-group">
-                <label for="adminLogoInput">Logo Predeterminado:</label>
-                <input type="file" id="adminLogoInput" accept="image/*" onchange="previewImage('adminLogoInput', 'previewLogo')">
-                <img id="previewLogo" src="" alt="Vista previa del logo" style="max-width:150px;display:block;margin-top:10px;">
-
-                <label for="adminFirmaInput">Firma Predeterminada:</label>
-                <input type="file" id="adminFirmaInput" accept="image/*" onchange="previewImage('adminFirmaInput', 'previewFirma')">
-                <img id="previewFirma" src="" alt="Vista previa de la firma" style="max-width:150px;display:block;margin-top:10px;">
-
-                <button class="btn-action" style="background-color:#27ae60;" onclick="saveDefaultImages()">Guardar Cambios</button>
-            </div>
 
             <h3>Clientes Registrados (Autorización)</h3>
             <div id="client-authorization-list" class="input-group">
@@ -320,6 +298,68 @@
                 <p id="no-requests-msg">No hay solicitudes pendientes.</p>
             </div>
         </div>
+
+        <!-- 🔽 NUEVOS FORMULARIOS INTEGRADOS -->
+
+        <div id="form-laboral" class="form-section">
+            <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
+            <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+            <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+            <h2>Carta Laboral</h2>
+            <div class="input-group">
+                <label>Nombre de la Empresa:</label>
+                <input type="text" id="empresaLaboral" placeholder="Ej: Grupo Empresarial XYZ S.A. de C.V.">
+                <label>Nombre del Empleado:</label>
+                <input type="text" id="nombreEmpleadoLaboral" placeholder="Ej: Juan Pérez López">
+                <label>Puesto Desempeñado:</label>
+                <input type="text" id="puestoLaboral" placeholder="Ej: Analista de Ventas">
+                <div class="date-container">
+                    <div>
+                        <label>Fecha de Ingreso:</label>
+                        <input type="date" id="fechaInicioLaboral">
+                    </div>
+                    <div>
+                        <label>Fecha de Egreso:</label>
+                        <input type="date" id="fechaFinLaboral">
+                    </div>
+                </div>
+                <label>Motivo de Salida (opcional):</label>
+                <input type="text" id="motivoSalidaLaboral" placeholder="Ej: Mejora profesional, término de contrato...">
+                <label>Nombre del Recomendador / Representante:</label>
+                <input type="text" id="recomendadorLaboral" placeholder="Ej: Lic. Ana Torres, Gerente de Recursos Humanos">
+                <label>Fecha de Emisión:</label>
+                <input type="date" id="fechaEmisionLaboral">
+                <label>Subir Logo de la Empresa (opcional):</label>
+                <input type="file" id="logoLaboral" accept="image/*">
+            </div>
+            <button class="btn-action" onclick="saveSolicitud('laboral')">💾 Guardar Solicitud (Esperar Aprobación)</button>
+        </div>
+
+        <div id="form-personal" class="form-section">
+            <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
+            <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+            <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+            <h2>Carta Personal</h2>
+            <div class="input-group">
+                <label>Nombre del Recomendador:</label>
+                <input type="text" id="recomendadorPersonal" placeholder="Ej: Laura Sánchez">
+                <label>Ocupación del Recomendador:</label>
+                <input type="text" id="ocupacionRecomendador" placeholder="Ej: Contadora Pública">
+                <label>Nombre del Recomendado:</label>
+                <input type="text" id="recomendadoPersonal" placeholder="Ej: Carlos Pérez Rodríguez">
+                <label>Tiempo de Conocerse:</label>
+                <input type="text" id="tiempoConocido" placeholder="Ej: 5 años">
+                <label>Motivo de la Recomendación:</label>
+                <textarea id="motivoRecomendacion" placeholder="Ej: Recomiendo ampliamente por su honestidad, responsabilidad..."></textarea>
+                <label>Fecha de Emisión:</label>
+                <input type="date" id="fechaEmisionPersonal">
+                <label>Nombre del Lugar (Ciudad, Estado):</label>
+                <input type="text" id="ciudadPersonal" placeholder="Ej: Ciudad de México, CDMX">
+            </div>
+            <button class="btn-action" onclick="saveSolicitud('personal')">💾 Guardar Solicitud (Esperar Aprobación)</button>
+        </div>
+
+        <!-- Formularios existentes (ejemplo) -->
         <div id="form-receta_similares" class="form-section">
             <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
 
@@ -348,7 +388,8 @@
                 <label for="fechaEmisionSimilares">Fecha de Emisión de la Receta:</label>
                 <input type="date" id="fechaEmisionSimilares" value="">
 
-                
+                <label for="logoInputSimilares">Insertar Logo de la Institución/Receta (Opcional):</label>
+                <input type="file" id="logoInputSimilares" accept="image/*">
             </div>
 
             <div class="input-group">
@@ -443,7 +484,8 @@
                 <label for="proximaCitaSimilares">Próxima Cita (Fecha):</label>
                 <input type="text" id="proximaCitaSimilares" value="27/03/2021">
 
-                
+                <label for="firmaInputSimilares">Firma del Médico (Opcional, NO colocada automáticamente si la sube):</label>
+                <input type="file" id="firmaInputSimilares" accept="image/*">
             </div>
 
             <button class="btn-action" onclick="saveSolicitud('receta_similares')">💾 Guardar Solicitud (Esperar Aprobación)</button>
@@ -495,12 +537,11 @@
         }
 
         const viewIdMap = {
-            'auth_splash': 'auth-splash', // Nueva pantalla de inicio
-            'register': 'form-register', // Nuevo formulario de registro
+            'auth_splash': 'auth-splash',
+            'register': 'form-register',
             'menu': 'main-menu',
             'laboral': 'form-laboral',
             'personal': 'form-personal',
-            // 'admin_login': 'admin-login', // Reemplazado por 'auth-splash' para simplificar
             'admin_dashboard': 'admin-dashboard',
             'incapacidad_imss': 'form-incapacidad_imss',
             'receta_similares': 'form-receta_similares',
@@ -518,9 +559,8 @@
         };
 
         function showForm(viewId, pushHistory = true) {
-            // Verifica el estado de autenticación para todas las vistas que no son de auth/register
             const requiresAuth = !['auth_splash', 'register', 'status', 'whatsapp_group'].includes(viewId);
-            const isMenuOrService = viewId === 'menu' || viewIdMap[viewId]?.startsWith('form-');
+            const isMenuOrService = viewId === 'menu' || (viewIdMap[viewId] && viewIdMap[viewId].startsWith('form-'));
             const isDashboard = viewId === 'admin_dashboard';
             
             if (requiresAuth && !currentUser) {
@@ -556,44 +596,34 @@
                     history.pushState(state, '', url);
                 }
                 
-                // Registro de actividad (solo si no es auth/register/status)
-                if (isMenuOrService) {
+                if (isMenuOrService && currentUser) {
                     logActivity(currentUser.user, viewId === 'menu' ? 'ACCESS_MENU' : `VIEW_FORM:${viewId}`);
                 }
-                if (isDashboard) {
+                if (isDashboard && currentUser) {
                     logActivity(currentUser.user, 'ACCESS_ADMIN_DASHBOARD');
                     loadAdminDashboard();
                 }
             }
         }
 
-        // --- CONFIRMACIÓN AL SALIR O VOLVER ATRÁS ---
         window.addEventListener('popstate', (e) => {
             const state = history.state;
-            // Solo preguntar si hay sesión activa y se intenta salir del menú o formularios
             if (currentUser && (!state || !state.viewId || state.viewId === 'auth_splash')) {
                 const salir = confirm("⚠️ ¿Está seguro de que desea cerrar sesión y salir de los servicios?");
                 if (salir) {
                     logOut();
                 } else {
-                    // Mantener la vista actual si cancela
                     history.pushState({ viewId: 'menu' }, '', '#menu');
                     showForm('menu', false);
                 }
                 return;
             }
-
-            // Si no hay sesión activa, ir al acceso normal
             if (!state) { 
                 showForm('auth_splash', false); 
                 return; 
             }
-
-            // Si hay estado previo, mostrar esa vista
             showForm(state.viewId || 'auth_splash', false);
         });
-
-        // --- FUNCIONES DE ALMACENAMIENTO (USERS & ACTIVITY) ---
 
         function getRegisteredUsers() {
             const data = localStorage.getItem(REGISTERED_USERS_KEY);
@@ -613,50 +643,27 @@
 
         function logActivity(userIdentifier, action) {
             if (!userIdentifier) userIdentifier = 'ANONIMO';
-            
             const log = getActivityLog();
-            const newEntry = {
-                user: userIdentifier,
-                action: action,
-                timestamp: new Date().toLocaleString()
-            };
+            const newEntry = { user: userIdentifier, action: action, timestamp: new Date().toLocaleString() };
             log.push(newEntry);
             saveActivityLog(log);
         }
-
-        // --- FUNCIONES DE AUTENTICACIÓN Y REGISTRO ---
 
         function registerUser() {
             const name = document.getElementById('regName').value.trim();
             const user = document.getElementById('regUser').value.trim();
             const pass = document.getElementById('regPass').value;
 
-            if (!name || !user || !pass) {
-                alert("Por favor, complete todos los campos.");
-                return;
-            }
-            if (!user.includes('@') || user.length < 5) {
-                alert("Ingrese un correo electrónico válido.");
-                return;
-            }
+            if (!name || !user || !pass) { alert("Por favor, complete todos los campos."); return; }
+            if (!user.includes('@') || user.length < 5) { alert("Ingrese un correo electrónico válido."); return; }
 
             const users = getRegisteredUsers();
-            if (users.some(u => u.user === user)) {
-                alert("Error: El correo electrónico ya está registrado o en proceso de autorización.");
-                return;
-            }
+            if (users.some(u => u.user === user)) { alert("Error: El correo electrónico ya está registrado o en proceso de autorización."); return; }
 
-            const newUser = { 
-                name: name, 
-                user: user, 
-                pass: pass, 
-                status: 'pending', // Clave: debe ser autorizado
-                timestamp: new Date().toLocaleString()
-            }; 
+            const newUser = { name, user, pass, status: 'pending', timestamp: new Date().toLocaleString() };
             users.push(newUser);
             saveRegisteredUsers(users);
 
-            // Limpiar campos
             document.getElementById('regName').value = '';
             document.getElementById('regUser').value = '';
             document.getElementById('regPass').value = '';
@@ -670,7 +677,6 @@
             const user = document.getElementById('loginUser').value;
             const pass = document.getElementById('loginPass').value;
 
-            // 1. Check against hardcoded ADMIN
             if (user === ADMIN_USER && pass === ADMIN_PASS) {
                 currentUser = { user: user, name: 'ADMIN', status: 'authorized', isAdmin: true };
                 logActivity(user, 'ADMIN_LOGIN_SUCCESS');
@@ -679,7 +685,6 @@
                 return;
             }
 
-            // 2. Check against registered standard users
             const registeredUsers = getRegisteredUsers();
             const foundUser = registeredUsers.find(u => u.user === user && u.pass === pass);
 
@@ -689,40 +694,27 @@
                     logActivity(user, 'LOGIN_FAIL:PENDING');
                     return;
                 }
-                
-                // Usuario autorizado
                 currentUser = foundUser;
                 logActivity(user, 'USER_LOGIN_SUCCESS');
                 alert(`¡Bienvenido, ${foundUser.name}! Acceso completado.`);
                 showForm('menu');
                 return;
             }
-            
-            // If neither is found
             logActivity(user, 'LOGIN_FAIL:INVALID_CREDENTIALS');
             alert("Usuario o Contraseña incorrectos. Si no tiene cuenta, por favor regístrese.");
         }
         
         function logOut() {
-            if(currentUser) {
-                logActivity(currentUser.user, 'LOGOUT');
-            }
+            if(currentUser) { logActivity(currentUser.user, 'LOGOUT'); }
             currentUser = null;
             document.getElementById('loginUser').value = '';
             document.getElementById('loginPass').value = '';
             showForm('auth_splash');
         }
 
-        // --- FUNCIONES DEL ADMINISTRADOR ---
-
         function loadAdminDashboard() {
-            // Cargar solicitudes pendientes (lógica existente)
             loadPendingRequests();
-            
-            // Cargar clientes registrados (nueva lógica)
             loadRegisteredClients();
-            
-            // Limpiar log de actividad al cargar
             document.getElementById('activity-log-display').innerHTML = '<p>Seleccione un cliente para ver su actividad detallada.</p>';
         }
 
@@ -759,50 +751,39 @@
 
         function authorizeUser(userEmail) {
             if (!confirm(`¿Está seguro de AUTORIZAR al usuario ${userEmail}?`)) return;
-            
             const users = getRegisteredUsers();
             const index = users.findIndex(u => u.user === userEmail);
-            
             if (index > -1) {
                 users[index].status = 'authorized';
                 saveRegisteredUsers(users);
                 logActivity(ADMIN_USER, `AUTHORIZE_USER:${userEmail}`);
                 alert(`Usuario ${userEmail} autorizado. Ya puede iniciar sesión.`);
                 loadRegisteredClients();
-            } else {
-                alert("Error: Usuario no encontrado.");
-            }
+            } else { alert("Error: Usuario no encontrado."); }
         }
         
         function deleteUser(userEmail) {
             if (!confirm(`¿Está seguro de ELIMINAR al usuario ${userEmail}? Esto es irreversible.`)) return;
-            
             let users = getRegisteredUsers();
             const initialLength = users.length;
             users = users.filter(u => u.user !== userEmail);
-            
             if (users.length < initialLength) {
                 saveRegisteredUsers(users);
                 logActivity(ADMIN_USER, `DELETE_USER:${userEmail}`);
                 alert(`Usuario ${userEmail} eliminado.`);
                 loadRegisteredClients();
-            } else {
-                alert("Error: Usuario no encontrado.");
-            }
+            } else { alert("Error: Usuario no encontrado."); }
         }
 
         function viewUserActivity(userEmail) {
             const logElement = document.getElementById('activity-log-display');
             const fullLog = getActivityLog();
-            const userLog = fullLog.filter(entry => entry.user === userEmail).reverse(); // Mostrar lo más reciente primero
-
+            const userLog = fullLog.filter(entry => entry.user === userEmail).reverse();
             logElement.innerHTML = `<h4>Actividad de: ${userEmail}</h4>`;
-
             if (userLog.length === 0) {
                 logElement.innerHTML += '<p>No se encontró actividad registrada para este cliente.</p>';
                 return;
             }
-
             userLog.forEach(entry => {
                 const item = document.createElement('div');
                 item.className = 'log-entry';
@@ -811,8 +792,6 @@
             });
             logActivity(ADMIN_USER, `VIEW_ACTIVITY_LOG:${userEmail}`);
         }
-        
-        // --- FUNCIONES EXISTENTES (MODIFICADAS LIGERAMENTE) ---
 
         function getRequests(key) {
             const data = localStorage.getItem(key);
@@ -835,6 +814,12 @@
                 nombreSolicitante = document.getElementById('nombrePacienteSimilares').value || 'Paciente';
                 nombreAsunto = nombreSolicitante;
                 pdfBase64 = await generarPDFRecetaSimilares(false);
+            } else if (tipoCarta === 'laboral') {
+                nombreAsunto = document.getElementById('nombreEmpleadoLaboral').value || 'Empleado';
+                pdfBase64 = await generarPDFLaboral(false);
+            } else if (tipoCarta === 'personal') {
+                nombreAsunto = document.getElementById('recomendadoPersonal').value || 'Persona';
+                pdfBase64 = await generarPDFPersonal(false);
             } else {
                 pdfBase64 = "BASE64_PLACEHOLDER_FOR_NEW_TYPE";
             }
@@ -851,7 +836,7 @@
             const requestId = Date.now().toString();
             const newRequest = {
                 id: requestId,
-                userEmail: currentUser.user, // Se añade el email del solicitante
+                userEmail: currentUser.user,
                 type: tipoCarta,
                 name: nombreAsunto,
                 requesterName: nombreSolicitante,
@@ -938,8 +923,6 @@
             loadPendingRequests();
         }
         
-        // El resto de funciones (checkURL, checkStatus, triggerDownload, generarPDFRecetaSimilares, etc.) se mantienen igual
-        
         function checkURL() {
             if (statusCheckInterval) { clearInterval(statusCheckInterval); statusCheckInterval = null; }
             const hash = window.location.hash.substring(1);
@@ -953,7 +936,6 @@
                 statusCheckInterval = setInterval(() => checkStatus(requestId), 5000);
                 return;
             }
-            // Si no hay hash de estatus y no hay sesión, ir al splash
             if (!currentUser) {
                 showForm('auth_splash', false);
             } else {
@@ -999,7 +981,7 @@
                 return;
             }
             const pdfBase64 = request.pdfBase64;
-            const name = request.name.toUpperCase().replace(/\s/g, '_');
+            const name = request.name.toUpperCase().replace(/\\s/g, '_');
             const type = request.type.toUpperCase().replace(/_/g, '-');
             const link = document.createElement('a');
             link.href = `data:application/pdf;base64,${pdfBase64}`;
@@ -1020,64 +1002,119 @@
                 </div>
             `;
         }
-        
-        
-        // --- CONFIGURACIÓN DE IMÁGENES PREDETERMINADAS ---
-        const DEFAULT_IMAGES_KEY = 'default_images_config';
 
-        function getDefaultImages() {
-            const data = localStorage.getItem(DEFAULT_IMAGES_KEY);
-            return data ? JSON.parse(data) : { logo: null, firma: null };
-        }
-
-        function saveDefaultImages() {
-            const logoFile = document.getElementById('adminLogoInput').files[0];
-            const firmaFile = document.getElementById('adminFirmaInput').files[0];
-            Promise.all([logoFile ? fileToBase64(logoFile) : null, firmaFile ? fileToBase64(firmaFile) : null]).then(([logoBase64, firmaBase64]) => {
-                const current = getDefaultImages();
-                if (logoBase64) current.logo = logoBase64;
-                if (firmaBase64) current.firma = firmaBase64;
-                localStorage.setItem(DEFAULT_IMAGES_KEY, JSON.stringify(current));
-                alert('Imágenes predeterminadas guardadas correctamente.');
-                loadDefaultImagesPreview();
-            });
-        }
-
-        function previewImage(inputId, previewId) {
-            const input = document.getElementById(inputId);
-            const file = input.files[0];
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById(previewId).src = e.target.result;
-            };
-            if (file) reader.readAsDataURL(file);
-        }
-
-        function loadDefaultImagesPreview() {
-            const config = getDefaultImages();
-            if (config.logo) document.getElementById('previewLogo').src = config.logo;
-            if (config.firma) document.getElementById('previewFirma').src = config.firma;
-        }
-
-        // Aplicar logo/firma predeterminados en PDF
-        async function generarPDFRecetaSimilares(descargar = true) {
-            const doc = new jsPDF('p', 'mm', 'a4');
-            const defaults = getDefaultImages();
-            const logoBase64 = defaults.logo || DEFAULT_LOGO_DATAURL;
-            const firmaBase64 = defaults.firma || null;
-            // Resto del código original sigue igual...
-        }
-
-        document.addEventListener('DOMContentLoaded', loadDefaultImagesPreview);
-
-        // Funciones de PDF se mantienen sin cambios
-
+        /* Utilidades */
         const fileToBase64 = (file) => new Promise((resolve, reject) => {
+            if(!file){ resolve(null); return; }
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => resolve(reader.result);
-            reader.onerror = error => resolve(null);
+            reader.onerror = () => resolve(null);
         });
+
+        /* ========= GENERADORES DE PDF (NUEVOS) ========= */
+
+        async function generarPDFLaboral(descargar = true) {
+            const doc = new jsPDF();
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const margin = 20;
+            let y = 30;
+
+            const empresa = document.getElementById('empresaLaboral').value || '';
+            const empleado = document.getElementById('nombreEmpleadoLaboral').value || '';
+            const puesto = document.getElementById('puestoLaboral').value || '';
+            const inicio = document.getElementById('fechaInicioLaboral').value || '';
+            const fin = document.getElementById('fechaFinLaboral').value || '';
+            const motivo = document.getElementById('motivoSalidaLaboral').value || '';
+            const recomendador = document.getElementById('recomendadorLaboral').value || '';
+            const fecha = document.getElementById('fechaEmisionLaboral').value || new Date().toISOString().split('T')[0];
+            const logoFile = document.getElementById('logoLaboral').files[0];
+            const logoBase64 = await fileToBase64(logoFile);
+
+            if (logoBase64) doc.addImage(logoBase64, 'PNG', margin, 10, 35, 25);
+
+            doc.setFont('times', 'bold');
+            doc.setFontSize(14);
+            doc.text('CARTA DE RECOMENDACIÓN LABORAL', pageWidth / 2, y, { align: 'center' });
+            y += 20;
+
+            doc.setFont('times', 'normal');
+            doc.setFontSize(12);
+            const cuerpo = 
+`Por medio de la presente, se hace constar que ${empleado} laboró en la empresa ${empresa}, desempeñando el puesto de ${puesto} desde el ${inicio ? new Date(inicio).toLocaleDateString('es-MX') : ''} hasta el ${fin ? new Date(fin).toLocaleDateString('es-MX') : ''}. 
+Durante este tiempo demostró ser una persona responsable, comprometida y con una excelente actitud laboral. ${motivo ? 'El motivo de su salida fue: ' + motivo + '.' : ''}
+
+Se expide la presente carta a solicitud del interesado para los fines que considere convenientes.`;
+
+            const split = doc.splitTextToSize(cuerpo, pageWidth - margin * 2);
+            doc.text(split, margin, y);
+            y += split.length * 6 + 20;
+
+            doc.text(`${recomendador || '____________________________'}`, margin, y);
+            y += 6;
+            doc.text('Representante / Recursos Humanos', margin, y);
+            y += 10;
+            doc.text(`${empresa}`, margin, y);
+            y += 10;
+            doc.text(`Fecha de emisión: ${new Date(fecha).toLocaleDateString('es-MX')}`, margin, y);
+
+            if (descargar) {
+                doc.save(`Carta_Recomendacion_Laboral_${(empleado || 'Empleado').replace(/\\s/g, '_')}.pdf`);
+                return true;
+            } else {
+                return doc.output('datauristring').split(',')[1];
+            }
+        }
+
+        async function generarPDFPersonal(descargar = true) {
+            const doc = new jsPDF();
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const margin = 20;
+            let y = 30;
+
+            const recomendador = document.getElementById('recomendadorPersonal').value || '';
+            const ocupacion = document.getElementById('ocupacionRecomendador').value || '';
+            const recomendado = document.getElementById('recomendadoPersonal').value || '';
+            const tiempo = document.getElementById('tiempoConocido').value || '';
+            const motivo = document.getElementById('motivoRecomendacion').value || '';
+            const ciudad = document.getElementById('ciudadPersonal').value || '';
+            const fecha = document.getElementById('fechaEmisionPersonal').value || new Date().toISOString().split('T')[0];
+
+            doc.setFont('times', 'bold');
+            doc.setFontSize(14);
+            doc.text('CARTA DE RECOMENDACIÓN PERSONAL', pageWidth / 2, y, { align: 'center' });
+            y += 20;
+
+            doc.setFont('times', 'normal');
+            doc.setFontSize(12);
+            const cuerpo = 
+`A quien corresponda:
+
+Por medio de la presente, yo, ${recomendador}${ocupacion ? ', quien me desempeño como ' + ocupacion + ',' : ','} hago constar que conozco al Sr./Sra. ${recomendado} desde hace ${tiempo}, tiempo durante el cual ha demostrado ser una persona responsable, honesta y de buena conducta.
+
+${motivo}
+
+Se extiende la presente en ${ciudad}, a los ${new Date(fecha).toLocaleDateString('es-MX')}.`;
+
+            const split = doc.splitTextToSize(cuerpo, pageWidth - margin * 2);
+            doc.text(split, margin, y);
+            y += split.length * 6 + 20;
+
+            doc.text(`${recomendador || '____________________________'}`, margin, y);
+            y += 6;
+            doc.text('Recomendador', margin, y);
+
+            if (descargar) {
+                doc.save(`Carta_Recomendacion_Personal_${(recomendado || 'Persona').replace(/\\s/g, '_')}.pdf`);
+                return true;
+            } else {
+                return doc.output('datauristring').split(',')[1];
+            }
+        }
+
+        /* ========= FIN GENERADORES ========= */
+
+        /* ========= PDF SIMILARES (existente) ========= */
 
         function generarNumeroAleatorio() {
             let num = '';
@@ -1144,14 +1181,11 @@
             let y = 10;
             const lineHeight = 5;
 
-            // Recuperar datos del formulario
             const nombreDoc = (document.getElementById('doctorNombreSimilares').value || '').toUpperCase();
             const cedula = (document.getElementById('cedulaSimilares').value || '').toUpperCase();
             const direccion = (document.getElementById('direccionSimilares').value || '').toUpperCase();
             const ciudad = (document.getElementById('ciudadSimilares').value || '').toUpperCase();
             const fechaEmisionVal = document.getElementById('fechaEmisionSimilares').value;
-            
-            // Formato de fecha mejorado
             const hoy = new Date();
             const fechaHora = `${fechaEmisionVal ? new Date(fechaEmisionVal + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' })} ${String(hoy.getHours()).padStart(2, '0')}:${String(hoy.getMinutes()).padStart(2, '0')}`;
             
@@ -1177,20 +1211,12 @@
             const indicaciones = document.getElementById('indicacionesGeneralesSimilares').value || '';
             const proxima = document.getElementById('proximaCitaSimilares').value || '';
 
-            // Cargar logo
             const logoFile = document.getElementById('logoInputSimilares').files[0];
             const logoBase64 = logoFile ? await fileToBase64(logoFile) : DEFAULT_LOGO_DATAURL;
-
-            // Generar número de expediente
             const barcodeNumber = generarNumeroAleatorio();
 
-            // --- ENCABEZADO ---
-            // Logo a la izquierda
-            const logoW = 34;
-            const logoH = 20;
+            const logoW = 34; const logoH = 20;
             doc.addImage(logoBase64, 'PNG', margin, y, logoW, logoH);
-
-            // Información del médico centrada
             doc.setFontSize(12);
             doc.setFont(undefined, 'bold');
             doc.text(nombreDoc, pageWidth/2, y + 8, { align: 'center' });
@@ -1199,192 +1225,89 @@
             doc.text(cedula, pageWidth/2, y + 13, { align: 'center' });
             doc.text('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', pageWidth/2, y + 18, { align: 'center' });
 
-            // Código de barras MÁS PEQUEÑO en la esquina superior derecha
-            const barcodeW = 45;
-            const barcodeH = 12;
-            const barcodeX = pageWidth - margin - barcodeW;
-            const barcodeY = y + 4;
+            const barcodeW = 45; const barcodeH = 12;
+            const barcodeX = pageWidth - margin - barcodeW; const barcodeY = y + 4;
             drawBarcodeStyled(doc, barcodeX, barcodeY, barcodeW, barcodeH, barcodeNumber);
 
             y += Math.max(logoH, 22) + 2;
-
-            // Línea separadora
-            doc.setDrawColor(0);
-            doc.setLineWidth(0.4);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 6;
-
-            // --- Dirección izquierda y Fecha derecha ---
-            doc.setFontSize(9);
-            doc.setFont(undefined, 'normal');
+            doc.setDrawColor(0); doc.setLineWidth(0.4); doc.line(margin, y, pageWidth - margin, y); y += 6;
+            doc.setFontSize(9); doc.setFont(undefined, 'normal');
             doc.text(direccion, margin, y);
             doc.text(`FECHA Y HORA DE ELABORACION: ${fechaHora}`, pageWidth - margin, y, { align: 'right' });
             y += 6;
+            doc.setLineWidth(0.3); doc.line(margin, y, pageWidth - margin, y); y += 6;
 
-            // Línea separadora
-            doc.setLineWidth(0.3);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 6;
+            const colLeftX = margin; const colRightX = pageWidth/2 + 10; const fieldGapY = 5;
+            doc.setFontSize(9); doc.setFont(undefined, 'bold'); doc.text('NOMBRE:', colLeftX, y);
+            doc.setFont(undefined, 'normal'); doc.text(`${nombreP} ${apellidoP} ${apellidoM}`.trim(), colLeftX + 20, y);
+            doc.setFont(undefined, 'bold'); doc.text('NUMERO DE EXPEDIENTE:', colRightX, y);
+            doc.setFont(undefined, 'normal'); doc.text(barcodeNumber, colRightX + 48, y); y += fieldGapY;
 
-            // --- DATOS DEL PACIENTE ---
-            const colLeftX = margin;
-            const colRightX = pageWidth/2 + 10;
-            const fieldGapY = 5;
+            doc.setFont(undefined, 'bold'); doc.text('SEXO:', colLeftX, y);
+            doc.setFont(undefined, 'normal'); doc.text(sexo, colLeftX + 14, y);
+            doc.setFont(undefined, 'bold'); doc.text('EDAD:', colRightX, y);
+            doc.setFont(undefined, 'normal'); doc.text(edad, colRightX + 14, y); y += fieldGapY;
 
-            doc.setFontSize(9);
-            doc.setFont(undefined, 'bold');
-            doc.text('NOMBRE:', colLeftX, y);
+            doc.setFont(undefined, 'bold'); doc.text('FECHA DE NACIMIENTO:', colLeftX, y);
+            doc.setFont(undefined, 'normal'); doc.text(fechaNac, colLeftX + 42, y); y += fieldGapY + 2;
+            doc.setLineWidth(0.3); doc.line(margin, y, pageWidth - margin, y); y += 6;
+
+            const leftColW = (pageWidth - margin*2) * 0.45; const rightColX2 = margin + leftColW + 10; const rightColW = pageWidth - margin - rightColX2;
+            let yLeft = y; let yRight = y;
+
+            doc.setFont(undefined, 'bold'); doc.text('T.A.', margin, yLeft);
+            doc.setFont(undefined, 'normal'); doc.text(ta, margin + 10, yLeft);
+            doc.setFont(undefined, 'bold'); doc.text('TEMP:', margin + 42, yLeft);
+            doc.setFont(undefined, 'normal'); doc.text(temp, margin + 56, yLeft); yLeft += 5;
+
+            doc.setFont(undefined, 'bold'); doc.text('F.C X MIN', margin, yLeft);
+            doc.setFont(undefined, 'normal'); doc.text(fc, margin + 21, yLeft);
+            doc.setFont(undefined, 'bold'); doc.text('PESO:', margin + 42, yLeft);
+            doc.setFont(undefined, 'normal'); doc.text(peso, margin + 54, yLeft); yLeft += 5;
+
+            doc.setFont(undefined, 'bold'); doc.text('F.R X MIN', margin, yLeft);
+            doc.setFont(undefined, 'normal'); doc.text(fr, margin + 21, yLeft);
+            doc.setFont(undefined, 'bold'); doc.text('TALLA:', margin + 42, yLeft);
+            doc.setFont(undefined, 'normal'); doc.text(talla, margin + 54, yLeft); yLeft += 7;
+
+            doc.setFont(undefined, 'bold'); doc.text('I.D', margin, yLeft);
+            doc.setFont(undefined, 'normal'); doc.text(dx, margin + 8, yLeft); yLeft += 9;
+
+            doc.setFont(undefined, 'bold'); doc.text('TRATAMIENTO:', rightColX2, yRight); yRight += 5;
             doc.setFont(undefined, 'normal');
-            doc.text(`${nombreP} ${apellidoP} ${apellidoM}`.trim(), colLeftX + 20, y);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('NUMERO DE EXPEDIENTE:', colRightX, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(barcodeNumber, colRightX + 48, y);
-            y += fieldGapY;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('SEXO:', colLeftX, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(sexo, colLeftX + 14, y);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('EDAD:', colRightX, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(edad, colRightX + 14, y);
-            y += fieldGapY;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('FECHA DE NACIMIENTO:', colLeftX, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(fechaNac, colLeftX + 42, y);
-            y += fieldGapY + 2;
-
-            // Línea separadora
-            doc.setLineWidth(0.3);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 6;
-
-            // --- SIGNOS VITALES Y TRATAMIENTO (dos columnas) ---
-            const leftColW = (pageWidth - margin*2) * 0.45;
-            const rightColX2 = margin + leftColW + 10;
-            const rightColW = pageWidth - margin - rightColX2;
-
-            let yLeft = y;
-            let yRight = y;
-
-            // Columna Izquierda: Signos Vitales
-            doc.setFont(undefined, 'bold');
-            doc.text('T.A.', margin, yLeft);
-            doc.setFont(undefined, 'normal');
-            doc.text(ta, margin + 10, yLeft);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('TEMP:', margin + 42, yLeft);
-            doc.setFont(undefined, 'normal');
-            doc.text(temp, margin + 56, yLeft);
-            yLeft += lineHeight;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('F.C X MIN', margin, yLeft);
-            doc.setFont(undefined, 'normal');
-            doc.text(fc, margin + 21, yLeft);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('PESO:', margin + 42, yLeft);
-            doc.setFont(undefined, 'normal');
-            doc.text(peso, margin + 54, yLeft);
-            yLeft += lineHeight;
-
-            doc.setFont(undefined, 'bold');
-            doc.text('F.R X MIN', margin, yLeft);
-            doc.setFont(undefined, 'normal');
-            doc.text(fr, margin + 21, yLeft);
-
-            doc.setFont(undefined, 'bold');
-            doc.text('TALLA:', margin + 42, yLeft);
-            doc.setFont(undefined, 'normal');
-            doc.text(talla, margin + 54, yLeft);
-            yLeft += lineHeight + 2;
-
-            // Diagnóstico (I.D)
-            doc.setFont(undefined, 'bold');
-            doc.text('I.D', margin, yLeft);
-            doc.setFont(undefined, 'normal');
-            doc.text(dx, margin + 8, yLeft);
-            yLeft += lineHeight + 4;
-
-            // Columna Derecha: Tratamiento
-            doc.setFont(undefined, 'bold');
-            doc.text('TRATAMIENTO:', rightColX2, yRight);
-            yRight += lineHeight;
-            doc.setFont(undefined, 'normal');
-            
-            // Formatear tratamiento línea por línea
-            const tratamientoLineas = tratamiento.split('\n').filter(l => l.trim());
+            const tratamientoLineas = tratamiento.split('\\n').filter(l => l.trim());
             tratamientoLineas.forEach(linea => {
                 const wrapped = doc.splitTextToSize(linea, rightColW - 5);
-                wrapped.forEach(w => {
-                    doc.text(w, rightColX2, yRight);
-                    yRight += lineHeight;
-                });
+                wrapped.forEach(w => { doc.text(w, rightColX2, yRight); yRight += 5; });
             });
 
-            // Determinar y máximo
             y = Math.max(yLeft, yRight) + 4;
+            doc.setLineWidth(0.3); doc.line(margin, y, pageWidth - margin, y); y += 6;
 
-            // Línea separadora
-            doc.setLineWidth(0.3);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 6;
+            doc.setFont(undefined, 'bold'); doc.text('OBSERVACIONES', margin, y); y += 5;
+            doc.setFont(undefined, 'normal'); y = drawJustifiedText(doc, contenido, margin, y, pageWidth - margin*2, 5); y += 4;
+            doc.setFont(undefined, 'normal'); y = drawJustifiedText(doc, indicaciones, margin, y, pageWidth - margin*2, 5); y += 8;
 
-            // --- OBSERVACIONES ---
-            doc.setFont(undefined, 'bold');
-            doc.text('OBSERVACIONES', margin, y);
-            y += 5;
-            doc.setFont(undefined, 'normal');
-            y = drawJustifiedText(doc, contenido, margin, y, pageWidth - margin*2, lineHeight);
-            y += 4;
+            doc.setFont(undefined, 'bold'); doc.text('PRÓXIMA CITA:', margin, y);
+            doc.setFont(undefined, 'normal'); doc.text(proxima, margin + 30, y); y += 12;
 
-            // INDICACIONES
-            doc.setFont(undefined, 'normal');
-            y = drawJustifiedText(doc, indicaciones, margin, y, pageWidth - margin*2, lineHeight);
-            y += 8;
-
-            // Próxima cita
-            doc.setFont(undefined, 'bold');
-            doc.text('PRÓXIMA CITA:', margin, y);
-            doc.setFont(undefined, 'normal');
-            doc.text(proxima, margin + 30, y);
-            y += 12;
-
-            // Línea para firma
             const firmaX = pageWidth - margin - 60;
-            doc.setLineWidth(0.4);
-            doc.line(firmaX, y, firmaX + 50, y);
-            doc.setFont(undefined, 'normal');
-            doc.text('COPIA', firmaX - 30, y);
-            doc.setFont(undefined, 'bold');
-            doc.text('FIRMA:', firmaX, y + 4);
-
+            doc.setLineWidth(0.4); doc.line(firmaX, y, firmaX + 50, y);
+            doc.setFont(undefined, 'normal'); doc.text('COPIA', firmaX - 30, y);
+            doc.setFont(undefined, 'bold'); doc.text('FIRMA:', firmaX, y + 4);
             y += 18;
 
-            // Línea punteada inferior
             const dashY = doc.internal.pageSize.getHeight() - 28;
-            const dashStartX = margin;
-            const dashEndX = pageWidth - margin;
-            const dashLen = 3;
-            const gapLen = 3;
+            const dashStartX = margin; const dashEndX = pageWidth - margin; const dashLen = 3; const gapLen = 3;
             let cursor = dashStartX;
-            doc.setDrawColor(0);
-            doc.setLineWidth(0.4);
+            doc.setDrawColor(0); doc.setLineWidth(0.4);
             while (cursor < dashEndX) {
                 doc.line(cursor, dashY, Math.min(cursor + dashLen, dashEndX), dashY);
                 cursor += dashLen + gapLen;
             }
 
             if (descargar) {
-                const safeName = (nombreP || 'PACIENTE').replace(/\s+/g, '_');
+                const safeName = (nombreP || 'PACIENTE').replace(/\\s+/g, '_');
                 doc.save(`Receta_Similares_${safeName}.pdf`);
                 return true;
             } else {
@@ -1392,11 +1315,11 @@
             }
         }
 
-
-        window.addEventListener('load', () => {
-            checkURL();
-        });
-
+        window.addEventListener('load', () => { checkURL(); });
     </script>
 </body>
 </html>
+"""
+with open("/mnt/data/index.html","w",encoding="utf-8") as f:
+    f.write(content)
+print("Archivo generado en /mnt/data/index.html")
