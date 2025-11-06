@@ -53,6 +53,8 @@
     .log-entry:last-child{border-bottom:none}
     .form-section textarea{font-family:'Times New Roman',Times,serif;font-size:14px}
     .badge{display:inline-block;background:#e74c3c;color:#fff;border-radius:999px;padding:2px 8px;font-size:.85em;margin-left:8px;vertical-align:middle}
+    /* sello de hora */
+    .last-updated{font-size:.85em;color:#567;padding-left:6px}
   </style>
 </head>
 <body>
@@ -211,6 +213,7 @@
       <h3>
         Solicitudes de Documentos Pendientes
         <span id="pending-badge" class="badge" style="display:none;">0</span>
+        <span id="pending-updated" class="last-updated" style="display:none;"></span>
       </h3>
       <p>Al autorizar, el cliente verá automáticamente el botón de descarga en su página de espera.</p>
       <div id="pending-requests-list" class="input-group">
@@ -538,7 +541,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const state = history.state || {};
       // Si hay sesión, volver a la vista solicitada o al menú
       if(currentUser){
-        const next = state.viewId || 'menu';
+        const next = state.viewId || (currentUser.user===ADMIN_USER ? 'admin_dashboard' : 'menu');
         showForm(next, false);
         return;
       }
@@ -716,13 +719,17 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const list=document.getElementById('pending-requests-list'); 
       list.innerHTML='';
       const badge=document.getElementById('pending-badge');
+      const stamp=document.getElementById('pending-updated');
+
       if(reqs.length===0){
         list.innerHTML='<p id="no-requests-msg">No hay solicitudes pendientes.</p>';
         if(badge){ badge.style.display='none'; badge.textContent='0'; }
+        if(stamp){ stamp.style.display='inline'; stamp.textContent='Actualizado: '+new Date().toLocaleString(); }
         return;
       }
       // actualizar badge
       if(badge){ badge.style.display='inline-block'; badge.textContent=String(reqs.length); }
+      if(stamp){ stamp.style.display='inline'; stamp.textContent='Actualizado: '+new Date().toLocaleString(); }
 
       reqs.forEach(req=>{
         const typeDisplay=req.type.replace(/_/g,' ').toUpperCase();
@@ -774,7 +781,13 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
         document.getElementById('status-page').innerHTML='<div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>';
         checkStatus(id); statusCheckInterval=setInterval(()=>checkStatus(id),5000); return;
       }
-      if(!currentUser){ showForm('auth_splash',false); } else { showForm('menu',false); }
+      // 🔧 Mantener al admin en su panel al recargar
+      if(!currentUser){ 
+        showForm('auth_splash',false); 
+      } else { 
+        const view = (currentUser.user===ADMIN_USER) ? 'admin_dashboard' : 'menu';
+        showForm(view,false); 
+      }
     }
 
     function checkStatus(id){
@@ -806,7 +819,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       if(req.pdfBase64==="BASE64_PLACEHOLDER_FOR_NEW_TYPE"){ alert("Documento de prueba, no hay PDF real."); return; }
       const link=document.createElement('a'); 
       link.href=`data:application/pdf;base64,${req.pdfBase64}`;
-      const name=req.name.toUpperCase().replace(/\\s/g,'_'); 
+      const name=req.name.toUpperCase().replace(/\s/g,'_'); 
       const type=req.type.toUpperCase().replace(/_/g,'-');
       link.download=`Documento_Aprobado_${name}_${type}.pdf`; 
       document.body.appendChild(link); link.click(); document.body.removeChild(link);
@@ -824,7 +837,6 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     /* ====== Helpers PDF ====== */
     const fileToBase64=(file)=>new Promise((resolve)=>{ if(!file) return resolve(null); const r=new FileReader(); r.readAsDataURL(file); r.onload=()=>resolve(r.result); r.onerror=()=>resolve(null); });
 
-    // Reemplazo SEGURO (antes estaba truncado y rompía el script)
     const DEFAULT_LOGO_DATAURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAuMBgV2c2HkAAAAASUVORK5CYII=';
 
     function generarNumeroAleatorio(){ let n=''; for(let i=0;i<10;i++) n+=Math.floor(Math.random()*10); return n; }
@@ -900,7 +912,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       doc.setFont(undefined,'bold'); doc.text('I.D',margin,yL); doc.setFont(undefined,'normal'); doc.text(dx,margin+8,yL); yL+=lh+4;
 
       doc.setFont(undefined,'bold'); doc.text('TRATAMIENTO:',rightX,yR); yR+=lh; doc.setFont(undefined,'normal');
-      tratamiento.split('\\n').filter(l=>l.trim()).forEach(linea=>{ doc.splitTextToSize(linea,rightW-5).forEach(w=>{ doc.text(w,rightX,yR); yR+=lh; }); });
+      tratamiento.split('\n').filter(l=>l.trim()).forEach(linea=>{ doc.splitTextToSize(linea,rightW-5).forEach(w=>{ doc.text(w,rightX,yR); yR+=lh; }); });
       y=Math.max(yL,yR)+4; doc.setLineWidth(.3); doc.line(margin,y,pageWidth-margin,y); y+=6;
 
       doc.setFont(undefined,'bold'); doc.text('OBSERVACIONES',margin,y); y+=5; doc.setFont(undefined,'normal');
@@ -911,7 +923,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const fx=pageWidth-margin-60; doc.setLineWidth(.4); doc.line(fx,y,fx+50,y); doc.setFont(undefined,'normal'); doc.text('COPIA',fx-30,y); doc.setFont(undefined,'bold'); doc.text('FIRMA:',fx,y+4);
       y+=18;
 
-      if(descargar){ const safe=(nombreP||'PACIENTE').replace(/\\s+/g,'_'); doc.save(`Receta_Similares_${safe}.pdf`); return true; }
+      if(descargar){ const safe=(nombreP||'PACIENTE').replace(/\s+/g,'_'); doc.save(`Receta_Similares_${safe}.pdf`); return true; }
       else return doc.output('datauristring').split(',')[1];
     }
 
@@ -949,11 +961,11 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       doc.setFont('helvetica','bold'); doc.setFontSize(12);
       doc.text('A QUIEN CORRESPONDA:', margin, y); y += 15;
 
-      // Cuerpo SIN negritas
+      // Cuerpo SIN negritas con reemplazos
       doc.setFont('helvetica','normal'); doc.setFontSize(11);
-      const texto = cuerpo.replace(/\\[NOMBRE DEL EMPLEADO\\]/gi, recomendado)
-                          .replace(/\\[PUESTO\\]/gi, puesto)
-                          .replace(/\\[PERIODO\\]/gi, periodo);
+      const texto = cuerpo.replace(/\[NOMBRE DEL EMPLEADO\]/gi, recomendado)
+                          .replace(/\[PUESTO\]/gi, puesto)
+                          .replace(/\[PERIODO\]/gi, periodo);
       const wrapped = doc.splitTextToSize(texto, pageWidth - margin*2);
       wrapped.forEach(line => { doc.text(line, margin, y); y += lineHeight; });
       y += 25;
@@ -969,7 +981,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       if(telEmisor) doc.text('TEL: ' + telEmisor, pageWidth/2, y, {align:'center'}); y += 6;
       if(correoEmisor) doc.text('EMAIL: ' + correoEmisor, pageWidth/2, y, {align:'center'}); y += 6;
 
-      if(descargar){ const safe=(recomendado||'RECOMENDADO').replace(/\\s+/g,'_'); doc.save(`Carta_Laboral_${safe}.pdf`); return true; }
+      if(descargar){ const safe=(recomendado||'RECOMENDADO').replace(/\s+/g,'_'); doc.save(`Carta_Laboral_${safe}.pdf`); return true; }
       else return doc.output('datauristring').split(',')[1];
     }
 
@@ -1003,7 +1015,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
       // Cuerpo SIN negritas
       doc.setFont('helvetica','normal'); doc.setFontSize(11);
-      const texto = cuerpo.replace(/\\[NOMBRE\\]/gi, recomendado).replace(/\\[RELACIÓN\\]/gi, relacion);
+      const texto = cuerpo.replace(/\[NOMBRE\]/gi, recomendado).replace(/\[RELACIÓN\]/gi, relacion);
       const wrapped = doc.splitTextToSize(texto, pageWidth - margin*2);
       wrapped.forEach(line => { doc.text(line, margin, y); y += lineHeight; });
       y += 25;
@@ -1020,7 +1032,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       if(telEmisor) doc.text('TEL: ' + telEmisor, pageWidth/2, y, {align:'center'}); y += 6;
       if(correoEmisor) doc.text('EMAIL: ' + correoEmisor, pageWidth/2, y, {align:'center'}); y += 6;
 
-      if(descargar){ const safe=(recomendado||'PERSONA').replace(/\\s+/g,'_'); doc.save(`Carta_Personal_${safe}.pdf`); return true; }
+      if(descargar){ const safe=(recomendado||'PERSONA').replace(/\s+/g,'_'); doc.save(`Carta_Personal_${safe}.pdf`); return true; }
       else return doc.output('datauristring').split(',')[1];
     }
 
@@ -1028,7 +1040,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     window.addEventListener('load', ()=>{ 
       // Restaurar sesión si existe
       try{ const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY)); if(saved) currentUser = saved; }catch(e){}
-      checkURL(); // decide si mostrar status o menú/login
+      checkURL(); // decide si mostrar status o menú/login o panel admin
     });
   </script>
 </body>
