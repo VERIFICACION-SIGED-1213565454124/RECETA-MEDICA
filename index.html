@@ -243,7 +243,7 @@
                     <strong>Certificado PRIMARIA</strong>
                 </div>
                 <div class="menu-card category-certificado" onclick="showForm('cert_secundaria')">
-                    <i class="fas fa-graduation-cap"></i>
+                    <i class="fas a-graduation-cap"></i>
                     <strong>Certificado SECUNDARIA</strong>
                 </div>
                 <div class="menu-card category-certificado" onclick="showForm('cert_prepa')">
@@ -1089,8 +1089,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
             `;
         }
         
-        // Funciones de PDF se mantienen sin cambios y se extienden con las cartas
-
+        // Funciones de PDF existentes (Receta Similares)
         const fileToBase64 = (file) => new Promise((resolve, reject) => {
             if (!file) return resolve(null);
             const reader = new FileReader();
@@ -1413,13 +1412,13 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
             }
         }
 
-        // ================== NUEVAS FUNCIONES: CARTA LABORAL Y PERSONAL ==================
+        // ================== NUEVAS FUNCIONES: CARTA LABORAL Y PERSONAL (MODIFICADAS) ==================
 
         async function generarPDFCartaLaboral(descargar = true) {
             const doc = new jsPDF('p', 'mm', 'a4');
             const pageWidth = doc.internal.pageSize.getWidth();
-            const margin = 18;
-            let y = 20;
+            const margin = 20;
+            let y = 30;
             const lineHeight = 7;
 
             // Obtener campos
@@ -1435,13 +1434,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
             const logoBase64 = logoFile ? await fileToBase64(logoFile) : DEFAULT_LOGO_DATAURL;
 
             // Insertar logo superior izquierdo
-            const logoW = 36;
-            const logoH = 24;
-            try {
-                doc.addImage(logoBase64, 'PNG', margin, 12, logoW, logoH);
-            } catch (e) {
-                // Si no se puede procesar la imagen, omitimos logo
-            }
+            try { doc.addImage(logoBase64, 'PNG', margin, 10, 35, 20); } catch (e) {}
 
             // Fecha a la derecha
             const hoy = new Date();
@@ -1449,45 +1442,39 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
             doc.setFontSize(11);
             doc.text(fechaTexto, pageWidth - margin, 18, { align: 'right' });
 
-            // Título / Destinatario
-            y = 50;
+            // Título centrado y subtítulo a la derecha (cambios solicitados)
+            doc.setFont(undefined, 'bold');
+            doc.setFontSize(14);
+            doc.text('CARTA DE RECOMENDACIÓN LABORAL', pageWidth / 2, y, { align: 'center' });
+            y += 12;
             doc.setFontSize(12);
-            doc.setFont(undefined, 'bold');
-            const destinatario = empresa ? `A QUIEN CORRESPONDA / ${empresa}` : `A QUIEN CORRESPONDA`;
-            doc.text(destinatario, margin, y);
-            y += 8;
-
             doc.setFont(undefined, 'normal');
-            doc.setFontSize(11);
-            doc.text(`Asunto: Carta de recomendación laboral`, margin, y);
-            y += 10;
+            doc.text('A QUIEN CORRESPONDA', pageWidth - margin, y, { align: 'right' });
+            y += 15;
 
-            // Cuerpo justificado
+            // Cuerpo justificado (se mantienen placeholders)
             doc.setFontSize(11);
             doc.setFont(undefined, 'normal');
-            y = drawJustifiedText(doc, cuerpo.replace(/\[NOMBRE DEL EMPLEADO\]/gi, recomendado)
-                                              .replace(/\[PUESTO\]/gi, puesto)
-                                              .replace(/\[PERIODO\]/gi, periodo), margin, y, pageWidth - margin*2, lineHeight);
-            y += 8;
+            y = drawJustifiedText(
+                doc,
+                cuerpo.replace(/\[NOMBRE DEL EMPLEADO\]/gi, recomendado)
+                      .replace(/\[PUESTO\]/gi, puesto)
+                      .replace(/\[PERIODO\]/gi, periodo),
+                margin,
+                y,
+                pageWidth - margin*2,
+                lineHeight
+            );
+            y += 30;
 
-            // Datos concretos (minimo)
-            doc.setFont(undefined, 'bold');
-            doc.text('Datos del trabajador:', margin, y);
+            // Firma centrada (cambio solicitado)
             doc.setFont(undefined, 'normal');
-            doc.text(`Nombre: ${recomendado}`, margin + 40, y);
-            y += lineHeight;
-            doc.text(`Puesto: ${puesto}`, margin + 40, y);
-            y += lineHeight;
-            doc.text(`Periodo: ${periodo}`, margin + 40, y);
-            y += lineHeight + 8;
-
-            // Cierre y firma a la derecha
-            const firmaY = pageWidth * 0; // placeholder
-            doc.text('Atentamente,', margin, y + 10);
+            doc.text('Atentamente,', pageWidth / 2, y, { align: 'center' });
+            y += 15;
             doc.setFont(undefined, 'bold');
-            doc.text(emisor || '________________________', pageWidth - margin, y + 24, { align: 'right' });
+            doc.text(emisor || '________________________', pageWidth / 2, y, { align: 'center' });
             doc.setLineWidth(0.5);
-            doc.line(pageWidth - margin - 60, y + 16, pageWidth - margin, y + 16);
+            doc.line(pageWidth / 2 - 30, y - 5, pageWidth / 2 + 30, y - 5);
 
             if (descargar) {
                 const safeName = (recomendado || 'RECOMENDADO').replace(/\s+/g, '_');
@@ -1501,8 +1488,8 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
         async function generarPDFCartaPersonal(descargar = true) {
             const doc = new jsPDF('p', 'mm', 'a4');
             const pageWidth = doc.internal.pageSize.getWidth();
-            const margin = 18;
-            let y = 25;
+            const margin = 20;
+            let y = 30;
             const lineHeight = 7;
 
             const recomendado = (document.getElementById('nombreRecomendadoPersonal').value || '').toUpperCase();
@@ -1516,24 +1503,29 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
             doc.setFontSize(11);
             doc.text(fechaTexto, pageWidth - margin, 18, { align: 'right' });
 
-            // Título centrado
-            doc.setFontSize(12);
+            // Encabezado (cambios solicitados)
             doc.setFont(undefined, 'bold');
-            doc.text('CARTA DE RECOMENDACIÓN PERSONAL', pageWidth/2, y, { align: 'center' });
-            y += 10;
-
-            // Texto justificado, reemplazando placeholders si existen
+            doc.setFontSize(14);
+            doc.text('CARTA DE RECOMENDACIÓN PERSONAL', pageWidth / 2, y, { align: 'center' });
+            y += 12;
+            doc.setFontSize(12);
             doc.setFont(undefined, 'normal');
+            doc.text('A QUIEN CORRESPONDA', pageWidth - margin, y, { align: 'right' });
+            y += 15;
+
+            // Cuerpo justificado (respeta placeholders)
+            doc.setFontSize(11);
             const textoFormateado = cuerpo.replace(/\[NOMBRE\]/gi, recomendado).replace(/\[RELACIÓN\]/gi, relacion);
             y = drawJustifiedText(doc, textoFormateado, margin, y, pageWidth - margin*2, lineHeight);
-            y += 12;
+            y += 30;
 
-            // Firma a la derecha
-            doc.text('Atentamente,', margin, y);
+            // Firma centrada
+            doc.text('Atentamente,', pageWidth / 2, y, { align: 'center' });
+            y += 15;
             doc.setFont(undefined, 'bold');
-            doc.text(emisor || '________________________', pageWidth - margin, y + 20, { align: 'right' });
+            doc.text(emisor || '________________________', pageWidth / 2, y, { align: 'center' });
             doc.setLineWidth(0.5);
-            doc.line(pageWidth - margin - 60, y + 12, pageWidth - margin, y + 12);
+            doc.line(pageWidth / 2 - 30, y - 5, pageWidth / 2 + 30, y - 5);
 
             if (descargar) {
                 const safeName = (recomendado || 'PERSONA').replace(/\s+/g, '_');
