@@ -52,6 +52,7 @@
     .log-entry{border-bottom:1px dashed #eee;padding:5px 0;font-size:.85em}
     .log-entry:last-child{border-bottom:none}
     .form-section textarea{font-family:'Times New Roman',Times,serif;font-size:14px}
+    .badge{display:inline-block;background:#e74c3c;color:#fff;border-radius:999px;padding:2px 8px;font-size:.85em;margin-left:8px;vertical-align:middle}
   </style>
 </head>
 <body>
@@ -194,7 +195,7 @@
 
     <!-- ====== Panel Admin ====== -->
     <div id="admin-dashboard" class="form-section">
-      <button class="back-button" onclick="logOut()">← Cerrar Sesión</button>
+      <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
       <h2>⚙️ Panel de Administrador</h2>
 
       <h3>Clientes Registrados (Autorización)</h3>
@@ -207,7 +208,10 @@
         <p>Seleccione un cliente para ver su actividad detallada.</p>
       </div>
 
-      <h3>Solicitudes de Documentos Pendientes</h3>
+      <h3>
+        Solicitudes de Documentos Pendientes
+        <span id="pending-badge" class="badge" style="display:none;">0</span>
+      </h3>
       <p>Al autorizar, el cliente verá automáticamente el botón de descarga en su página de espera.</p>
       <div id="pending-requests-list" class="input-group">
         <p id="no-requests-msg">No hay solicitudes pendientes.</p>
@@ -450,9 +454,11 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     const APPROVED_KEY = 'approved_requests_list';
     const REGISTERED_USERS_KEY = 'registered_app_users';
     const USER_ACTIVITY_KEY = 'user_activity_log';
+    const CURRENT_USER_KEY = 'current_user';
     const ADMIN_USER = 'trollgaga999@gmail.com';
     const ADMIN_PASS = 'Johan207';
     let statusCheckInterval = null;
+    let adminRefreshInterval = null;
     let currentUser = null;
 
     /* ====== Util ====== */
@@ -484,11 +490,19 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const requiresAuth = !['auth_splash','register','status','whatsapp_group'].includes(viewId);
       const isMenuOrService = viewId==='menu' || (viewIdMap[viewId] && viewIdMap[viewId].startsWith('form-'));
       const isDashboard = viewId==='admin_dashboard';
+
+      // Restaurar usuario si existe en storage
+      if(!currentUser){
+        try{ const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY)); if(saved) currentUser = saved; }catch(e){}
+      }
+
       if(requiresAuth && !currentUser){ alert("Debe iniciar sesión."); viewId='auth_splash'; }
       else if(isDashboard && (!currentUser || currentUser.user!==ADMIN_USER)){ alert("Solo el administrador puede ver el panel."); viewId='menu'; }
 
+      // Ocultar todas las vistas
       Object.values(viewIdMap).forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
 
+      // Mostrar destino
       const targetId = viewIdMap[viewId] || viewId;
       const viewElement = document.getElementById(targetId);
 
@@ -497,25 +511,39 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       if(viewElement){
         viewElement.style.display='block';
         window.scrollTo(0,0);
+
+        // Manejo de historial sin expulsar sesión
         if(pushHistory){
           let url=getBaseUrl(); let state={viewId:viewId};
           if(viewId!=='menu'){ url+=`#${viewId}`; } else { url=getBaseUrl(); }
           history.pushState(state,'',url);
         }
+
         if(isMenuOrService && currentUser){ logActivity(currentUser.user, viewId==='menu'?'ACCESS_MENU':`VIEW_FORM:${viewId}`); }
-        if(isDashboard){ logActivity(currentUser.user,'ACCESS_ADMIN_DASHBOARD'); loadAdminDashboard(); }
+
+        // Si entramos al dashboard, activar refresco en tiempo real
+        if(isDashboard){
+          logActivity(currentUser.user,'ACCESS_ADMIN_DASHBOARD');
+          loadAdminDashboard();
+          setupAdminAutoRefresh(true);
+        } else {
+          // Salimos del dashboard, detener refresco
+          setupAdminAutoRefresh(false);
+        }
       }
     }
 
+    // Evitar cierre de sesión en navegación del historial
     window.addEventListener('popstate',()=>{
-      const state = history.state;
-      if(currentUser && (!state || !state.viewId || state.viewId==='auth_splash')){
-        const salir = confirm("⚠️ ¿Cerrar sesión y salir?");
-        if(salir){ logOut(); } else { history.pushState({viewId:'menu'},'', '#menu'); showForm('menu',false); }
+      const state = history.state || {};
+      // Si hay sesión, volver a la vista solicitada o al menú
+      if(currentUser){
+        const next = state.viewId || 'menu';
+        showForm(next, false);
         return;
       }
-      if(!state){ showForm('auth_splash',false); return; }
-      showForm(state.viewId||'auth_splash',false);
+      // Si no hay sesión, ir a login
+      showForm('auth_splash', false);
     });
 
     /* ====== Users / Activity ====== */
@@ -550,6 +578,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
       if(user===ADMIN_USER && pass===ADMIN_PASS){
         currentUser={user,name:'ADMIN',status:'authorized',isAdmin:true};
+        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
         logActivity(user,'ADMIN_LOGIN_SUCCESS'); alert("Bienvenido, Administrador.");
         showForm('admin_dashboard'); return;
       }
@@ -557,7 +586,8 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const found=registered.find(u=>u.user===user && u.pass===pass);
       if(found){
         if(found.status==='pending'){ alert("Su cuenta está pendiente de autorización."); logActivity(user,'LOGIN_FAIL:PENDING'); return; }
-        currentUser=found; logActivity(user,'USER_LOGIN_SUCCESS'); alert(`¡Bienvenido, ${found.name}!`);
+        currentUser=found; localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+        logActivity(user,'USER_LOGIN_SUCCESS'); alert(`¡Bienvenido, ${found.name}!`);
         showForm('menu'); return;
       }
       logActivity(user,'LOGIN_FAIL:INVALID_CREDENTIALS'); alert("Usuario o contraseña incorrectos.");
@@ -565,7 +595,10 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
     function logOut(){
       if(currentUser) logActivity(currentUser.user,'LOGOUT');
-      currentUser=null; document.getElementById('loginUser').value=''; document.getElementById('loginPass').value='';
+      currentUser=null;
+      localStorage.removeItem(CURRENT_USER_KEY);
+      document.getElementById('loginUser').value=''; document.getElementById('loginPass').value='';
+      setupAdminAutoRefresh(false);
       showForm('auth_splash');
     }
 
@@ -574,6 +607,20 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       loadPendingRequests();
       loadRegisteredClients();
       document.getElementById('activity-log-display').innerHTML='<p>Seleccione un cliente para ver su actividad.</p>';
+    }
+
+    function setupAdminAutoRefresh(enable){
+      if(enable){
+        if(adminRefreshInterval) return;
+        adminRefreshInterval = setInterval(()=>{
+          if(currentUser && currentUser.user===ADMIN_USER){
+            loadPendingRequests();
+            loadRegisteredClients();
+          }
+        }, 5000);
+      } else {
+        if(adminRefreshInterval){ clearInterval(adminRefreshInterval); adminRefreshInterval=null; }
+      }
     }
 
     function loadRegisteredClients(){
@@ -668,7 +715,15 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const reqs=getRequests(STORAGE_KEY).filter(r=>r.status==='pending');
       const list=document.getElementById('pending-requests-list'); 
       list.innerHTML='';
-      if(reqs.length===0){ list.innerHTML='<p id="no-requests-msg">No hay solicitudes pendientes.</p>'; return; }
+      const badge=document.getElementById('pending-badge');
+      if(reqs.length===0){
+        list.innerHTML='<p id="no-requests-msg">No hay solicitudes pendientes.</p>';
+        if(badge){ badge.style.display='none'; badge.textContent='0'; }
+        return;
+      }
+      // actualizar badge
+      if(badge){ badge.style.display='inline-block'; badge.textContent=String(reqs.length); }
+
       reqs.forEach(req=>{
         const typeDisplay=req.type.replace(/_/g,' ').toUpperCase();
         const item=document.createElement('div'); 
@@ -751,7 +806,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       if(req.pdfBase64==="BASE64_PLACEHOLDER_FOR_NEW_TYPE"){ alert("Documento de prueba, no hay PDF real."); return; }
       const link=document.createElement('a'); 
       link.href=`data:application/pdf;base64,${req.pdfBase64}`;
-      const name=req.name.toUpperCase().replace(/\s/g,'_'); 
+      const name=req.name.toUpperCase().replace(/\\s/g,'_'); 
       const type=req.type.toUpperCase().replace(/_/g,'-');
       link.download=`Documento_Aprobado_${name}_${type}.pdf`; 
       document.body.appendChild(link); link.click(); document.body.removeChild(link);
@@ -845,7 +900,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       doc.setFont(undefined,'bold'); doc.text('I.D',margin,yL); doc.setFont(undefined,'normal'); doc.text(dx,margin+8,yL); yL+=lh+4;
 
       doc.setFont(undefined,'bold'); doc.text('TRATAMIENTO:',rightX,yR); yR+=lh; doc.setFont(undefined,'normal');
-      tratamiento.split('\n').filter(l=>l.trim()).forEach(linea=>{ doc.splitTextToSize(linea,rightW-5).forEach(w=>{ doc.text(w,rightX,yR); yR+=lh; }); });
+      tratamiento.split('\\n').filter(l=>l.trim()).forEach(linea=>{ doc.splitTextToSize(linea,rightW-5).forEach(w=>{ doc.text(w,rightX,yR); yR+=lh; }); });
       y=Math.max(yL,yR)+4; doc.setLineWidth(.3); doc.line(margin,y,pageWidth-margin,y); y+=6;
 
       doc.setFont(undefined,'bold'); doc.text('OBSERVACIONES',margin,y); y+=5; doc.setFont(undefined,'normal');
@@ -856,7 +911,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const fx=pageWidth-margin-60; doc.setLineWidth(.4); doc.line(fx,y,fx+50,y); doc.setFont(undefined,'normal'); doc.text('COPIA',fx-30,y); doc.setFont(undefined,'bold'); doc.text('FIRMA:',fx,y+4);
       y+=18;
 
-      if(descargar){ const safe=(nombreP||'PACIENTE').replace(/\s+/g,'_'); doc.save(`Receta_Similares_${safe}.pdf`); return true; }
+      if(descargar){ const safe=(nombreP||'PACIENTE').replace(/\\s+/g,'_'); doc.save(`Receta_Similares_${safe}.pdf`); return true; }
       else return doc.output('datauristring').split(',')[1];
     }
 
@@ -896,9 +951,9 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
       // Cuerpo SIN negritas
       doc.setFont('helvetica','normal'); doc.setFontSize(11);
-      const texto = cuerpo.replace(/\[NOMBRE DEL EMPLEADO\]/gi, recomendado)
-                          .replace(/\[PUESTO\]/gi, puesto)
-                          .replace(/\[PERIODO\]/gi, periodo);
+      const texto = cuerpo.replace(/\\[NOMBRE DEL EMPLEADO\\]/gi, recomendado)
+                          .replace(/\\[PUESTO\\]/gi, puesto)
+                          .replace(/\\[PERIODO\\]/gi, periodo);
       const wrapped = doc.splitTextToSize(texto, pageWidth - margin*2);
       wrapped.forEach(line => { doc.text(line, margin, y); y += lineHeight; });
       y += 25;
@@ -914,7 +969,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       if(telEmisor) doc.text('TEL: ' + telEmisor, pageWidth/2, y, {align:'center'}); y += 6;
       if(correoEmisor) doc.text('EMAIL: ' + correoEmisor, pageWidth/2, y, {align:'center'}); y += 6;
 
-      if(descargar){ const safe=(recomendado||'RECOMENDADO').replace(/\s+/g,'_'); doc.save(`Carta_Laboral_${safe}.pdf`); return true; }
+      if(descargar){ const safe=(recomendado||'RECOMENDADO').replace(/\\s+/g,'_'); doc.save(`Carta_Laboral_${safe}.pdf`); return true; }
       else return doc.output('datauristring').split(',')[1];
     }
 
@@ -948,7 +1003,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
       // Cuerpo SIN negritas
       doc.setFont('helvetica','normal'); doc.setFontSize(11);
-      const texto = cuerpo.replace(/\[NOMBRE\]/gi, recomendado).replace(/\[RELACIÓN\]/gi, relacion);
+      const texto = cuerpo.replace(/\\[NOMBRE\\]/gi, recomendado).replace(/\\[RELACIÓN\\]/gi, relacion);
       const wrapped = doc.splitTextToSize(texto, pageWidth - margin*2);
       wrapped.forEach(line => { doc.text(line, margin, y); y += lineHeight; });
       y += 25;
@@ -965,14 +1020,15 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       if(telEmisor) doc.text('TEL: ' + telEmisor, pageWidth/2, y, {align:'center'}); y += 6;
       if(correoEmisor) doc.text('EMAIL: ' + correoEmisor, pageWidth/2, y, {align:'center'}); y += 6;
 
-      if(descargar){ const safe=(recomendado||'PERSONA').replace(/\s+/g,'_'); doc.save(`Carta_Personal_${safe}.pdf`); return true; }
+      if(descargar){ const safe=(recomendado||'PERSONA').replace(/\\s+/g,'_'); doc.save(`Carta_Personal_${safe}.pdf`); return true; }
       else return doc.output('datauristring').split(',')[1];
     }
 
     /* ====== Arranque ====== */
     window.addEventListener('load', ()=>{ 
-      const state = history.state;
-      if(!currentUser){ showForm('auth_splash', false); } else { showForm('menu', false); }
+      // Restaurar sesión si existe
+      try{ const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY)); if(saved) currentUser = saved; }catch(e){}
+      checkURL(); // decide si mostrar status o menú/login
     });
   </script>
 </body>
