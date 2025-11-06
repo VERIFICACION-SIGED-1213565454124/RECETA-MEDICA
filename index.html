@@ -229,7 +229,7 @@
 
     <!-- ====== Receta Similares ====== -->
     <div id="form-receta_similares" class="form-section">
-      <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
       <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>
       <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
       <h2>💊 Formulario de Receta Médica SIMILARES</h2>
@@ -350,7 +350,7 @@
 
     <!-- ====== Carta LABORAL ====== -->
     <div id="form-laboral" class="form-section">
-      <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
       <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>
 
       <h2>✉️ Carta de Recomendación - LABORAL</h2>
@@ -396,7 +396,7 @@ Sin otro particular, quedo a sus órdenes para cualquier aclaración.</textarea>
 
     <!-- ====== Carta PERSONAL ====== -->
     <div id="form-personal" class="form-section">
-      <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
       <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>
 
       <h2>✉️ Carta de Recomendación - PERSONAL</h2>
@@ -428,7 +428,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
     <!-- ====== Incapacidad IMSS (placeholder) ====== -->
     <div id="form-incapacidad_imss" class="form-section">
-      <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
       <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
       <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
       <h2>💊 Formulario de Incapacidad IMSS</h2>
@@ -817,7 +817,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
           <h2>✅ ¡Solicitud Aprobada!</h2>
           <p>El administrador ha autorizado su documento para <strong>${req.name}</strong>.</p>
           <button class="btn-action btn-download-now" onclick="triggerDownload('${req.id}')">Descargar Documento Ahora</button>
-          <p style="margin-top:30px;"><a href="#" onclick="showForm('menu')">← Volver al Menú Principal</a></p>`;
+          <p style="margin-top:30px;"><a href="#" onclick="return goBackAfterDownload()">← Volver al Menú Principal</a></p>`;
       }
     }
 
@@ -839,7 +839,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
         <div>
           <h1>✅ Descarga Exitosa</h1>
           <p>Su documento para <strong>${req.name}</strong> ha sido descargado.</p>
-          <p style="margin-top:30px;"><a href="#" onclick="showForm('menu')">← Volver al Menú Principal</a></p>
+          <p style="margin-top:30px;"><a href="#" onclick="return goBackAfterDownload()">← Volver al Menú Principal</a></p>
         </div>`;
     }
 
@@ -1052,5 +1052,41 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       checkURL(); // decide si mostrar status o menú/login o panel admin
     });
   </script>
+
+<script>
+// --- Inserción automática: navegación segura tras descarga ---
+(function(){
+  if (window.goBackAfterDownload) return;
+  window.goBackAfterDownload = function(){
+    try{
+      var cu = (typeof currentUser !== 'undefined' && currentUser) ? currentUser : null;
+      if(!cu){
+        try{
+          cu = JSON.parse(localStorage.getItem('current_user')
+               || localStorage.getItem('CUR_USER')
+               || localStorage.getItem('cur_user')
+               || localStorage.getItem('CURRENT_USER')
+               || localStorage.getItem('CURRENT_USER_KEY')
+               || 'null');
+        }catch(e){ cu = null; }
+      }
+      var isAdmin = false;
+      try{
+        var ADMIN_USER = (typeof ADMIN_USER !== 'undefined') ? ADMIN_USER : null;
+        isAdmin = !!(cu && (cu.user === ADMIN_USER || cu.role === 'admin'));
+      }catch(_){ isAdmin = !!(cu && cu.role === 'admin'); }
+
+      if(typeof showForm === 'function'){
+        if(isAdmin){
+          showForm('admin_dashboard');
+        }else{
+          showForm('menu');
+        }
+      }
+    }catch(e){ /* no-op */ }
+    return false; // prevenir navegación por href="#"
+  };
+})();
+</script>
 </body>
 </html>
