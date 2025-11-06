@@ -364,8 +364,18 @@ En base a lo anterior, recomendamos a [NOMBRE DEL EMPLEADO] para cualquier puest
 
 Sin otro particular, quedo a sus órdenes para cualquier aclaración.</textarea>
 
-        <label for="nombreEmisorLaboral">Nombre y cargo quien emite:</label>
-        <input type="text" id="nombreEmisorLaboral" placeholder="Ej. Lic. JUAN PEREZ - Gerente RRHH">
+        <label for="nombreEmisorLaboral">Nombre del recomendante:</label>
+        <input type="text" id="nombreEmisorLaboral" placeholder="Ej. Lic. JUAN PEREZ">
+
+        <!-- NUEVOS CAMPOS -->
+        <label for="puestoEmisorLaboral">Puesto del recomendante:</label>
+        <input type="text" id="puestoEmisorLaboral" placeholder="Ej. Gerente RRHH">
+
+        <label for="telefonoEmisorLaboral">Teléfono de contacto:</label>
+        <input type="text" id="telefonoEmisorLaboral" placeholder="Ej. 6624535738">
+
+        <label for="correoEmisorLaboral">Correo electrónico (opcional):</label>
+        <input type="email" id="correoEmisorLaboral" placeholder="Ej. correo@empresa.com">
       </div>
 
       <button class="btn-action" onclick="saveSolicitud('laboral')">💾 Guardar Solicitud (Carta Laboral)</button>
@@ -391,6 +401,13 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
         <label for="nombreEmisorPersonal">Nombre (emisor):</label>
         <input type="text" id="nombreEmisorPersonal" placeholder="Ej. María López - Vecina">
+
+        <!-- NUEVOS CAMPOS -->
+        <label for="telefonoEmisorPersonal">Teléfono de contacto:</label>
+        <input type="text" id="telefonoEmisorPersonal" placeholder="Ej. 6624535738">
+
+        <label for="correoEmisorPersonal">Correo electrónico (opcional):</label>
+        <input type="email" id="correoEmisorPersonal" placeholder="Ej. correo@dominio.com">
       </div>
 
       <button class="btn-action" onclick="saveSolicitud('personal')">💾 Guardar Solicitud (Carta Personal)</button>
@@ -843,7 +860,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       else return doc.output('datauristring').split(',')[1];
     }
 
-    /* ====== PDF CARTA LABORAL (texto completo + negritas) ====== */
+    /* ====== PDF CARTA LABORAL (modificado) ====== */
     async function generarPDFCartaLaboral(descargar=true){
       const doc=new jsPDF('p','mm','a4');
       const pageWidth=doc.internal.pageSize.getWidth();
@@ -853,7 +870,11 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const periodo=(document.getElementById('periodoLaboral').value||'').toUpperCase();
       const recomendado=(document.getElementById('nombreRecomendadoLaboral').value||'').toUpperCase();
       const cuerpo=document.getElementById('cuerpoLaboral').value||'';
-      const emisor=(document.getElementById('nombreEmisorLaboral').value||'').toUpperCase();
+
+      const nombreEmisor=(document.getElementById('nombreEmisorLaboral').value||'').toUpperCase();
+      const puestoEmisor=(document.getElementById('puestoEmisorLaboral').value||'').toUpperCase();
+      const telEmisor=(document.getElementById('telefonoEmisorLaboral').value||'').toUpperCase();
+      const correoEmisor=(document.getElementById('correoEmisorLaboral').value||'').toUpperCase();
 
       const logoFile=document.getElementById('logoLaboralInput')?.files[0];
       const logoBase64=logoFile?await fileToBase64(logoFile):DEFAULT_LOGO_DATAURL;
@@ -873,25 +894,31 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       doc.setFont('helvetica','bold'); doc.setFontSize(12);
       doc.text('A QUIEN CORRESPONDA:', margin, y); y += 15;
 
-      // Cuerpo completo en negritas
-      doc.setFont('helvetica','bold'); doc.setFontSize(11);
+      // Cuerpo SIN negritas
+      doc.setFont('helvetica','normal'); doc.setFontSize(11);
       const texto = cuerpo.replace(/\[NOMBRE DEL EMPLEADO\]/gi, recomendado)
                           .replace(/\[PUESTO\]/gi, puesto)
                           .replace(/\[PERIODO\]/gi, periodo);
       const wrapped = doc.splitTextToSize(texto, pageWidth - margin*2);
       wrapped.forEach(line => { doc.text(line, margin, y); y += lineHeight; });
-      y += 30;
+      y += 25;
 
-      // Firma centrada
-      doc.setFont('helvetica','normal'); doc.text('Atentamente,', pageWidth/2, y, {align:'center'}); y += 15;
-      doc.setFont('helvetica','bold'); doc.text(emisor || '________________________', pageWidth/2, y, {align:'center'});
-      doc.setLineWidth(.5); doc.line(pageWidth/2 - 30, y - 5, pageWidth/2 + 30, y - 5);
+      // Firma / Recomendante centrado (uno debajo del otro)
+      doc.setFont('helvetica','normal');
+      doc.text('Atentamente,', pageWidth/2, y, {align:'center'}); y += 12;
+
+      doc.setFont('helvetica','bold');
+      if(nombreEmisor) doc.text(nombreEmisor, pageWidth/2, y, {align:'center'}); y += 6;
+      doc.setFont('helvetica','normal');
+      if(puestoEmisor) doc.text(puestoEmisor, pageWidth/2, y, {align:'center'}); y += 6;
+      if(telEmisor) doc.text('TEL: ' + telEmisor, pageWidth/2, y, {align:'center'}); y += 6;
+      if(correoEmisor) doc.text('EMAIL: ' + correoEmisor, pageWidth/2, y, {align:'center'}); y += 6;
 
       if(descargar){ const safe=(recomendado||'RECOMENDADO').replace(/\s+/g,'_'); doc.save(`Carta_Laboral_${safe}.pdf`); return true; }
       else return doc.output('datauristring').split(',')[1];
     }
 
-    /* ====== PDF CARTA PERSONAL (texto completo + negritas) ====== */
+    /* ====== PDF CARTA PERSONAL (modificado) ====== */
     async function generarPDFCartaPersonal(descargar=true){
       const doc=new jsPDF('p','mm','a4');
       const pageWidth=doc.internal.pageSize.getWidth();
@@ -900,7 +927,10 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const recomendado=(document.getElementById('nombreRecomendadoPersonal').value||'').toUpperCase();
       const relacion=(document.getElementById('relacionPersonal').value||'').toUpperCase();
       const cuerpo=document.getElementById('cuerpoPersonal').value||'';
-      const emisor=(document.getElementById('nombreEmisorPersonal').value||'').toUpperCase();
+
+      const nombreEmisor=(document.getElementById('nombreEmisorPersonal').value||'').toUpperCase();
+      const telEmisor=(document.getElementById('telefonoEmisorPersonal').value||'').toUpperCase();
+      const correoEmisor=(document.getElementById('correoEmisorPersonal').value||'').toUpperCase();
 
       // Título
       doc.setFont('helvetica','bold'); doc.setFontSize(14);
@@ -916,17 +946,24 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       doc.setFont('helvetica','bold'); doc.setFontSize(12);
       doc.text('A QUIEN CORRESPONDA:', margin, y); y += 15;
 
-      // Cuerpo completo en negritas
-      doc.setFont('helvetica','bold'); doc.setFontSize(11);
+      // Cuerpo SIN negritas
+      doc.setFont('helvetica','normal'); doc.setFontSize(11);
       const texto = cuerpo.replace(/\[NOMBRE\]/gi, recomendado).replace(/\[RELACIÓN\]/gi, relacion);
       const wrapped = doc.splitTextToSize(texto, pageWidth - margin*2);
       wrapped.forEach(line => { doc.text(line, margin, y); y += lineHeight; });
-      y += 30;
+      y += 25;
 
-      // Firma centrada
-      doc.setFont('helvetica','normal'); doc.text('Atentamente,', pageWidth/2, y, {align:'center'}); y += 15;
-      doc.setFont('helvetica','bold'); doc.text(emisor || '________________________', pageWidth/2, y, {align:'center'});
-      doc.setLineWidth(.5); doc.line(pageWidth/2 - 30, y - 5, pageWidth/2 + 30, y - 5);
+      // Firma / Emisor centrado (uno debajo del otro)
+      doc.setFont('helvetica','normal');
+      doc.text('Atentamente,', pageWidth/2, y, {align:'center'}); y += 12;
+
+      doc.setFont('helvetica','bold');
+      if(nombreEmisor) doc.text(nombreEmisor, pageWidth/2, y, {align:'center'}); y += 6;
+
+      doc.setFont('helvetica','normal');
+      if(relacion) doc.text(relacion, pageWidth/2, y, {align:'center'}); y += 6;
+      if(telEmisor) doc.text('TEL: ' + telEmisor, pageWidth/2, y, {align:'center'}); y += 6;
+      if(correoEmisor) doc.text('EMAIL: ' + correoEmisor, pageWidth/2, y, {align:'center'}); y += 6;
 
       if(descargar){ const safe=(recomendado||'PERSONA').replace(/\s+/g,'_'); doc.save(`Carta_Personal_${safe}.pdf`); return true; }
       else return doc.output('datauristring').split(',')[1];
@@ -934,7 +971,6 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
     /* ====== Arranque ====== */
     window.addEventListener('load', ()=>{ 
-      // Si ya hay sesión previa, ir al menú; si no, a login
       const state = history.state;
       if(!currentUser){ showForm('auth_splash', false); } else { showForm('menu', false); }
     });
