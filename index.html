@@ -466,8 +466,8 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     const CURRENT_USER_KEY = 'current_user';
 
     /* 🔒 Credenciales ocultas (base64) */
-    const ADMIN_USER = atob('dHJvbGxnYWdhOTk5QGdtYWlsLmNvbQ==');  // trollgaga999@gmail.com
-    const ADMIN_PASS = atob('Sm9oYW4yMDc=');                      // Johan207
+    const ADMIN_USER = 'trollgaga999@gmail.com';  // oculto: no se muestra en UI
+    const ADMIN_PASS = 'Johan207';               // oculto: no se muestra en UI
 
     let statusCheckInterval = null;
     let adminRefreshInterval = null;
@@ -499,35 +499,45 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     };
 
     function showForm(viewId, pushHistory=true){
-  const requiresAuth = !['auth_splash','register','status','whatsapp_group'].includes(viewId);
-  const isDashboard = viewId === 'admin_dashboard';
+      const requiresAuth = !['auth_splash','register','status','whatsapp_group'].includes(viewId);
+      const isMenuOrService = viewId==='menu' || (viewIdMap[viewId] && viewIdMap[viewId].startsWith('form-'));
+      const isDashboard = viewId==='admin_dashboard';
 
-  // Restaurar sesión si no está cargada
-  if(!currentUser){
-    try { const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY)); if(saved) currentUser = saved; }catch(e){}
-  }
+      if(!currentUser){
+        try{ const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY)); if(saved) currentUser = saved; }catch(e){}
+      }
 
-  if(requiresAuth && !currentUser){ 
-    alert('Debe iniciar sesión.'); 
-    viewId='auth_splash'; 
-  }
+      if(requiresAuth && !currentUser){ alert("Debe iniciar sesión."); viewId='auth_splash'; }
+      else if(isDashboard && (!currentUser || currentUser.user!==ADMIN_USER)){ alert("Solo el administrador puede ver el panel."); viewId='menu'; }
 
-  // 🚫 Bloquear acceso manual al admin
-  if(isDashboard && (!currentUser || currentUser.user !== ADMIN_USER)){
-    alert('Acceso denegado: solo el administrador puede ingresar al panel.');
-    viewId='menu';
-  }
+      Object.values(viewIdMap).forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
 
-  // Ocultar todas las vistas y mostrar la correspondiente
-  Object.values(viewIdMap).forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.style.display='none';
-  });
+      const targetId = viewIdMap[viewId] || viewId;
+      const viewElement = document.getElementById(targetId);
 
-  const targetId = viewIdMap[viewId] || viewId;
-  const viewElement = document.getElementById(targetId);
-  if(viewElement){ viewElement.style.display='block'; window.scrollTo(0,0); }
-}
+      if(viewId==='whatsapp_group'){ window.open('https://chat.whatsapp.com/GbkvIbPwCRX1JacpJJOS9D','_blank'); logActivity(currentUser?.user||'anon','VIEW_WHATSAPP_GROUP'); return; }
+
+      if(viewElement){
+        viewElement.style.display='block';
+        window.scrollTo(0,0);
+
+        if(pushHistory){
+          let url=getBaseUrl(); let state={viewId:viewId};
+          if(viewId!=='menu'){ url+=`#${viewId}`; } else { url=getBaseUrl(); }
+          history.pushState(state,'',url);
+        }
+
+        if(isMenuOrService && currentUser){ logActivity(currentUser.user, viewId==='menu'?'ACCESS_MENU':`VIEW_FORM:${viewId}`); }
+
+        if(isDashboard){
+          logActivity(currentUser.user,'ACCESS_ADMIN_DASHBOARD');
+          loadAdminDashboard();
+          setupAdminAutoRefresh(true);
+        } else {
+          setupAdminAutoRefresh(false);
+        }
+      }
+    }
 
       if(requiresAuth && !currentUser){ alert("Debe iniciar sesión."); viewId='auth_splash'; }
       else if(isDashboard && (!currentUser || currentUser.user!==ADMIN_USER)){ alert("Solo el administrador puede ver el panel."); viewId='menu'; }
@@ -606,76 +616,26 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     }
 
     function authenticateUser(){
-  const user = document.getElementById('loginUser').value.trim();
-  const pass = document.getElementById('loginPass').value.trim();
-
-  if(!user || !pass){
-    alert("Debe ingresar usuario y contraseña.");
-    return;
-  }
-
-  // Limpieza automática de sesión corrupta
-  try { localStorage.removeItem(CURRENT_USER_KEY); } catch(e){}
-
-  // Si es el administrador
-  if(user === ADMIN_USER && pass === ADMIN_PASS){
-    currentUser = {user, name: 'ADMIN', status: 'authorized', isAdmin: true};
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
-    logActivity(user, 'ADMIN_LOGIN_SUCCESS');
-    alert("Bienvenido, Administrador.");
-    showForm('admin_dashboard');
-    return;
-  }
-
-  // Buscar usuario registrado
-  const registered = getRegisteredUsers();
-  const found = registered.find(u => u.user === user && u.pass === pass);
-
-  if(found){
-    // ✅ El cliente accede directamente al menú
-    currentUser = found;
-    currentUser.status = 'authorized';
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
-    logActivity(user, 'USER_LOGIN_SUCCESS');
-    alert(`¡Bienvenido, ${found.name || 'Usuario'}!`);
-    showForm('menu');
-    return;
-  }
-
-  // Si no existe
-  logActivity(user, 'LOGIN_FAIL:INVALID_CREDENTIALS');
-  alert("Usuario o contraseña incorrectos.");
-}
-
-  // Si es el administrador
-  if(user === ADMIN_USER && pass === ADMIN_PASS){
-    currentUser = {user, name: 'ADMIN', status: 'authorized', isAdmin: true};
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
-    logActivity(user, 'ADMIN_LOGIN_SUCCESS');
-    alert("Bienvenido, Administrador.");
-    showForm('admin_dashboard');
-    return;
-  }
-
-  // Buscar usuario registrado
-  const registered = getRegisteredUsers();
-  const found = registered.find(u => u.user === user && u.pass === pass);
-
-  if(found){
-    // ✅ El cliente puede acceder al menú inmediatamente
-    currentUser = found;
-    currentUser.status = 'authorized';
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
-    logActivity(user, 'USER_LOGIN_SUCCESS');
-    alert(`¡Bienvenido, ${found.name}!`);
-    showForm('menu');
-    return;
-  }
-
-  // Si no existe
-  logActivity(user, 'LOGIN_FAIL:INVALID_CREDENTIALS');
-  alert("Usuario o contraseña incorrectos.");
-}
+      const user=document.getElementById('loginUser').value.trim();
+      const pass=document.getElementById('loginPass').value.trim();
+      if(!user||!pass){ alert("Debe ingresar usuario y contraseña."); return; }
+      try{ localStorage.removeItem(CURRENT_USER_KEY);}catch(e){}
+      if(user===ADMIN_USER && pass===ADMIN_PASS){
+        currentUser={user,name:'ADMIN',status:'authorized',isAdmin:true};
+        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+        logActivity(user,'ADMIN_LOGIN_SUCCESS'); alert("Bienvenido, Administrador.");
+        showForm('admin_dashboard'); return;
+      }
+      const registered=getRegisteredUsers();
+      const found=registered.find(u=>u.user===user && u.pass===pass);
+      if(found){
+        currentUser={...found,status:'authorized'};
+        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+        logActivity(user,'USER_LOGIN_SUCCESS'); alert(`¡Bienvenido, ${found.name||'Usuario'}!`);
+        showForm('menu'); return;
+      }
+      logActivity(user,'LOGIN_FAIL:INVALID_CREDENTIALS'); alert("Usuario o contraseña incorrectos.");
+    }
       const registered=getRegisteredUsers();
       const found=registered.find(u=>u.user===user && u.pass===pass);
       if(found){
@@ -862,48 +822,38 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
     /* ====== Status Page ====== */
     function checkURL(){
-  if(statusCheckInterval){ clearInterval(statusCheckInterval); statusCheckInterval=null; }
-  const hash=window.location.hash.substring(1); 
-  const params=new URLSearchParams(hash.split('?')[1]||''); 
-  const id=params.get('id');
+      if(statusCheckInterval){ clearInterval(statusCheckInterval); statusCheckInterval=null; }
+      const hash=window.location.hash.substring(1); 
+      const params=new URLSearchParams(hash.split('?')[1]||''); 
+      const id=params.get('id');
 
-  // Restaurar usuario si existe
-  if(!currentUser){
-    try { const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY)); if(saved) currentUser = saved; } catch(e){}
-  }
+      if(!currentUser){
+        try{ const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY)); if(saved) currentUser = saved; }catch(e){}
+      }
 
-  // Si el usuario no está autenticado
-  if(!currentUser){ 
-    showForm('auth_splash', false);
-    return;
-  }
+      if(hash.includes('admin_dashboard') && (!currentUser || currentUser.user!==ADMIN_USER)){
+        alert("Acceso denegado: solo el administrador puede ingresar al panel.");
+        showForm('menu', false);
+        return;
+      }
 
-  // Si alguien intenta forzar el panel admin sin ser admin
-  if(currentUser.user !== ADMIN_USER){
-    if(hash.includes('admin_dashboard')){
-      alert('Acceso denegado: solo el administrador puede ingresar al panel.');
-      showForm('menu', false);
-      return;
+      if(hash.startsWith('status') && id){
+        document.getElementById('app-container').style.display='none';
+        document.getElementById('status-page').style.display='flex';
+        document.getElementById('status-page').innerHTML='<div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>';
+        checkStatus(id); 
+        statusCheckInterval=setInterval(()=>checkStatus(id),5000); 
+        return;
+      }
+
+      if(!currentUser){ 
+        showForm('auth_splash', false); 
+      } else if(currentUser.user===ADMIN_USER){ 
+        showForm('admin_dashboard', false);
+      } else { 
+        showForm('menu', false); 
+      }
     }
-  }
-
-  // Página de estatus
-  if(hash.startsWith('status') && id){
-    document.getElementById('app-container').style.display='none';
-    document.getElementById('status-page').style.display='flex';
-    document.getElementById('status-page').innerHTML='<div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>';
-    checkStatus(id); 
-    statusCheckInterval=setInterval(()=>checkStatus(id),5000); 
-    return;
-  }
-
-  // Restaurar vista correcta
-  if(currentUser.user === ADMIN_USER){ 
-    showForm('admin_dashboard', false);
-  } else { 
-    showForm('menu', false); 
-  }
-}
       // 🔧 Mantener al admin en su panel al recargar; el cliente queda en su menú
       if(!currentUser){ 
         showForm('auth_splash',false); 
