@@ -606,15 +606,43 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     }
 
     function authenticateUser(){
-      const user=document.getElementById('loginUser').value;
-      const pass=document.getElementById('loginPass').value;
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
 
-      if(user===ADMIN_USER && pass===ADMIN_PASS){
-        currentUser={user,name:'ADMIN',status:'authorized',isAdmin:true};
-        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
-        logActivity(user,'ADMIN_LOGIN_SUCCESS'); alert("Bienvenido, Administrador.");
-        showForm('admin_dashboard'); return;
-      }
+  if(!user || !pass){
+    alert("Debe ingresar usuario y contraseña.");
+    return;
+  }
+
+  // Si es el administrador
+  if(user === ADMIN_USER && pass === ADMIN_PASS){
+    currentUser = {user, name: 'ADMIN', status: 'authorized', isAdmin: true};
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+    logActivity(user, 'ADMIN_LOGIN_SUCCESS');
+    alert("Bienvenido, Administrador.");
+    showForm('admin_dashboard');
+    return;
+  }
+
+  // Buscar usuario registrado
+  const registered = getRegisteredUsers();
+  const found = registered.find(u => u.user === user && u.pass === pass);
+
+  if(found){
+    // ✅ El cliente puede acceder al menú inmediatamente
+    currentUser = found;
+    currentUser.status = 'authorized';
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+    logActivity(user, 'USER_LOGIN_SUCCESS');
+    alert(`¡Bienvenido, ${found.name}!`);
+    showForm('menu');
+    return;
+  }
+
+  // Si no existe
+  logActivity(user, 'LOGIN_FAIL:INVALID_CREDENTIALS');
+  alert("Usuario o contraseña incorrectos.");
+}
       const registered=getRegisteredUsers();
       const found=registered.find(u=>u.user===user && u.pass===pass);
       if(found){
