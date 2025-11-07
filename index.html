@@ -784,6 +784,34 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const hash=window.location.hash.substring(1); 
       const params=new URLSearchParams(hash.split('?')[1]||''); 
       const id=params.get('id');
+
+      // Asegurar restauración de sesión
+      if(!currentUser){
+        try { const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY)); if(saved) currentUser = saved; } catch(e){}
+      }
+
+      // --- Página de estatus ---
+      if(hash.startsWith('status') && id){
+        document.getElementById('app-container').style.display='none';
+        document.getElementById('status-page').style.display='flex';
+        document.getElementById('status-page').innerHTML='<div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>';
+        checkStatus(id); 
+        statusCheckInterval=setInterval(()=>checkStatus(id),5000); 
+        return;
+      }
+
+      // --- Restaurar vista correcta al recargar ---
+      if(!currentUser){ 
+        showForm('auth_splash', false); 
+      } else if(currentUser.user === ADMIN_USER){ 
+        showForm('admin_dashboard', false);
+      } else { 
+        showForm('menu', false); 
+      }
+    }
+      const hash=window.location.hash.substring(1); 
+      const params=new URLSearchParams(hash.split('?')[1]||''); 
+      const id=params.get('id');
       if(hash.startsWith('status') && id){
         document.getElementById('app-container').style.display='none';
         document.getElementById('status-page').style.display='flex';
