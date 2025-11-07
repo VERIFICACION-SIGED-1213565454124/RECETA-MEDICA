@@ -614,6 +614,39 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     return;
   }
 
+  // Limpieza automática de sesión corrupta
+  try { localStorage.removeItem(CURRENT_USER_KEY); } catch(e){}
+
+  // Si es el administrador
+  if(user === ADMIN_USER && pass === ADMIN_PASS){
+    currentUser = {user, name: 'ADMIN', status: 'authorized', isAdmin: true};
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+    logActivity(user, 'ADMIN_LOGIN_SUCCESS');
+    alert("Bienvenido, Administrador.");
+    showForm('admin_dashboard');
+    return;
+  }
+
+  // Buscar usuario registrado
+  const registered = getRegisteredUsers();
+  const found = registered.find(u => u.user === user && u.pass === pass);
+
+  if(found){
+    // ✅ El cliente accede directamente al menú
+    currentUser = found;
+    currentUser.status = 'authorized';
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+    logActivity(user, 'USER_LOGIN_SUCCESS');
+    alert(`¡Bienvenido, ${found.name || 'Usuario'}!`);
+    showForm('menu');
+    return;
+  }
+
+  // Si no existe
+  logActivity(user, 'LOGIN_FAIL:INVALID_CREDENTIALS');
+  alert("Usuario o contraseña incorrectos.");
+}
+
   // Si es el administrador
   if(user === ADMIN_USER && pass === ADMIN_PASS){
     currentUser = {user, name: 'ADMIN', status: 'authorized', isAdmin: true};
