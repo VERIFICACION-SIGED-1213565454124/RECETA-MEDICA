@@ -229,7 +229,7 @@
 
     <!-- ====== Receta Similares ====== -->
     <div id="form-receta_similares" class="form-section">
-      <button class="back-button" onclick="volverAlMenu()">← Volver al Menú</button>
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
       <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>
       <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
       <h2>💊 Formulario de Receta Médica SIMILARES</h2>
@@ -350,7 +350,7 @@
 
     <!-- ====== Carta LABORAL ====== -->
     <div id="form-laboral" class="form-section">
-      <button class="back-button" onclick="volverAlMenu()">← Volver al Menú</button>
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
       <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>
 
       <h2>✉️ Carta de Recomendación - LABORAL</h2>
@@ -396,7 +396,7 @@ Sin otro particular, quedo a sus órdenes para cualquier aclaración.</textarea>
 
     <!-- ====== Carta PERSONAL ====== -->
     <div id="form-personal" class="form-section">
-      <button class="back-button" onclick="volverAlMenu()">← Volver al Menú</button>
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
       <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>
 
       <h2>✉️ Carta de Recomendación - PERSONAL</h2>
@@ -428,7 +428,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
     <!-- ====== Incapacidad IMSS (placeholder) ====== -->
     <div id="form-incapacidad_imss" class="form-section">
-      <button class="back-button" onclick="volverAlMenu()">← Volver al Menú</button>
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
       <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
       <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
       <h2>💊 Formulario de Incapacidad IMSS</h2>
@@ -784,34 +784,6 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const hash=window.location.hash.substring(1); 
       const params=new URLSearchParams(hash.split('?')[1]||''); 
       const id=params.get('id');
-
-      // Asegurar restauración de sesión
-      if(!currentUser){
-        try { const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY)); if(saved) currentUser = saved; } catch(e){}
-      }
-
-      // --- Página de estatus ---
-      if(hash.startsWith('status') && id){
-        document.getElementById('app-container').style.display='none';
-        document.getElementById('status-page').style.display='flex';
-        document.getElementById('status-page').innerHTML='<div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>';
-        checkStatus(id); 
-        statusCheckInterval=setInterval(()=>checkStatus(id),5000); 
-        return;
-      }
-
-      // --- Restaurar vista correcta al recargar ---
-      if(!currentUser){ 
-        showForm('auth_splash', false); 
-      } else if(currentUser.user === ADMIN_USER){ 
-        showForm('admin_dashboard', false);
-      } else { 
-        showForm('menu', false); 
-      }
-    }
-      const hash=window.location.hash.substring(1); 
-      const params=new URLSearchParams(hash.split('?')[1]||''); 
-      const id=params.get('id');
       if(hash.startsWith('status') && id){
         document.getElementById('app-container').style.display='none';
         document.getElementById('status-page').style.display='flex';
@@ -845,7 +817,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
           <h2>✅ ¡Solicitud Aprobada!</h2>
           <p>El administrador ha autorizado su documento para <strong>${req.name}</strong>.</p>
           <button class="btn-action btn-download-now" onclick="triggerDownload('${req.id}')">Descargar Documento Ahora</button>
-          <p style="margin-top:30px;"><a href="#" onclick="volverAlMenu()">← Volver al Menú Principal</a></p>`;
+          <p style="margin-top:30px;"><a href="#" onclick="return goBackAfterDownload()">← Volver al Menú Principal</a></p>`;
       }
     }
 
@@ -867,7 +839,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
         <div>
           <h1>✅ Descarga Exitosa</h1>
           <p>Su documento para <strong>${req.name}</strong> ha sido descargado.</p>
-          <p style="margin-top:30px;"><a href="#" onclick="volverAlMenu()">← Volver al Menú Principal</a></p>
+          <p style="margin-top:30px;"><a href="#" onclick="return goBackAfterDownload()">← Volver al Menú Principal</a></p>
         </div>`;
     }
 
@@ -1082,29 +1054,39 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
   </script>
 
 <script>
-// === Navegación corregida al presionar "Volver al menú" ===
-function volverAlMenu(){
-  try{
-    let userData = null;
-    try {
-      userData = JSON.parse(localStorage.getItem('user') || localStorage.getItem('currentUser') || 'null');
-    } catch(e){}
-    const isAdmin = userData && userData.user === ADMIN_USER;
-    if (isAdmin){
-      if (typeof show === 'function') show('admin');
-      else if (typeof showForm === 'function') showForm('admin_dashboard');
-    } else {
-      if (typeof show === 'function') show('menu');
-      else if (typeof showForm === 'function') showForm('menu');
-    }
-  }catch(e){ console.error('Error al volver al menú', e); }
-}
-</script>
+// --- Inserción automática: navegación segura tras descarga ---
+(function(){
+  if (window.goBackAfterDownload) return;
+  window.goBackAfterDownload = function(){
+    try{
+      var cu = (typeof currentUser !== 'undefined' && currentUser) ? currentUser : null;
+      if(!cu){
+        try{
+          cu = JSON.parse(localStorage.getItem('current_user')
+               || localStorage.getItem('CUR_USER')
+               || localStorage.getItem('cur_user')
+               || localStorage.getItem('CURRENT_USER')
+               || localStorage.getItem('CURRENT_USER_KEY')
+               || 'null');
+        }catch(e){ cu = null; }
+      }
+      var isAdmin = false;
+      try{
+        var ADMIN_USER = (typeof ADMIN_USER !== 'undefined') ? ADMIN_USER : null;
+        isAdmin = !!(cu && (cu.user === ADMIN_USER || cu.role === 'admin'));
+      }catch(_){ isAdmin = !!(cu && cu.role === 'admin'); }
 
-</body>
-<script>
-window.addEventListener('error', function(e){
-  console.error('Error global capturado:', e.message);
-});
+      if(typeof showForm === 'function'){
+        if(isAdmin){
+          showForm('admin_dashboard');
+        }else{
+          showForm('menu');
+        }
+      }
+    }catch(e){ /* no-op */ }
+    return false; // prevenir navegación por href="#"
+  };
+})();
 </script>
+</body>
 </html>
