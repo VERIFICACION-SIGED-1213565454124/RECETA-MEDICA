@@ -214,7 +214,7 @@
       </div>
     </div>
 
-    <!-- ====== Receta Similares ====== -->
+    <!-- ====== Receta Similares (existente) ====== -->
     <div id="form-receta_similares" class="form-section">
       <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
       <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>
@@ -232,7 +232,7 @@
         <label for="ciudadSimilares">Ciudad:</label>
         <input type="text" id="ciudadSimilares" value="CIUDAD DE MÉXICO">
         <label for="fechaEmisionSimilares">Fecha de Emisión:</label>
-        <input type="date" id="fechaEmisionSimilares">
+        <input type="date" id="fechaEmisionSimilares" value="">
         <label for="logoInputSimilares">Logo (opcional):</label>
         <input type="file" id="logoInputSimilares" accept="image/*">
       </div>
@@ -396,7 +396,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       <button class="btn-action" onclick="saveSolicitud('personal')">💾 Guardar Solicitud (Carta Personal)</button>
     </div>
 
-    <!-- ====== Incapacidad IMSS (placeholder) ====== -->
+    <!-- ====== Incapacidad IMSS (placeholder existente) ====== -->
     <div id="form-incapacidad_imss" class="form-section">
       <button class="back-button" onclick="showForm('menu')">← Volver al Menú</button>
       <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
@@ -465,7 +465,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
     function showForm(viewId, pushHistory=true){
       const requiresAuth = !['auth_splash','register','status','whatsapp_group'].includes(viewId);
-      const isMenuOrService = viewId==='menu' || (viewIdMap[viewId] && viewIdMap[viewId].startsWith('form-'));
+      const isMenuOrService = viewId==='menu' || viewIdMap[viewId]?.startsWith('form-');
       const isDashboard = viewId==='admin_dashboard';
       if(requiresAuth && !currentUser){ alert("Debe iniciar sesión."); viewId='auth_splash'; }
       else if(isDashboard && (!currentUser || currentUser.user!==ADMIN_USER)){ alert("Solo el administrador puede ver el panel."); viewId='menu'; }
@@ -485,12 +485,12 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
           if(viewId!=='menu'){ url+=`#${viewId}`; } else { url=getBaseUrl(); }
           history.pushState(state,'',url);
         }
-        if(isMenuOrService && currentUser){ logActivity(currentUser.user, viewId==='menu'?'ACCESS_MENU':`VIEW_FORM:${viewId}`); }
+        if(isMenuOrService){ logActivity(currentUser.user, viewId==='menu'?'ACCESS_MENU':`VIEW_FORM:${viewId}`); }
         if(isDashboard){ logActivity(currentUser.user,'ACCESS_ADMIN_DASHBOARD'); loadAdminDashboard(); }
       }
     }
 
-    window.addEventListener('popstate',()=>{
+    window.addEventListener('popstate',(e)=>{
       const state = history.state;
       if(currentUser && (!state || !state.viewId || state.viewId==='auth_splash')){
         const salir = confirm("⚠️ ¿Cerrar sesión y salir?");
@@ -553,22 +553,14 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     }
 
     /* ====== Admin ====== */
-    function loadAdminDashboard(){
-      loadPendingRequests();
-      loadRegisteredClients();
-      document.getElementById('activity-log-display').innerHTML='<p>Seleccione un cliente para ver su actividad.</p>';
-    }
-
+    function loadAdminDashboard(){ loadPendingRequests(); loadRegisteredClients(); document.getElementById('activity-log-display').innerHTML='<p>Seleccione un cliente para ver su actividad.</p>'; }
     function loadRegisteredClients(){
-      const users=getRegisteredUsers(); 
-      const list=document.getElementById('client-authorization-list'); 
-      list.innerHTML='';
+      const users=getRegisteredUsers(); const list=document.getElementById('client-authorization-list'); list.innerHTML='';
       if(users.length===0){ list.innerHTML='<p>No hay clientes registrados.</p>'; return; }
       users.forEach(user=>{
         const statusColor=user.status==='authorized'?'#27ae60':'#e67e22';
         const item=document.createElement('div');
-        item.id=`client-${user.user.replace(/[^a-zA-Z0-9]/g,'-')}`; 
-        item.className='client-item';
+        item.id=`client-${user.user.replace(/[^a-zA-Z0-9]/g,'-')}`; item.className='client-item';
         item.innerHTML=`
           <div class="client-info">
             <strong>${user.name}</strong>
@@ -583,7 +575,6 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
         list.appendChild(item);
       });
     }
-
     function authorizeUser(email){
       if(!confirm(`¿Autorizar al usuario ${email}?`)) return;
       const users=getRegisteredUsers(); const i=users.findIndex(u=>u.user===email);
@@ -597,17 +588,10 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       else alert("Usuario no encontrado.");
     }
     function viewUserActivity(email){
-      const logEl=document.getElementById('activity-log-display'); 
-      const all=getActivityLog(); 
-      const items=all.filter(e=>e.user===email).reverse();
+      const logEl=document.getElementById('activity-log-display'); const all=getActivityLog(); const items=all.filter(e=>e.user===email).reverse();
       logEl.innerHTML=`<h4>Actividad de: ${email}</h4>`;
       if(items.length===0){ logEl.innerHTML+='<p>Sin actividad registrada.</p>'; return; }
-      items.forEach(entry=>{
-        const div=document.createElement('div'); 
-        div.className='log-entry'; 
-        div.innerHTML=`[${entry.timestamp}] <strong>${entry.action}</strong>`; 
-        logEl.appendChild(div);
-      });
+      items.forEach(entry=>{ const div=document.createElement('div'); div.className='log-entry'; div.innerHTML=`[${entry.timestamp}] <strong>${entry.action}</strong>`; logEl.appendChild(div); });
       logActivity(ADMIN_USER,`VIEW_ACTIVITY_LOG:${email}`);
     }
 
@@ -649,14 +633,11 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
     function loadPendingRequests(){
       const reqs=getRequests(STORAGE_KEY).filter(r=>r.status==='pending');
-      const list=document.getElementById('pending-requests-list'); 
-      list.innerHTML='';
+      const list=document.getElementById('pending-requests-list'); list.innerHTML='';
       if(reqs.length===0){ list.innerHTML='<p id="no-requests-msg">No hay solicitudes pendientes.</p>'; return; }
       reqs.forEach(req=>{
         const typeDisplay=req.type.replace(/_/g,' ').toUpperCase();
-        const item=document.createElement('div'); 
-        item.id=`request-${req.id}`; 
-        item.className='request-item';
+        const item=document.createElement('div'); item.id=`request-${req.id}`; item.className='request-item';
         item.innerHTML=`
           <div class="request-info">
             <strong>${typeDisplay} - ${req.name}</strong>
@@ -693,9 +674,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     /* ====== Status Page ====== */
     function checkURL(){
       if(statusCheckInterval){ clearInterval(statusCheckInterval); statusCheckInterval=null; }
-      const hash=window.location.hash.substring(1); 
-      const params=new URLSearchParams(hash.split('?')[1]||''); 
-      const id=params.get('id');
+      const hash=window.location.hash.substring(1); const params=new URLSearchParams(hash.split('?')[1]||''); const id=params.get('id');
       if(hash.startsWith('status') && id){
         document.getElementById('app-container').style.display='none';
         document.getElementById('status-page').style.display='flex';
@@ -706,9 +685,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     }
 
     function checkStatus(id){
-      const approved=getRequests(APPROVED_KEY); 
-      const req=approved.find(r=>r.id===id); 
-      const statusPage=document.getElementById('status-page');
+      const approved=getRequests(APPROVED_KEY); const req=approved.find(r=>r.id===id); const statusPage=document.getElementById('status-page');
       const disclaimer=statusPage.querySelector('.disclaimer-notice')?statusPage.querySelector('.disclaimer-notice').outerHTML:'';
       if(!req){
         statusPage.innerHTML=disclaimer+`
@@ -728,16 +705,12 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     }
 
     function triggerDownload(id){
-      const approved=getRequests(APPROVED_KEY); 
-      const req=approved.find(r=>r.id===id);
+      const approved=getRequests(APPROVED_KEY); const req=approved.find(r=>r.id===id);
       if(!req){ alert("Archivo no encontrado."); showForm('menu'); return; }
       if(req.pdfBase64==="BASE64_PLACEHOLDER_FOR_NEW_TYPE"){ alert("Documento de prueba, no hay PDF real."); return; }
-      const link=document.createElement('a'); 
-      link.href=`data:application/pdf;base64,${req.pdfBase64}`;
-      const name=req.name.toUpperCase().replace(/\s/g,'_'); 
-      const type=req.type.toUpperCase().replace(/_/g,'-');
-      link.download=`Documento_Aprobado_${name}_${type}.pdf`; 
-      document.body.appendChild(link); link.click(); document.body.removeChild(link);
+      const link=document.createElement('a'); link.href=`data:application/pdf;base64,${req.pdfBase64}`;
+      const name=req.name.toUpperCase().replace(/\s/g,'_'); const type=req.type.toUpperCase().replace(/_/g,'-');
+      link.download=`Documento_Aprobado_${name}_${type}.pdf`; document.body.appendChild(link); link.click(); document.body.removeChild(link);
       if(currentUser) logActivity(currentUser.user,`DOWNLOAD_DOCUMENT:${req.type}:${id}`);
       const statusPage=document.getElementById('status-page');
       const disclaimer=statusPage.querySelector('.disclaimer-notice')?statusPage.querySelector('.disclaimer-notice').outerHTML:'';
@@ -751,16 +724,13 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
     /* ====== Helpers PDF ====== */
     const fileToBase64=(file)=>new Promise((resolve)=>{ if(!file) return resolve(null); const r=new FileReader(); r.readAsDataURL(file); r.onload=()=>resolve(r.result); r.onerror=()=>resolve(null); });
-
-    // Reemplazo SEGURO (antes estaba truncado y rompía el script)
-    const DEFAULT_LOGO_DATAURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAuMBgV2c2HkAAAAASUVORK5CYII=';
-
     function generarNumeroAleatorio(){ let n=''; for(let i=0;i<10;i++) n+=Math.floor(Math.random()*10); return n; }
     function drawJustifiedText(doc,text,x,y,maxWidth,lineHeight){
       const lines = doc.splitTextToSize(text, maxWidth);
-      lines.forEach(line=>{ doc.text(line, x, y); y += lineHeight; });
+      lines.forEach((line, idx)=>{ doc.text(line, x, y); y += lineHeight; });
       return y;
     }
+    const DEFAULT_LOGO_DATAURL='data:image/svg+xml;base64,'+btoa(`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="80" viewBox="0 0 200 80"><rect width="200" height="80" fill="white"/><g transform="translate(10,8)"><circle cx="24" cy="24" r="24" fill="#0a6ebd"/><path d="M18 24 C18 14 36 12 36 24 C36 36 18 34 18 24 Z" fill="white"/><text x="62" y="36" font-family="Arial" font-size="14" fill="#0a6ebd" font-weight="bold">FARMACIAS</text><text x="62" y="53" font-family="Arial" font-size="14" fill="#0a6ebd" font-weight="bold">SIMILARES</text></g></svg>`);
 
     function drawBarcodeStyled(doc,x,y,w,h,code){
       const digits=code.split(''); const total=digits.length*4; const unit=w/total; let cursor=x; doc.setFillColor(0);
@@ -769,7 +739,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       doc.setFontSize(8); doc.text(code, x+(w/2), y+h+4, {align:'center'});
     }
 
-    /* ====== PDF Receta Similares ====== */
+    /* ====== PDF Receta Similares (existente, no tocado) ====== */
     async function generarPDFRecetaSimilares(descargar=true){
       const doc=new jsPDF('p','mm','a4'); const pageWidth=doc.internal.pageSize.getWidth(); const margin=10; let y=10; const lh=5;
       const nombreDoc=(document.getElementById('doctorNombreSimilares').value||'').toUpperCase();
@@ -800,7 +770,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const barcodeNumber=generarNumeroAleatorio();
 
       // Encabezado
-      if(logoBase64) { try{ doc.addImage(logoBase64,'PNG',margin,y,34,20); }catch(e){} }
+      doc.addImage(logoBase64,'PNG',margin,y,34,20);
       doc.setFontSize(12); doc.setFont(undefined,'bold'); doc.text(nombreDoc,pageWidth/2,y+8,{align:'center'});
       doc.setFontSize(10); doc.setFont(undefined,'normal'); doc.text(cedula,pageWidth/2,y+13,{align:'center'});
       doc.text('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO',pageWidth/2,y+18,{align:'center'});
@@ -837,17 +807,20 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       doc.setFont(undefined,'bold'); doc.text('PRÓXIMA CITA:',margin,y); doc.setFont(undefined,'normal'); doc.text(proxima,margin+30,y); y+=12;
 
       const fx=pageWidth-margin-60; doc.setLineWidth(.4); doc.line(fx,y,fx+50,y); doc.setFont(undefined,'normal'); doc.text('COPIA',fx-30,y); doc.setFont(undefined,'bold'); doc.text('FIRMA:',fx,y+4);
-      y+=18;
+      y+=18; const dashY=doc.internal.pageSize.getHeight()-28; const dashStart=margin; const dashEnd=pageWidth-margin; let c=dashStart; doc.setDrawColor(0); doc.setLineWidth(.4);
+      while(c<dashEnd){ doc.line(c,dashY,Math.min(c+3,dashEnd),dashY); c+=6; }
 
       if(descargar){ const safe=(nombreP||'PACIENTE').replace(/\s+/g,'_'); doc.save(`Receta_Similares_${safe}.pdf`); return true; }
       else return doc.output('datauristring').split(',')[1];
     }
 
-    /* ====== PDF CARTA LABORAL (texto completo + negritas) ====== */
+    /* ====== PDF CARTA LABORAL (corregido: texto completo + negritas) ====== */
     async function generarPDFCartaLaboral(descargar=true){
       const doc=new jsPDF('p','mm','a4');
       const pageWidth=doc.internal.pageSize.getWidth();
-      const margin=20; let y=30; const lineHeight=7;
+      const margin=20;
+      let y=30;
+      const lineHeight=7;
 
       const puesto=(document.getElementById('puestoLaboral').value||'').toUpperCase();
       const periodo=(document.getElementById('periodoLaboral').value||'').toUpperCase();
@@ -857,23 +830,26 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
       const logoFile=document.getElementById('logoLaboralInput')?.files[0];
       const logoBase64=logoFile?await fileToBase64(logoFile):DEFAULT_LOGO_DATAURL;
-      if(logoBase64){ try{ doc.addImage(logoBase64,'PNG',margin,10,35,20); }catch(e){} }
+      try{ if(logoBase64) doc.addImage(logoBase64,'PNG',margin,10,35,20); }catch(e){}
 
       // Título
       doc.setFont('helvetica','bold'); doc.setFontSize(14);
-      doc.text('CARTA DE RECOMENDACIÓN LABORAL', pageWidth/2, y, {align:'center'}); y += 10;
+      doc.text('CARTA DE RECOMENDACIÓN LABORAL', pageWidth/2, y, {align:'center'});
+      y += 10;
 
-      // Fecha derecha
+      // Fecha a la derecha
       const hoy=new Date();
       const fechaTexto=hoy.toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
       doc.setFont('helvetica','normal'); doc.setFontSize(11);
-      doc.text(fechaTexto, pageWidth - margin, y, {align:'right'}); y += 8;
+      doc.text(fechaTexto, pageWidth - margin, y, {align:'right'});
+      y += 8;
 
-      // Subtítulo izquierda
+      // Subtítulo a la izquierda
       doc.setFont('helvetica','bold'); doc.setFontSize(12);
-      doc.text('A QUIEN CORRESPONDA:', margin, y); y += 15;
+      doc.text('A QUIEN CORRESPONDA:', margin, y);
+      y += 15;
 
-      // Cuerpo completo en negritas
+      // Cuerpo completo y en negritas
       doc.setFont('helvetica','bold'); doc.setFontSize(11);
       const texto = cuerpo.replace(/\[NOMBRE DEL EMPLEADO\]/gi, recomendado)
                           .replace(/\[PUESTO\]/gi, puesto)
@@ -891,11 +867,13 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       else return doc.output('datauristring').split(',')[1];
     }
 
-    /* ====== PDF CARTA PERSONAL (texto completo + negritas) ====== */
+    /* ====== PDF CARTA PERSONAL (corregido: texto completo + negritas) ====== */
     async function generarPDFCartaPersonal(descargar=true){
       const doc=new jsPDF('p','mm','a4');
       const pageWidth=doc.internal.pageSize.getWidth();
-      const margin=20; let y=30; const lineHeight=7;
+      const margin=20;
+      let y=30;
+      const lineHeight=7;
 
       const recomendado=(document.getElementById('nombreRecomendadoPersonal').value||'').toUpperCase();
       const relacion=(document.getElementById('relacionPersonal').value||'').toUpperCase();
@@ -904,17 +882,20 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
       // Título
       doc.setFont('helvetica','bold'); doc.setFontSize(14);
-      doc.text('CARTA DE RECOMENDACIÓN PERSONAL', pageWidth/2, y, {align:'center'}); y += 10;
+      doc.text('CARTA DE RECOMENDACIÓN PERSONAL', pageWidth/2, y, {align:'center'});
+      y += 10;
 
       // Fecha derecha
       const hoy=new Date();
       const fechaTexto=hoy.toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
       doc.setFont('helvetica','normal'); doc.setFontSize(11);
-      doc.text(fechaTexto, pageWidth - margin, y, {align:'right'}); y += 8;
+      doc.text(fechaTexto, pageWidth - margin, y, {align:'right'});
+      y += 8;
 
       // Subtítulo izquierda
       doc.setFont('helvetica','bold'); doc.setFontSize(12);
-      doc.text('A QUIEN CORRESPONDA:', margin, y); y += 15;
+      doc.text('A QUIEN CORRESPONDA:', margin, y);
+      y += 15;
 
       // Cuerpo completo en negritas
       doc.setFont('helvetica','bold'); doc.setFontSize(11);
@@ -933,11 +914,10 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     }
 
     /* ====== Arranque ====== */
-    window.addEventListener('load', ()=>{ 
-      // Si ya hay sesión previa, ir al menú; si no, a login
-      const state = history.state;
-      if(!currentUser){ showForm('auth_splash', false); } else { showForm('menu', false); }
-    });
+    function loadPendingRequests(){ /* no-op en demo corta */ }
+    function loadRegisteredClients(){ /* no-op en demo corta */ }
+
+    window.addEventListener('load', ()=>{ showForm('auth_splash', false); });
   </script>
 </body>
 </html>
