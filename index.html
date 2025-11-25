@@ -227,7 +227,6 @@
 
     <!-- ====== Panel Admin ====== -->
     <div id="admin-dashboard" class="form-section">
-      <!-- Quitamos el botón de volver al menú y dejamos SOLO cerrar sesión -->
       <div class="toolbar">
         <h2 style="border-bottom:none;margin-bottom:0;">⚙️ Panel de Administrador
           <span id="pending-badge" class="badge" style="display:none;">0</span>
@@ -345,7 +344,6 @@
         <label for="nombreEmisorPersonal">Nombre de quien emite la carta:</label>
         <input type="text" id="nombreEmisorPersonal" placeholder="Ej. María López - Vecina">
 
-        <!-- NUEVOS CAMPOS -->
         <label for="telefonoEmisorPersonal">Teléfono de contacto:</label>
         <input type="text" id="telefonoEmisorPersonal" placeholder="Ej. 6624535738">
 
@@ -539,13 +537,6 @@
     const USER_ACTIVITY_KEY = 'user_activity_log';
     const CURRENT_USER_KEY = 'current_user';
 
-    /* 🔒 Credenciales de administrador
-       IMPORTANTE: En producción, mueve esta validación a un backend seguro.
-       Estas credenciales son SOLO de ejemplo, cámbialas por las tuyas.
-    */
-    const ADMIN_USER = 'admin@example.com';
-    const ADMIN_PASS = 'cambia_esta_contraseña_segura';
-
     let statusCheckInterval = null;
     let adminRefreshInterval = null;
     let currentUser = null;
@@ -586,30 +577,46 @@
         try{ const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY)); if(saved) currentUser = saved; }catch(e){}
       }
 
-      if(requiresAuth && !currentUser){ alert("Debe iniciar sesión."); viewId='auth_splash'; }
-      else if(isDashboard && (!currentUser || currentUser.user!==ADMIN_USER)){ alert("Solo el administrador puede ver el panel."); viewId='menu'; }
+      if(requiresAuth && !currentUser){ 
+        alert("Debe iniciar sesión."); 
+        viewId='auth_splash'; 
+      }
+      else if(isDashboard && (!currentUser || !currentUser.isAdmin)){ 
+        alert("Solo el administrador puede ver el panel."); 
+        viewId='menu'; 
+      }
 
       // Ocultar todas las vistas
-      Object.values(viewIdMap).forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
+      Object.values(viewIdMap).forEach(id=>{ 
+        const el=document.getElementById(id); 
+        if(el) el.style.display='none'; 
+      });
 
       // Mostrar destino
       const targetId = viewIdMap[viewId] || viewId;
       const viewElement = document.getElementById(targetId);
 
-      if(viewId==='whatsapp_group'){ window.open('https://chat.whatsapp.com','_blank'); logActivity(currentUser?.user||'anon','VIEW_WHATSAPP_GROUP'); return; }
+      if(viewId==='whatsapp_group'){ 
+        window.open('https://chat.whatsapp.com','_blank'); 
+        logActivity(currentUser?.user||'anon','VIEW_WHATSAPP_GROUP'); 
+        return; 
+      }
 
       if(viewElement){
         viewElement.style.display='block';
         window.scrollTo(0,0);
 
-        // Manejo de historial sin expulsar sesión
+        // Manejo de historial
         if(pushHistory){
-          let url=getBaseUrl(); let state={viewId:viewId};
+          let url=getBaseUrl(); 
+          let state={viewId:viewId};
           if(viewId!=='menu'){ url+=`#${viewId}`; } else { url=getBaseUrl(); }
           history.pushState(state,'',url);
         }
 
-        if(isMenuOrService && currentUser){ logActivity(currentUser.user, viewId==='menu'?'ACCESS_MENU':`VIEW_FORM:${viewId}`); }
+        if(isMenuOrService && currentUser){ 
+          logActivity(currentUser.user, viewId==='menu'?'ACCESS_MENU':`VIEW_FORM:${viewId}`); 
+        }
 
         // Si entramos al dashboard, activar refresco en tiempo real
         if(isDashboard){
@@ -617,7 +624,6 @@
           loadAdminDashboard();
           setupAdminAutoRefresh(true);
         } else {
-          // Salimos del dashboard, detener refresco
           setupAdminAutoRefresh(false);
         }
       }
@@ -651,21 +657,51 @@
       showForm('auth_splash');
     }
 
-    function authenticateUser(){
-      const user=document.getElementById('loginUser').value;
-      const pass=document.getElementById('loginPass').value;
+    // 🔐 Login seguro con backend PHP
+    async function authenticateUser(){
+      const user = document.getElementById('loginUser').value;
+      const pass = document.getElementById('loginPass').value;
 
-      if(user===ADMIN_USER && pass===ADMIN_PASS){
-        currentUser={user,name:'ADMIN',status:'authorized',isAdmin:true};
-        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
-        logActivity(user,'ADMIN_LOGIN_SUCCESS'); alert("Bienvenido, Administrador.");
-        showForm('admin_dashboard'); return;
+      // --- 1) Intentar admin en backend ---
+      try{
+        const res = await fetch("admin_login.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user, pass })
+        });
+
+        const result = await res.json();
+
+        if(result && result.success === true){
+          // LOGIN ADMIN
+          currentUser = {
+            user,
+            role: result.role || "admin",
+            name: "ADMIN",
+            isAdmin: true,
+            status: "authorized"
+          };
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+          logActivity(user,'ADMIN_LOGIN_SUCCESS');
+          alert("Bienvenido, Administrador.");
+          showForm("admin_dashboard");
+          return;
+        }
+      } catch(e){
+        console.error("Error al verificar admin:", e);
       }
+
+      // --- 2) Si NO es admin, validar como usuario normal localmente ---
       const registered=getRegisteredUsers();
       const found=registered.find(u=>u.user===user && u.pass===pass);
       if(found){
-        if(found.status==='pending'){ alert("Su cuenta está pendiente de autorización."); logActivity(user,'LOGIN_FAIL:PENDING'); return; }
-        currentUser=found; localStorage.setItem(CURRENT_USER_KEY,JSON.stringify(found));
+        if(found.status==='pending'){ 
+          alert("Su cuenta está pendiente de autorización."); 
+          logActivity(user,'LOGIN_FAIL:PENDING');
+          return; 
+        }
+        currentUser=found; 
+        localStorage.setItem(CURRENT_USER_KEY,JSON.stringify(found));
         logActivity(user,'LOGIN_SUCCESS');
         showForm('menu');
       } else {
@@ -789,7 +825,6 @@
         });
       }
 
-      // Actualizar badge
       const totalPending=pendingUsers.length+pendingReqs.length;
       if(totalPending>0){
         badge.textContent=totalPending;
@@ -800,7 +835,6 @@
       updated.textContent='Última actualización: '+new Date().toLocaleTimeString();
       updated.style.display='inline-block';
 
-      // Delegar events para autorizar/rechazar
       clientsContainer.querySelectorAll('.btn-authorize').forEach(btn=>{
         btn.onclick=()=>handleUserAuthorization(btn.dataset.user,true);
       });
@@ -840,7 +874,6 @@
       const req=reqs[idx];
 
       if(approved){
-        // Aqui se debería subir/generar el PDF y asociar la URL/base64
         req.status='approved';
         req.approvedAt=new Date().toISOString();
         req.pdf='BASE64_PDF_EXAMPLE'; // placeholder
@@ -874,14 +907,13 @@
       const hash=window.location.hash.replace('#','');
       if(hash.startsWith('status')){
         document.getElementById('status-page').style.display='block';
-        // Podrías agregar más lógica de estatus aquí
         return;
       }
       if(hash && viewIdMap[hash]){
         showForm(hash,false);
       } else {
         if(currentUser){
-          if(currentUser.user===ADMIN_USER){
+          if(currentUser.isAdmin){
             showForm('admin_dashboard',false);
           } else {
             showForm('menu',false);
@@ -901,14 +933,13 @@
     };
 
     window.addEventListener('load', ()=>{ 
-      // Restaurar sesión si existe
       try{ const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY)); if(saved) currentUser = saved; }catch(e){}
-      checkURL(); // decide si mostrar status o menú/login o panel admin
+      checkURL();
     });
   </script>
 
 <script>
-// --- Navegación segura tras descarga (ajustada para respetar rol de admin) ---
+// --- Navegación segura tras descarga (respeta rol de admin) ---
 (function(){
   if (window.goBackAfterDownload) return;
   window.goBackAfterDownload = function(){
@@ -927,7 +958,7 @@
         }catch(e){ cu = null; }
       }
 
-      var isAdmin = !!(cu && (cu.user === window.ADMIN_USER || cu.isAdmin));
+      var isAdmin = !!(cu && (cu.isAdmin || cu.role === 'admin'));
 
       if(typeof showForm === 'function'){
         if(isAdmin){
@@ -937,7 +968,7 @@
         }
       }
     }catch(e){ /* no-op */ }
-    return false; // prevenir navegación por href="#"
+    return false;
   };
 })();
 </script>
