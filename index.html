@@ -58,7 +58,12 @@
     .toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
     .btn-logout{background:#3498db;color:#fff;border:none;border-radius:6px;padding:10px 14px;cursor:pointer;font-weight:700}
     .btn-logout:hover{filter:brightness(0.95)}
-  </style>
+  
+    .btn-upload{background:#8e44ad;color:#fff;padding:8px 12px;border:none;border-radius:4px;cursor:pointer;font-size:.9em}
+    .btn-upload:hover{background:#732d91}
+    .logo-preview img{max-width:160px;max-height:80px;border:1px solid #ccc;border-radius:4px;display:block;margin-top:5px}
+    .small-muted{font-size:.85em;color:#7f8c8d}
+</style>
 </head>
 <body>
 
@@ -222,6 +227,22 @@
       <h3>Registro de Actividad del Último Cliente Seleccionado</h3>
       <div id="activity-log-display" class="input-group">
         <p>Seleccione un cliente para ver su actividad detallada.</p>
+      </div>
+
+      <h3>Logo Certificado Médico Farmacia</h3>
+      <div id="logo-cert-farmacia-settings" class="input-group">
+        <p class="small-muted">
+          Aquí puede subir el logo que se usará en el Certificado Médico de Farmacia.
+          Se guarda como predeterminado en este navegador para todos los certificados.
+        </p>
+        <input type="file" id="logoCertFarmaciaInput" accept="image/*">
+        <div style="margin-top:10px;">
+          <button type="button" class="btn-upload" onclick="saveCertFarmaciaLogo()">Guardar logo por defecto</button>
+          <button type="button" class="btn-reject" onclick="removeCertFarmaciaLogo()">Quitar logo</button>
+        </div>
+        <div id="logoCertFarmaciaPreview" class="logo-preview small-muted" style="margin-top:10px;">
+          <p>No hay logo guardado actualmente.</p>
+        </div>
       </div>
 
       <h3>Solicitudes de Documentos Pendientes</h3>
@@ -571,7 +592,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
         <input type="text" id="cmfUniversidad" value="UNIVERSIDAD AUTÓNOMA DEL ESTADO DE MORELOS">
       </div>
 
-      <button class="btn-action" onclick="generarCertMedicoFarmaciaPDF(true)">🧾 Generar PDF de Certificado</button>
+      <button class="btn-action" onclick="saveSolicitud('cert_medico_farmacia')">💾 Guardar Solicitud (Certificado Médico Farmacia)</button>
     </div>
 
 <!-- ====== Incapacidad IMSS (placeholder) ====== -->
@@ -612,6 +633,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     const REGISTERED_USERS_KEY = 'registered_app_users';
     const USER_ACTIVITY_KEY = 'user_activity_log';
     const CURRENT_USER_KEY = 'current_user';
+    const CERT_FARMACIA_LOGO_KEY = 'cert_farmacia_logo_base64';
 
     /* 🔒 Credenciales ocultas (base64) */
     const ADMIN_USER = atob('dHJvbGxnYWdhOTk5QGdtYWlsLmNvbQ==');  // trollgaga999@gmail.com
@@ -768,6 +790,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       loadPendingRequests();
       loadRegisteredClients();
       document.getElementById('activity-log-display').innerHTML='<p>Seleccione un cliente para ver su actividad.</p>';
+      if(typeof updateCertFarmaciaLogoPreview==='function'){ updateCertFarmaciaLogoPreview(); }
     }
 
     function setupAdminAutoRefresh(enable){
@@ -1200,6 +1223,24 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const doc = new jsPDF('p','mm','letter');
       const pageWidth = doc.internal.pageSize.getWidth();
       let y = 20;
+
+      // Logo de Certificado de Farmacia (configurado por el administrador)
+      try{
+        let logoBase64 = null;
+        try{
+          logoBase64 = localStorage.getItem(CERT_FARMACIA_LOGO_KEY);
+        }catch(e){ logoBase64 = null; }
+        if(!logoBase64){ logoBase64 = typeof DEFAULT_LOGO_DATAURL!=='undefined' ? DEFAULT_LOGO_DATAURL : null; }
+        if(logoBase64){
+          const logoWidth = 25;
+          const logoHeight = 25;
+          const logoX = pageWidth - logoWidth - 20;
+          const logoY = 18;
+          doc.addImage(logoBase64,'PNG',logoX,logoY,logoWidth,logoHeight);
+        }
+      }catch(e){
+        console.error('No se pudo agregar el logo al certificado:', e);
+      }
 
       // Datos del formulario
       const nombre = (document.getElementById('cmfNombre').value || '').toUpperCase();
