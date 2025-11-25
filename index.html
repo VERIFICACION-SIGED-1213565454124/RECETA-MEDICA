@@ -146,6 +146,10 @@
           <i class="fas fa-notes-medical"></i>
           <strong>Certificado Médico IMSS</strong>
         </div>
+        <div class="menu-card category-receta" onclick="showForm('cert_medico_farmacia')">
+          <i class="fas fa-file-medical"></i>
+          <strong>Certificado Médico Farmacia</strong>
+        </div>
       </div>
 
       <hr/>
@@ -426,7 +430,151 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       <button class="btn-action" onclick="saveSolicitud('personal')">💾 Guardar Solicitud (Carta Personal)</button>
     </div>
 
-    <!-- ====== Incapacidad IMSS (placeholder) ====== -->
+    
+    <!-- ====== Certificado Médico Farmacia ====== -->
+    <div id="form-cert_medico_farmacia" class="form-section">
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
+      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>
+      <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+
+      <h2>📋 Certificado Médico - Farmacia</h2>
+
+      <div class="input-group">
+        <h3>👤 Datos del Paciente</h3>
+        <label for="cmfNombre">Nombre completo:</label>
+        <input type="text" id="cmfNombre" placeholder="Ej. Jerry Mauricio Carmona Rodríguez">
+
+        <div class="flex-row">
+          <div>
+            <label for="cmfSexo">Sexo:</label>
+            <input type="text" id="cmfSexo" placeholder="MASCULINO / FEMENINO">
+          </div>
+          <div>
+            <label for="cmfEdad">Edad:</label>
+            <input type="text" id="cmfEdad" placeholder="Ej. 29 años">
+          </div>
+        </div>
+
+        <div class="flex-row">
+          <div>
+            <label for="cmfExpediente">Número de expediente:</label>
+            <input type="text" id="cmfExpediente" placeholder="Ej. 0016145176">
+          </div>
+          <div>
+            <label for="cmfNacimiento">Fecha de nacimiento:</label>
+            <input type="text" id="cmfNacimiento" placeholder="Ej. 16/01/1996">
+          </div>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <h3>📈 Signos vitales y medidas</h3>
+        <div class="flex-row">
+          <div>
+            <label for="cmfPeso">Peso:</label>
+            <input type="text" id="cmfPeso" placeholder="Ej. 82 Kg">
+          </div>
+          <div>
+            <label for="cmfTalla">Talla:</label>
+            <input type="text" id="cmfTalla" placeholder="Ej. 1.69">
+          </div>
+        </div>
+
+        <div class="flex-row">
+          <div>
+            <label for="cmfIMC">IMC:</label>
+            <input type="text" id="cmfIMC" placeholder="Ej. 24.9 Kg/m2">
+          </div>
+          <div>
+            <label for="cmfTA">T.A.:</label>
+            <input type="text" id="cmfTA" placeholder="Ej. 120/80 mmHg">
+          </div>
+        </div>
+
+        <div class="flex-row">
+          <div>
+            <label for="cmfFC">F.C.:</label>
+            <input type="text" id="cmfFC" placeholder="Ej. 87 x min">
+          </div>
+          <div>
+            <label for="cmfFR">F.R.:</label>
+            <input type="text" id="cmfFR" placeholder="Ej. 20 x min">
+          </div>
+        </div>
+
+        <div class="flex-row">
+          <div>
+            <label for="cmfTemp">Temperatura:</label>
+            <input type="text" id="cmfTemp" placeholder="Ej. 36 °C">
+          </div>
+          <div>
+            <label for="cmfSaturacion">Saturación:</label>
+            <input type="text" id="cmfSaturacion" placeholder="Ej. 92%">
+          </div>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <h3>🩺 Exploración y antecedentes</h3>
+        <label for="cmfAbdominal">Abdominal:</label>
+        <input type="text" id="cmfAbdominal" placeholder="Ej. SIN DATOS PATOLÓGICOS">
+
+        <label for="cmfClinico">Conclusión clínica:</label>
+        <input type="text" id="cmfClinico" value="CLÍNICAMENTE: SANO Y APTO PARA REALIZAR SUS ACTIVIDADES FÍSICAS">
+
+        <label for="cmfVisual">A visual:</label>
+        <input type="text" id="cmfVisual" placeholder="Ej. OJO DERECHO NORMAL 30/30; OJO IZQUIERDO NORMAL 30/30">
+
+        <label for="cmfAuditiva">A auditiva:</label>
+        <input type="text" id="cmfAuditiva" placeholder="Ej. OÍDO DERECHO NORMAL; OÍDO IZQUIERDO NORMAL">
+
+        <label for="cmfBucal">C. bucal:</label>
+        <input type="text" id="cmfBucal" placeholder="Ej. NORMAL">
+
+        <label for="cmfSangre">Tipo de sangre:</label>
+        <input type="text" id="cmfSangre" placeholder="Ej. O+">
+
+        <label for="cmfAlergias">Alergias:</label>
+        <input type="text" id="cmfAlergias" placeholder="Ej. NEGADAS">
+
+        <label for="cmfDM">DM:</label>
+        <input type="text" id="cmfDM" placeholder="Ej. NEGATIVOS">
+
+        <label for="cmfHAS">H.A.S.:</label>
+        <input type="text" id="cmfHAS" placeholder="Ej. NEGATIVOS">
+
+        <label for="cmfEKG">EKG:</label>
+        <input type="text" id="cmfEKG" placeholder="Ej. NORMAL">
+
+        <label for="cmfPies">Pies:</label>
+        <input type="text" id="cmfPies" placeholder="Ej. SIN DATOS PATOLÓGICOS">
+
+        <label for="cmfResto">Resto de exploración:</label>
+        <input type="text" id="cmfResto" placeholder="Ej. SIN DATOS PATOLÓGICOS">
+      </div>
+
+      <div class="input-group">
+        <h3>👨‍⚕️ Datos del médico y emisión</h3>
+        <label for="cmfCiudad">Ciudad:</label>
+        <input type="text" id="cmfCiudad" value="MÉXICO">
+
+        <label for="cmfFechaCert">Fecha del certificado:</label>
+        <input type="date" id="cmfFechaCert">
+
+        <label for="cmfMedicoNombre">Nombre del médico:</label>
+        <input type="text" id="cmfMedicoNombre" value="Dra. CARMEN ROSSANO AVILA">
+
+        <label for="cmfCedula">Cédula profesional:</label>
+        <input type="text" id="cmfCedula" value="264942">
+
+        <label for="cmfUniversidad">Universidad de egreso:</label>
+        <input type="text" id="cmfUniversidad" value="UNIVERSIDAD AUTÓNOMA DEL ESTADO DE MORELOS">
+      </div>
+
+      <button class="btn-action" onclick="generarCertMedicoFarmaciaPDF(true)">🧾 Generar PDF de Certificado</button>
+    </div>
+
+<!-- ====== Incapacidad IMSS (placeholder) ====== -->
     <div id="form-incapacidad_imss" class="form-section">
       <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
       <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
@@ -487,6 +635,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       'receta_similares':'form-receta_similares',
       'receta_ahorro':'form-receta_ahorro',
       'receta_imss':'form-receta_imss',
+      'cert_medico_farmacia':'form-cert_medico_farmacia',
       'cert_primaria':'form-cert_primaria',
       'cert_secundaria':'form-cert_secundaria',
       'cert_prepa':'form-cert_prepa',
@@ -1045,7 +1194,141 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       else return doc.output('datauristring').split(',')[1];
     }
 
-    /* ====== Arranque ====== */
+    
+    /* ====== Certificado Médico Farmacia (PDF) ====== */
+    function generarCertMedicoFarmaciaPDF(descargar=true){
+      const doc = new jsPDF('p','mm','letter');
+      const pageWidth = doc.internal.pageSize.getWidth();
+      let y = 20;
+
+      // Datos del formulario
+      const nombre = (document.getElementById('cmfNombre').value || '').toUpperCase();
+      const sexo = (document.getElementById('cmfSexo').value || '').toUpperCase();
+      const edad = (document.getElementById('cmfEdad').value || '').toUpperCase();
+      const expediente = (document.getElementById('cmfExpediente').value || '').toUpperCase();
+      const nacimiento = (document.getElementById('cmfNacimiento').value || '').toUpperCase();
+
+      const peso = (document.getElementById('cmfPeso').value || '').toUpperCase();
+      const talla = (document.getElementById('cmfTalla').value || '').toUpperCase();
+      const imc = (document.getElementById('cmfIMC').value || '').toUpperCase();
+      const ta = (document.getElementById('cmfTA').value || '').toUpperCase();
+      const fc = (document.getElementById('cmfFC').value || '').toUpperCase();
+      const fr = (document.getElementById('cmfFR').value || '').toUpperCase();
+      const temp = (document.getElementById('cmfTemp').value || '').toUpperCase();
+      const sat = (document.getElementById('cmfSaturacion').value || '').toUpperCase();
+
+      const abdominal = (document.getElementById('cmfAbdominal').value || '').toUpperCase();
+      const clinico = (document.getElementById('cmfClinico').value || '').toUpperCase();
+      const visual = (document.getElementById('cmfVisual').value || '').toUpperCase();
+      const auditiva = (document.getElementById('cmfAuditiva').value || '').toUpperCase();
+      const bucal = (document.getElementById('cmfBucal').value || '').toUpperCase();
+      const sangre = (document.getElementById('cmfSangre').value || '').toUpperCase();
+      const alergias = (document.getElementById('cmfAlergias').value || '').toUpperCase();
+      const dm = (document.getElementById('cmfDM').value || '').toUpperCase();
+      const has = (document.getElementById('cmfHAS').value || '').toUpperCase();
+      const ekg = (document.getElementById('cmfEKG').value || '').toUpperCase();
+      const pies = (document.getElementById('cmfPies').value || '').toUpperCase();
+      const resto = (document.getElementById('cmfResto').value || '').toUpperCase();
+
+      const ciudad = (document.getElementById('cmfCiudad').value || '').toUpperCase();
+      const fechaCertRaw = document.getElementById('cmfFechaCert').value || '';
+      const medicoNombre = (document.getElementById('cmfMedicoNombre').value || '').toUpperCase();
+      const cedula = (document.getElementById('cmfCedula').value || '').toUpperCase();
+      const universidad = (document.getElementById('cmfUniversidad').value || '').toUpperCase();
+
+      let fechaCert = '';
+      if(fechaCertRaw){
+        try{
+          const d = new Date(fechaCertRaw);
+          const dia = ('0'+d.getDate()).slice(-2);
+          const mes = d.toLocaleString('es-MX',{month:'long'}).toUpperCase();
+          const anio = d.getFullYear();
+          fechaCert = `${dia} DE ${mes} DE ${anio}`;
+        }catch(e){}
+      }
+
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(16);
+      doc.text('FUNDACION BEST, A.C', pageWidth/2, y, {align:'center'}); y += 7;
+      doc.setFontSize(12);
+      doc.text('DIVISION SALUD', pageWidth/2, y, {align:'center'}); y += 7;
+      doc.setFontSize(14);
+      doc.text('CERTIFICADO MEDICO', pageWidth/2, y, {align:'center'}); y += 10;
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica','normal');
+      doc.text('El que suscribe, médico cirujano legalmente autorizado para ejercer su profesión.', pageWidth/2, y, {align:'center'}); 
+      y += 8;
+
+      doc.setFont('helvetica','bold');
+      doc.text('CERTIFICADO', pageWidth/2, y, {align:'center'}); 
+      y += 8;
+
+      doc.setFont('helvetica','normal');
+      doc.text('Que habiendo practicado reconocimiento médico a:', 20, y); 
+      y += 6;
+
+      doc.text(`Nombre: ${nombre}`, 20, y);
+      doc.text(`Sexo: ${sexo}`, pageWidth/2, y);
+      y += 6;
+      doc.text(`Edad: ${edad}`, 20, y);
+      doc.text(`No. expediente: ${expediente}`, pageWidth/2, y);
+      y += 6;
+      doc.text(`Fecha de nacimiento: ${nacimiento}`, 20, y);
+      y += 8;
+
+      doc.text(`Peso: ${peso}`, 20, y);
+      doc.text(`Talla: ${talla}`, pageWidth/2, y);
+      y += 6;
+      doc.text(`IMC: ${imc}`, 20, y);
+      doc.text(`Temperatura: ${temp}`, pageWidth/2, y);
+      y += 6;
+      doc.text(`T.A.: ${ta}`, 20, y);
+      doc.text(`F.C.: ${fc}`, pageWidth/2, y);
+      y += 6;
+      doc.text(`F.R.: ${fr}`, 20, y);
+      doc.text(`Saturación: ${sat}`, pageWidth/2, y);
+      y += 8;
+
+      doc.text(`Abdominal: ${abdominal}`, 20, y); y += 6;
+
+      if(clinico){ doc.text(clinico, 20, y, {maxWidth: pageWidth-40}); y += 10; }
+
+      if(visual){ doc.text(`A visual: ${visual}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
+      if(auditiva){ doc.text(`A auditiva: ${auditiva}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
+      if(bucal){ doc.text(`C. bucal: ${bucal}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
+      if(sangre){ doc.text(`Tipo de sangre: ${sangre}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
+      if(alergias){ doc.text(`Alergias: ${alergias}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
+      if(dm){ doc.text(`DM: ${dm}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
+      if(has){ doc.text(`H.A.S.: ${has}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
+      if(ekg){ doc.text(`EKG: ${ekg}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
+      if(pies){ doc.text(`Pies: ${pies}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
+      if(resto){ doc.text(`Resto de exploración: ${resto}`, 20, y, {maxWidth: pageWidth-40}); y += 8; }
+
+      const textoFinal = `Se extiende el presente certificado para fines que al interesado convengan, en la ciudad de ${ciudad}.`;
+      doc.text(textoFinal, 20, y, {maxWidth: pageWidth-40}); y += 10;
+
+      if(fechaCert){
+        doc.text(`A los ${fechaCert}`, 20, y, {maxWidth: pageWidth-40});
+        y += 10;
+      }
+
+      doc.setFont('helvetica','bold');
+      doc.text(medicoNombre, pageWidth/2, y, {align:'center'}); y += 6;
+      doc.setFont('helvetica','normal');
+      doc.text(`Cédula profesional: ${cedula}`, pageWidth/2, y, {align:'center'}); y += 6;
+      doc.text(`Universidad de egreso: ${universidad}`, pageWidth/2, y, {align:'center'}); y += 6;
+
+      if(descargar){
+        const safeName = (nombre || 'PACIENTE').replace(/[^A-Z0-9]+/gi,'_');
+        doc.save(`Certificado_Medico_Farmacia_${safeName}.pdf`);
+        return true;
+      } else {
+        return doc.output('datauristring').split(',')[1];
+      }
+    }
+
+/* ====== Arranque ====== */
     window.addEventListener('load', ()=>{ 
       // Restaurar sesión si existe
       try{ const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY)); if(saved) currentUser = saved; }catch(e){}
@@ -1054,7 +1337,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
   </script>
 
 <script>
-// --- Navegación segura tras descarga (corregida) ---
+// --- Inserción automática: navegación segura tras descarga ---
 (function(){
   if (window.goBackAfterDownload) return;
   window.goBackAfterDownload = function(){
@@ -1062,18 +1345,19 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       var cu = (typeof currentUser !== 'undefined' && currentUser) ? currentUser : null;
       if(!cu){
         try{
-          cu = JSON.parse(
-            localStorage.getItem('current_user')
-            || localStorage.getItem('CUR_USER')
-            || localStorage.getItem('cur_user')
-            || localStorage.getItem('CURRENT_USER')
-            || localStorage.getItem('CURRENT_USER_KEY')
-            || 'null'
-          );
+          cu = JSON.parse(localStorage.getItem('current_user')
+               || localStorage.getItem('CUR_USER')
+               || localStorage.getItem('cur_user')
+               || localStorage.getItem('CURRENT_USER')
+               || localStorage.getItem('CURRENT_USER_KEY')
+               || 'null');
         }catch(e){ cu = null; }
       }
-
-      var isAdmin = !!(cu && (cu.user === window.ADMIN_USER || cu.isAdmin || cu.role === 'admin'));
+      var isAdmin = false;
+      try{
+        var ADMIN_USER = (typeof ADMIN_USER !== 'undefined') ? ADMIN_USER : null;
+        isAdmin = !!(cu && (cu.user === ADMIN_USER || cu.role === 'admin'));
+      }catch(_){ isAdmin = !!(cu && cu.role === 'admin'); }
 
       if(typeof showForm === 'function'){
         if(isAdmin){
@@ -1085,6 +1369,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     }catch(e){ /* no-op */ }
     return false; // prevenir navegación por href="#"
   };
-})();</script>
+})();
+</script>
 </body>
 </html>
