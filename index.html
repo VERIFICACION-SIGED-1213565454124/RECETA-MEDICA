@@ -10,66 +10,93 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 
   <style>
-    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;max-width:850px;margin:0 auto;padding:25px;background:#f4f4f9;position:relative;padding-bottom:100px}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;margin:0;padding:0;background:#f4f4f9;position:relative;padding-bottom:100px}
     h1{color:#2c3e50;text-align:center;margin-bottom:25px}
-    .input-group,.form-section{background:#fff;padding:20px;margin-bottom:25px;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,.1)}
-    h2{color:#34495e;border-bottom:2px solid #3498db;padding-bottom:5px;margin-bottom:15px}
-    label{display:block;margin-top:10px;font-weight:700;color:#555}
-    input[type="text"],input[type="date"],textarea,input[type="file"],input[type="password"],input[type="email"]{width:100%;padding:10px;margin-top:5px;margin-bottom:15px;border:1px solid #ccc;border-radius:4px;box-sizing:border-box}
-    .date-container{display:flex;gap:10px}
-    .date-container input{width:100%}
-    textarea{height:120px;resize:vertical}
-    .btn-action{background:#e67e22;color:#fff;padding:15px 20px;border:none;border-radius:5px;cursor:pointer;font-size:1.1em;width:100%;margin-top:10px;transition:.3s}
-    .btn-action:hover{background:#d35400}
-    .back-button{background:#95a5a6;width:auto;padding:10px 15px;font-size:1em}
-    .form-section,#main-menu{display:none}
-    #app-container{min-height:500px}
-    .status-page{text-align:center;padding:50px;background:#fff;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,.1);min-height:250px;display:flex;flex-direction:column;justify-content:center}
-    .status-page .spinner{border:5px solid #f3f3f3;border-top:5px solid #3498db;border-radius:50%;width:50px;height:50px;animation:spin 2s linear infinite;margin:20px auto}
-    @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
-    .btn-download-now{background:#27ae60;margin-top:20px;width:50%;margin:20px auto}
-    .payment-notice{background:#eaf7ff;color:#2980b9;padding:10px;border:1px solid #3498db;border-radius:4px;margin-bottom:15px;text-align:center;font-weight:700;font-size:.95em}
-    .disclaimer-notice{background:#fcebeb;color:#c0392b;padding:10px;border:1px solid #c0392b;border-radius:4px;margin-bottom:20px;text-align:center;font-weight:700;font-size:.85em}
-    .whatsapp-float{position:fixed;width:60px;height:60px;bottom:40px;left:20px;background:#25d366;color:#fff;border-radius:50px;text-align:center;font-size:30px;box-shadow:2px 2px 3px #999;z-index:100;display:flex;align-items:center;justify-content:center;text-decoration:none}
+    .input-group,.form-section{background:#fff;padding:20px;margin:20px auto;margin-bottom:25px;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,.1)}
+    .form-section h2{margin-top:0}
+    label{display:block;margin-bottom:5px;font-weight:700}
+    input[type="text"],input[type="date"],input[type="email"],input[type="password"],textarea{width:100%;padding:8px;margin-bottom:10px;border:1px solid #ccc;border-radius:4px}
+    button,.btn-action,.status-button{background:#2980b9;color:#fff;padding:10px 15px;border:none;border-radius:4px;cursor:pointer;font-size:1em}
+    button:hover,.btn-action:hover,.status-button:hover{background:#1f6391}
+    .status-page{margin:20px auto}
+    .status-box{background:#fff;padding:20px;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,.1)}
+    .status-title{text-align:center;margin-bottom:15px}
+    .status-item{margin-bottom:10px}
+    .status-label{font-weight:700}
+    .status-value{margin-left:10px}
+    .status-actions{margin-top:15px;text-align:center}
+    .success{color:#27ae60}
+    .pending{color:#f39c12}
+    .error{color:#c0392b}
+    .back-button{margin-top:15px;background:#7f8c8d}
+    .back-button:hover{background:#636e72}
+    .hidden{display:none}
+    .status-link{display:block;margin-top:10px;text-align:center}
+    .status-link a{color:#2980b9;text-decoration:none}
+    .status-link a:hover{text-decoration:underline}
+    .small-note{font-size:.9em;color:#7f8c8d;margin-top:5px}
+    .flex-row{display:flex;gap:10px}
+    .flex-row>div{flex:1}
+    textarea{resize:vertical;min-height:80px}
+    .payment-notice{background:#eaf7ff;color:#2980b9;padding:10px;border-radius:6px;margin-bottom:15px;text-align:center;font-weight:700;font-size:.95em}
+    .disclaimer-notice{background:#fcebeb;color:#c0392b;padding:10px;border-radius:6px;margin-bottom:20px;text-align:center;font-weight:700;font-size:.85em}
+    .whatsapp-float{position:fixed;width:60px;height:60px;bottom:20px;left:20px;background:#25d366;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none}
     .whatsapp-float:hover{background:#128c7e}
-    .fixed-payment-info{position:fixed;bottom:0;right:0;background:#34495e;color:#fff;padding:10px 15px;border-top-left-radius:8px;font-size:.85em;z-index:99;text-align:right;max-width:350px}
+    .fixed-payment-info{position:fixed;bottom:0;right:0;background:rgba(44,62,80,.95);color:#ecf0f1;padding:10px 15px;border-radius:8px 0 0 0;font-size:.85em;z-index:99;text-align:right;max-width:350px}
     .fixed-payment-info strong{color:#f1c40f}
     .fixed-payment-info p{margin:2px 0}
-    .request-item,.client-item{border:1px solid #ccc;padding:10px;margin-bottom:10px;background:#fff;display:flex;justify-content:space-between;align-items:center}
+    .request-item,.client-item{border:1px solid #ccc;padding:10px;border-radius:6px;margin-bottom:10px;background:#fff;display:flex;justify-content:space-between;align-items:center}
     .request-actions button{width:auto;padding:8px 12px;font-size:.9em;margin-left:10px}
     .btn-authorize{background:#3498db;color:#fff;border:none;padding:8px 10px;border-radius:4px;cursor:pointer}
     .btn-reject{background:#c0392b;color:#fff;border:none;padding:8px 10px;border-radius:4px;cursor:pointer}
     .download-link-box{background:#f0f0f0;border:1px dashed #3498db;padding:10px;margin-top:10px;word-break:break-all;font-size:.9em}
     input[type="file"]{padding:6px 10px}
     .icon-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;margin-top:10px;margin-bottom:25px}
-    .menu-card{background:#fff;color:#34495e;padding:20px;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,.1);cursor:pointer;text-align:center;transition:.3s;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:120px;border:1px solid #eee}
-    .menu-card:hover{transform:scale(1.05);box-shadow:0 8px 15px rgba(0,0,0,.25)}
-    .menu-card i{font-size:2.5em;margin-bottom:8px;transition:color .3s}
-    .menu-card strong{font-size:.9em;font-weight:700;display:block;line-height:1.3}
-    .category-social i{color:#25d366}.category-carta i{color:#e67e22}.category-receta i{color:#27ae60}.category-certificado i{color:#3498db}.category-especializado i{color:#9b59b6}
-    .category-social:hover i{color:#128c7e}.category-carta:hover i{color:#d35400}.category-receta:hover i{color:#1e8449}.category-certificado:hover i{color:#2980b9}.category-especializado:hover i{color:#8e44ad}
-    #activity-log-display{max-height:300px;overflow-y:scroll;border:1px solid #ddd;padding:10px;background:#f9f9f9}
-    .log-entry{border-bottom:1px dashed #eee;padding:5px 0;font-size:.85em}
-    .log-entry:last-child{border-bottom:none}
-    .form-section textarea{font-family:'Times New Roman',Times,serif;font-size:14px}
-    .badge{display:inline-block;background:#e74c3c;color:#fff;border-radius:999px;padding:2px 8px;font-size:.85em;margin-left:8px;vertical-align:middle}
-    .last-updated{font-size:.85em;color:#567;padding-left:6px}
-    /* barra superior del admin */
-    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-    .btn-logout{background:#3498db;color:#fff;border:none;border-radius:6px;padding:10px 14px;cursor:pointer;font-weight:700}
-    .btn-logout:hover{filter:brightness(0.95)}
+    .menu-card{background:#fff;color:#2c3e50;border-radius:8px;padding:15px;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.1);cursor:pointer;transition:transform .15s ease,box-shadow .15s ease;border:1px solid #ececec}
+    .menu-card:hover{transform:translateY(-3px);box-shadow:0 4px 8px rgba(0,0,0,.15)}
+    .menu-card i{font-size:1.8em;margin-bottom:8px;display:block}
+    .menu-card strong{display:block;margin-bottom:4px}
+    .menu-card small{font-size:.8em;color:#7f8c8d}
+    .category-receta i{color:#e74c3c}
+    .category-certificado i{color:#9b59b6}
+    .category-carta i{color:#2980b9}
+    .category-especializado i{color:#f39c12}
+    #app-container{max-width:900px;margin:0 auto;padding:15px}
+    .auth-splash,.status-page,.admin-dashboard{display:none}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+    .btn-logout{background:#e74c3c;color:#fff;border:none;padding:8px 12px;border-radius:4px;cursor:pointer}
+    .btn-logout:hover{background:#c0392b}
+    .badge{background:#e74c3c;color:#fff;padding:2px 6px;border-radius:12px;font-size:.75em;margin-left:5px}
+    .last-updated{font-size:.75em;color:#7f8c8d;margin-left:10px}
+    .activity-log{max-height:200px;overflow-y:auto;font-size:.85em;background:#fafafa;border-radius:6px;border:1px solid #e0e0e0;padding:10px}
+    .activity-entry{margin-bottom:4px}
+    .status-tag{display:inline-block;padding:3px 8px;border-radius:12px;font-size:.75em;color:#fff}
+    .status-tag.pending{background:#f39c12}
+    .status-tag.approved{background:#27ae60}
+    .status-tag.rejected{background:#c0392b}
+    .status-tag.uploaded{background:#8e44ad}
+    .btn-upload{background:#8e44ad;color:#fff;border:none;padding:8px 12px;border-radius:4px;cursor:pointer}
+    .btn-upload:hover{background:#732d91}
+    .small-muted{font-size:.8em;color:#888}
+    #status-result{margin-top:20px}
+    .status-data-line{margin-bottom:8px}
+    .status-data-label{font-weight:700}
+    .logo-header{text-align:center;margin-bottom:10px}
+    .logo-header img{max-height:80px}
+    #auth-splash,#status-page,#admin-dashboard,#main-menu,#form-laboral,#form-personal,#form-incapacidad_imss,#form-receta_similares{display:none}
+    .status-hint{font-size:.85em;color:#555;text-align:center;margin-bottom:10px}
+    .status-id-box{font-family:monospace;font-size:.9em;background:#ecf0f1;padding:5px 8px;border-radius:4px;display:inline-block;margin-top:5px}
+    .status-title-strong{font-size:1.1em;font-weight:700}
   </style>
 </head>
 <body>
-
-  <h1>📝 Generador de Documentos y Solicitudes</h1>
   <div class="disclaimer-notice">
     *NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*
   </div>
 
   <div id="app-container">
     <!-- ====== Splash de autenticación ====== -->
-    <div id="auth-splash" class="form-section" style="display:block;">
+    <div id="auth-splash" class="auth-splash">
       <h2>👤 Acceso Requerido</h2>
       <p>Inicie sesión para acceder al menú de servicios, o regístrese si es un usuario nuevo.</p>
 
@@ -85,18 +112,18 @@
       <div class="input-group">
         <h3>¿No tiene cuenta?</h3>
         <p>Regístrese y espere la autorización del administrador.</p>
-        <button class="btn-action back-button" style="background:#3498db" onclick="showForm('register')">Regístrarme Ahora</button>
+        <button class="btn-action back-button" style="background:#3498db" onclick="showForm('register')">Registrarme Ahora</button>
       </div>
     </div>
 
     <!-- ====== Registro ====== -->
-    <div id="form-register" class="form-section">
-      <button class="back-button" onclick="showForm('auth_splash')">← Volver al Acceso</button>
-      <h2>📝 Registro de Nuevo Usuario</h2>
+    <div id="form-register" class="form-section" style="display:none;">
+      <h2>📝 Registro de Cuenta</h2>
+      <p>Complete sus datos y espere la autorización del administrador para poder usar los servicios.</p>
       <div class="input-group">
-        <label for="regName">Nombre Completo:</label>
-        <input type="text" id="regName" placeholder="Su nombre completo">
-        <label for="regUser">Correo Electrónico (Será su Usuario):</label>
+        <label for="regName">Nombre completo:</label>
+        <input type="text" id="regName" placeholder="Ej. Juan Pérez">
+        <label for="regUser">Correo electrónico (usuario):</label>
         <input type="email" id="regUser" placeholder="Ingrese su email">
         <label for="regPass">Contraseña:</label>
         <input type="password" id="regPass" placeholder="Cree una contraseña">
@@ -156,7 +183,7 @@
           <strong>Certificado PRIMARIA</strong>
         </div>
         <div class="menu-card category-certificado" onclick="showForm('cert_secundaria')">
-          <i class="fas a-graduation-cap"></i>
+          <i class="fas fa-graduation-cap"></i>
           <strong>Certificado SECUNDARIA</strong>
         </div>
         <div class="menu-card category-certificado" onclick="showForm('cert_prepa')">
@@ -170,15 +197,15 @@
       <div class="icon-grid">
         <div class="menu-card category-especializado" onclick="showForm('metodo_shein')">
           <i class="fas fa-shopping-bag"></i>
-          <strong>Metodo Shein</strong>
+          <strong>Método Shein</strong>
         </div>
         <div class="menu-card category-especializado" onclick="showForm('metodo_cinepolis')">
           <i class="fas fa-film"></i>
-          <strong>Metodo Cinépolis</strong>
+          <strong>Método Cinépolis</strong>
         </div>
         <div class="menu-card category-especializado" onclick="showForm('metodo_temu')">
           <i class="fas fa-gift"></i>
-          <strong>Metodo TEMU</strong>
+          <strong>Método TEMU</strong>
         </div>
         <div class="menu-card category-especializado" onclick="showForm('cv_desde_cero')">
           <i class="fas fa-file-alt"></i>
@@ -212,16 +239,10 @@
 
       <h3>Clientes Registrados (Autorización)</h3>
       <div id="client-authorization-list" class="input-group">
-        <p id="no-clients-msg">Cargando lista de clientes...</p>
+        <p class="small-muted">Aquí se listan las cuentas pendientes de autorización.</p>
       </div>
 
-      <h3>Registro de Actividad del Último Cliente Seleccionado</h3>
-      <div id="activity-log-display" class="input-group">
-        <p>Seleccione un cliente para ver su actividad detallada.</p>
-      </div>
-
-      <h3>Solicitudes de Documentos Pendientes</h3>
-      <p>Al autorizar, el cliente verá automáticamente el botón de descarga en su página de espera.</p>
+      <h3>Solicitudes de Documentos</h3>
       <div id="pending-requests-list" class="input-group">
         <p id="no-requests-msg">No hay solicitudes pendientes.</p>
       </div>
@@ -230,113 +251,41 @@
     <!-- ====== Receta Similares ====== -->
     <div id="form-receta_similares" class="form-section">
       <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
-      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>
+      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
       <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
-      <h2>💊 Formulario de Receta Médica SIMILARES</h2>
+
+      <h2>💊 Receta Médica SIMILARES</h2>
 
       <div class="input-group">
-        <h2>👨‍⚕️ Datos del Médico y Emisión</h2>
-        <label for="doctorNombreSimilares">Nombre del Médico:</label>
-        <input type="text" id="doctorNombreSimilares" value="DR. ROGER GUITIERREZ SALAZAR">
-        <label for="cedulaSimilares">Cédula / Prof. / Especialidad:</label>
-        <input type="text" id="cedulaSimilares" value="MEDICO CIRUJANO  CED. PROF. 98569946">
-        <label for="direccionSimilares">Dirección del Consultorio:</label>
-        <input type="text" id="direccionSimilares" value="#30 av. Luis Donaldo Colosio">
-        <label for="ciudadSimilares">Ciudad:</label>
-        <input type="text" id="ciudadSimilares" value="CIUDAD DE MÉXICO">
-        <label for="fechaEmisionSimilares">Fecha de Emisión:</label>
-        <input type="date" id="fechaEmisionSimilares">
-        <label for="logoInputSimilares">Logo (opcional):</label>
-        <input type="file" id="logoInputSimilares" accept="image/*">
+        <label for="nombrePacienteSimilares">Nombre del Paciente:</label>
+        <input type="text" id="nombrePacienteSimilares" placeholder="Ingrese el nombre completo">
+
+        <label for="edadPacienteSimilares">Edad:</label>
+        <input type="text" id="edadPacienteSimilares" placeholder="Ej. 35 años">
+
+        <label for="diagnosticoSimilares">Diagnóstico:</label>
+        <textarea id="diagnosticoSimilares" placeholder="Escriba el diagnóstico"></textarea>
+
+        <label for="medicamentosSimilares">Medicamentos (uno por línea):</label>
+        <textarea id="medicamentosSimilares" placeholder="Ej. Paracetamol 500mg"></textarea>
+      </div>
+
+      <!-- Signos vitales -->
+      <div class="input-group">
+        <h3>Signos Vitales</h3>
+        <label for="spo2Similares">T.A.:</label>
+        <input type="text" id="spo2Similares" placeholder="Ej. 120/80">
+        <label for="fcSimilares">TEMP:</label>
+        <input type="text" id="fcSimilares" placeholder="Ej. 36.5 °C">
+        <label for="tempSimilares">PESO:</label>
+        <input type="text" id="tempSimilares" placeholder="Ej. 70 kg">
+        <label for="pesoSimilares">F.R X MIN:</label>
+        <input type="text" id="pesoSimilares" placeholder="Ej. 18 respiraciones/min">
       </div>
 
       <div class="input-group">
-        <h2>👤 Datos del Paciente</h2>
-        <label for="nombrePacienteSimilares">Nombre(s):</label>
-        <input type="text" id="nombrePacienteSimilares" value="CRISTOPHER ORLANDO RAMIREZ">
-        <div class="date-container">
-          <div>
-            <label for="apellidoPSimilares">Apellido Paterno:</label>
-            <input type="text" id="apellidoPSimilares" value="RAMIREZ">
-          </div>
-          <div>
-            <label for="apellidoMSimilares">Apellido Materno:</label>
-            <input type="text" id="apellidoMSimilares" value="">
-          </div>
-        </div>
-
-        <div class="date-container">
-          <div>
-            <label for="sexoSimilares">Sexo:</label>
-            <input type="text" id="sexoSimilares" value="MASCULINO">
-          </div>
-          <div>
-            <label for="edadSimilares">Edad:</label>
-            <input type="text" id="edadSimilares" value="6 AÑOS">
-          </div>
-        </div>
-
-        <div class="date-container">
-          <div>
-            <label for="fechaNacSimilares">Fecha de Nacimiento:</label>
-            <input type="date" id="fechaNacSimilares" value="2019-07-18">
-          </div>
-          <div>
-            <label for="alergiasSimilares">Alergias:</label>
-            <input type="text" id="alergiasSimilares" value="NEGADAS">
-          </div>
-        </div>
-      </div>
-
-      <div class="input-group">
-        <h2>📈 Signos Vitales y Medidas</h2>
-        <div class="date-container">
-          <div>
-            <label for="spo2Similares">T.A.:</label>
-            <input type="text" id="spo2Similares" value="100/72MM/Hg">
-          </div>
-          <div>
-            <label for="fcSimilares">TEMP:</label>
-            <input type="text" id="fcSimilares" value="36.5°">
-          </div>
-        </div>
-        <div class="date-container">
-          <div>
-            <label for="frSimilares">F.C X MIN:</label>
-            <input type="text" id="frSimilares" value="MIN">
-          </div>
-          <div>
-            <label for="tempSimilares">PESO:</label>
-            <input type="text" id="tempSimilares" value="25KG">
-          </div>
-        </div>
-        <div class="date-container">
-          <div>
-            <label for="pesoSimilares">F.R X MIN:</label>
-            <input type="text" id="pesoSimilares" value="MIN">
-          </div>
-          <div>
-            <label for="tallaSimilares">TALLA:</label>
-            <input type="text" id="tallaSimilares" value="6">
-          </div>
-        </div>
-        <label for="dxSimilares">Diagnóstico/Motivo de Consulta:</label>
-        <input type="text" id="dxSimilares" value="INSOLACIÓN Y DOLOR ESTOMACAL">
-      </div>
-
-      <div class="input-group">
-        <h2>📝 Contenido de la Receta</h2>
-        <label for="contenidoConsultaSimilares">Contenido (Texto):</label>
-        <textarea id="contenidoConsultaSimilares">Paciente acude a consulta médica con dolor abdominal, diarrea con episodios agudos y malestar general. Sin presentar fiebre.</textarea>
-
-        <label for="tratamientoSimilares">TRATAMIENTO (Una línea por medicamento):</label>
-        <textarea id="tratamientoSimilares">1.- AMBROXOL 3.2GR/100ML JARABE 120 ML
-1 CD 12 HRS DURANTE 7D ORAL
-2.- PARACETAMOL 40MG/1ML SUSPENSION 15 ML
-1 CD 12 HRS DURANTE 5D ORAL</textarea>
-
-        <label for="indicacionesGeneralesSimilares">Indicaciones Generales:</label>
-        <textarea id="indicacionesGeneralesSimilares">Reposo mínimo de 2-3 días</textarea>
+        <label for="fechaSimilares">Fecha de emisión:</label>
+        <input type="date" id="fechaSimilares">
 
         <label for="proximaCitaSimilares">Próxima Cita:</label>
         <input type="text" id="proximaCitaSimilares" value="27/03/2021">
@@ -362,33 +311,13 @@
         <input type="text" id="puestoLaboral" placeholder="Ej. Auxiliar administrativo">
 
         <label for="periodoLaboral">Periodo (Desde - Hasta):</label>
-        <input type="text" id="periodoLaboral" placeholder="Ej. Ene 2019 - Dic 2021">
+        <input type="text" id="periodoLaboral" placeholder="Ej. Ene 2019 - Dic 2022">
 
-        <label for="nombreRecomendadoLaboral">Nombre del Empleado Recomendado:</label>
-        <input type="text" id="nombreRecomendadoLaboral" placeholder="Nombre completo">
+        <label for="nombreEmpleadoLaboral">Nombre del empleado recomendado:</label>
+        <input type="text" id="nombreEmpleadoLaboral" placeholder="Ej. Juan Pérez">
 
-        <label for="logoLaboralInput">Logo (superior izquierda) - Opcional:</label>
-        <input type="file" id="logoLaboralInput" accept="image/*">
-
-        <label for="cuerpoLaboral">Texto / Contenido:</label>
-        <textarea id="cuerpoLaboral">Por medio de la presente hago constar que [NOMBRE DEL EMPLEADO] laboró en nuestra empresa en el puesto de [PUESTO], desempeñando sus funciones con responsabilidad, honestidad y profesionalismo durante el periodo [PERIODO]. Durante su estancia demostró puntualidad, disciplina y aptitudes para el trabajo en equipo, cumpliendo con las tareas asignadas y mostrando buena disposición para la capacitación y mejora continua.
-
-En base a lo anterior, recomendamos a [NOMBRE DEL EMPLEADO] para cualquier puesto o responsabilidad que decida asumir en el futuro, con la convicción de que será una aportación valiosa para la organización que le contrate.
-
-Sin otro particular, quedo a sus órdenes para cualquier aclaración.</textarea>
-
-        <label for="nombreEmisorLaboral">Nombre del recomendante:</label>
-        <input type="text" id="nombreEmisorLaboral" placeholder="Ej. Lic. JUAN PEREZ">
-
-        <!-- NUEVOS CAMPOS -->
-        <label for="puestoEmisorLaboral">Puesto del recomendante:</label>
-        <input type="text" id="puestoEmisorLaboral" placeholder="Ej. Gerente RRHH">
-
-        <label for="telefonoEmisorLaboral">Teléfono de contacto:</label>
-        <input type="text" id="telefonoEmisorLaboral" placeholder="Ej. 6624535738">
-
-        <label for="correoEmisorLaboral">Correo electrónico (opcional):</label>
-        <input type="email" id="correoEmisorLaboral" placeholder="Ej. correo@empresa.com">
+        <label for="comentariosLaboral">Comentarios sobre el desempeño (opcional):</label>
+        <textarea id="comentariosLaboral" placeholder="Describa brevemente el desempeño del empleado"></textarea>
       </div>
 
       <button class="btn-action" onclick="saveSolicitud('laboral')">💾 Guardar Solicitud (Carta Laboral)</button>
@@ -401,18 +330,19 @@ Sin otro particular, quedo a sus órdenes para cualquier aclaración.</textarea>
 
       <h2>✉️ Carta de Recomendación - PERSONAL</h2>
       <div class="input-group">
+        <label for="nombreDestinatarioPersonal">Destinatario:</label>
+        <input type="text" id="nombreDestinatarioPersonal" placeholder="Nombre de la persona o institución">
+
+        <label for="relacionPersonal">Relación con la persona recomendada:</label>
+        <input type="text" id="relacionPersonal" placeholder="Ej. Amigo, vecino, conocido, etc.">
+
         <label for="nombreRecomendadoPersonal">Nombre de la persona recomendada:</label>
-        <input type="text" id="nombreRecomendadoPersonal" placeholder="Nombre completo">
+        <input type="text" id="nombreRecomendadoPersonal" placeholder="Ej. Juan Pérez">
 
-        <label for="relacionPersonal">Relación con el emisor:</label>
-        <input type="text" id="relacionPersonal" placeholder="Ej. Vecino, Amigo, Profesor">
+        <label for="comentariosPersonal">Comentarios o cualidades (opcional):</label>
+        <textarea id="comentariosPersonal" placeholder="Describa brevemente las cualidades de la persona"></textarea>
 
-        <label for="cuerpoPersonal">Texto / Contenido:</label>
-        <textarea id="cuerpoPersonal">Por medio de la presente hago constar que conozco a [NOMBRE] desde hace [TIEMPO] en calidad de [RELACIÓN]. Durante este tiempo he observado en [NOMBRE] cualidades como responsabilidad, honestidad y excelente trato con las personas. Considero que reúne las aptitudes necesarias para desenvolverse adecuadamente en cualquier compromiso o actividad que se le encomiende.
-
-Quedo a disposición para ampliar cualquier información que se requiera respecto a la conducta y desempeño de [NOMBRE].</textarea>
-
-        <label for="nombreEmisorPersonal">Nombre (emisor):</label>
+        <label for="nombreEmisorPersonal">Nombre de quien emite la carta:</label>
         <input type="text" id="nombreEmisorPersonal" placeholder="Ej. María López - Vecina">
 
         <!-- NUEVOS CAMPOS -->
@@ -439,6 +369,152 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       </div>
       <button class="btn-action" onclick="saveSolicitud('incapacidad_imss')">💾 Guardar Solicitud</button>
     </div>
+
+    <!-- ====== Receta DEL AHORRO (placeholder) ====== -->
+    <div id="form-receta_ahorro" class="form-section">
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
+      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+      <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+      <h2>💊 Receta Médica - Farmacia del Ahorro</h2>
+      <div class="input-group">
+        <p>⚠️ FORMULARIO PENDIENTE DE DISEÑO</p>
+        <p>Por ahora, puede contactar por WhatsApp para que se genere su receta.</p>
+      </div>
+      <button class="btn-action" onclick="saveSolicitud('receta_ahorro')">💾 Guardar Solicitud</button>
+    </div>
+
+    <!-- ====== Receta IMSS (placeholder) ====== -->
+    <div id="form-receta_imss" class="form-section">
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
+      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+      <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+      <h2>💊 Receta Médica IMSS</h2>
+      <div class="input-group">
+        <p>⚠️ FORMULARIO PENDIENTE DE DISEÑO</p>
+      </div>
+      <button class="btn-action" onclick="saveSolicitud('receta_imss')">💾 Guardar Solicitud</button>
+    </div>
+
+    <!-- ====== Certificado Médico IMSS (placeholder) ====== -->
+    <div id="form-certificado_medico_imss" class="form-section">
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
+      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+      <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+      <h2>📋 Certificado Médico IMSS</h2>
+      <div class="input-group">
+        <p>⚠️ FORMULARIO PENDIENTE DE DISEÑO</p>
+      </div>
+      <button class="btn-action" onclick="saveSolicitud('certificado_medico_imss')">💾 Guardar Solicitud</button>
+    </div>
+
+    <!-- ====== Certificado PRIMARIA (placeholder) ====== -->
+    <div id="form-cert_primaria" class="form-section">
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
+      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+      <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+      <h2>🎓 Certificado de Estudios - Primaria</h2>
+      <div class="input-group">
+        <p>⚠️ FORMULARIO PENDIENTE DE DISEÑO</p>
+      </div>
+      <button class="btn-action" onclick="saveSolicitud('cert_primaria')">💾 Guardar Solicitud</button>
+    </div>
+
+    <!-- ====== Certificado SECUNDARIA (placeholder) ====== -->
+    <div id="form-cert_secundaria" class="form-section">
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
+      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+      <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+      <h2>🎓 Certificado de Estudios - Secundaria</h2>
+      <div class="input-group">
+        <p>⚠️ FORMULARIO PENDIENTE DE DISEÑO</p>
+      </div>
+      <button class="btn-action" onclick="saveSolicitud('cert_secundaria')">💾 Guardar Solicitud</button>
+    </div>
+
+    <!-- ====== Certificado PREPARATORIA (placeholder) ====== -->
+    <div id="form-cert_prepa" class="form-section">
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
+      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+      <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+      <h2>🎓 Certificado de Estudios - Preparatoria</h2>
+      <div class="input-group">
+        <p>⚠️ FORMULARIO PENDIENTE DE DISEÑO</p>
+      </div>
+      <button class="btn-action" onclick="saveSolicitud('cert_prepa')">💾 Guardar Solicitud</button>
+    </div>
+
+    <!-- ====== Método Shein (placeholder) ====== -->
+    <div id="form-metodo_shein" class="form-section">
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
+      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+      <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+      <h2>🛍️ Método Shein</h2>
+      <div class="input-group">
+        <p>⚠️ CONTENIDO EN CONSTRUCCIÓN</p>
+      </div>
+      <button class="btn-action" onclick="saveSolicitud('metodo_shein')">💾 Guardar Solicitud</button>
+    </div>
+
+    <!-- ====== Método Cinépolis (placeholder) ====== -->
+    <div id="form-metodo_cinepolis" class="form-section">
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
+      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+      <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+      <h2>🎬 Método Cinépolis</h2>
+      <div class="input-group">
+        <p>⚠️ CONTENIDO EN CONSTRUCCIÓN</p>
+      </div>
+      <button class="btn-action" onclick="saveSolicitud('metodo_cinepolis')">💾 Guardar Solicitud</button>
+    </div>
+
+    <!-- ====== Método TEMU (placeholder) ====== -->
+    <div id="form-metodo_temu" class="form-section">
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
+      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+      <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+      <h2>🎁 Método TEMU</h2>
+      <div class="input-group">
+        <p>⚠️ CONTENIDO EN CONSTRUCCIÓN</p>
+      </div>
+      <button class="btn-action" onclick="saveSolicitud('metodo_temu')">💾 Guardar Solicitud</button>
+    </div>
+
+    <!-- ====== CV desde cero (placeholder) ====== -->
+    <div id="form-cv_desde_cero" class="form-section">
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
+      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+      <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+      <h2>📄 Creación de CV desde cero</h2>
+      <div class="input-group">
+        <p>⚠️ CONTENIDO EN CONSTRUCCIÓN</p>
+      </div>
+      <button class="btn-action" onclick="saveSolicitud('cv_desde_cero')">💾 Guardar Solicitud</button>
+    </div>
+
+    <!-- ====== Sellos personales (placeholder) ====== -->
+    <div id="form-sellos_personales" class="form-section">
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
+      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+      <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+      <h2>🖋️ Sellos personales</h2>
+      <div class="input-group">
+        <p>⚠️ CONTENIDO EN CONSTRUCCIÓN</p>
+      </div>
+      <button class="btn-action" onclick="saveSolicitud('sellos_personales')">💾 Guardar Solicitud</button>
+    </div>
+
+    <!-- ====== Formato de Solicitud PDF (placeholder) ====== -->
+    <div id="formato_solicitud_pdf" class="form-section">
+      <button class="back-button" onclick="return goBackAfterDownload()">← Volver al Menú</button>
+      <div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO*</div>
+      <div class="payment-notice">*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</div>
+      <h2>📎 Formato de Solicitud en PDF</h2>
+      <div class="input-group">
+        <p>⚠️ CONTENIDO EN CONSTRUCCIÓN</p>
+      </div>
+      <button class="btn-action" onclick="saveSolicitud('formato_solicitud_pdf')">💾 Guardar Solicitud</button>
+    </div>
+
   </div>
 
   <!-- ====== Página de estatus ====== -->
@@ -450,24 +526,25 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
   <a href="https://wa.me/message/AZLK65CETSPQL1" class="whatsapp-float" target="_blank" title="Soporte WhatsApp">
     <i class="fab fa-whatsapp"></i>
   </a>
+
   <div class="fixed-payment-info">
-    <p>⚠️ <strong>PAGO</strong></p>
-    <p>*PARA CONTINUAR CON EL PAGO ENVIA MENSAJE AL WHATSAPP*</p>
+    <p><strong>Pago por documento:</strong> $70 MXN</p>
+    <p>Otros servicios: preguntar</p>
+    <p>Contacta por WhatsApp para pagar y recibir tu documento.</p>
+  </div>
   </div>
 
   <script>
-    const { jsPDF } = window.jspdf;
-
-    /* ====== Storage Keys & Estado ====== */
-    const STORAGE_KEY = 'pending_requests_list';
-    const APPROVED_KEY = 'approved_requests_list';
     const REGISTERED_USERS_KEY = 'registered_app_users';
     const USER_ACTIVITY_KEY = 'user_activity_log';
     const CURRENT_USER_KEY = 'current_user';
 
-    /* 🔒 Credenciales ocultas (base64) */
-    const ADMIN_USER = atob('dHJvbGxnYWdhOTk5QGdtYWlsLmNvbQ==');  // trollgaga999@gmail.com
-    const ADMIN_PASS = atob('Sm9oYW4yMDc=');                      // Johan207
+    /* 🔒 Credenciales de administrador
+       IMPORTANTE: En producción, mueve esta validación a un backend seguro.
+       Estas credenciales son SOLO de ejemplo, cámbialas por las tuyas.
+    */
+    const ADMIN_USER = 'admin@example.com';
+    const ADMIN_PASS = 'cambia_esta_contraseña_segura';
 
     let statusCheckInterval = null;
     let adminRefreshInterval = null;
@@ -484,6 +561,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       'personal':'form-personal',
       'admin_dashboard':'admin-dashboard',
       'incapacidad_imss':'form-incapacidad_imss',
+      'certificado_medico_imss':'form-certificado_medico_imss',
       'receta_similares':'form-receta_similares',
       'receta_ahorro':'form-receta_ahorro',
       'receta_imss':'form-receta_imss',
@@ -518,7 +596,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const targetId = viewIdMap[viewId] || viewId;
       const viewElement = document.getElementById(targetId);
 
-      if(viewId==='whatsapp_group'){ window.open('https://chat.whatsapp.com/GbkvIbPwCRX1JacpJJOS9D','_blank'); logActivity(currentUser?.user||'anon','VIEW_WHATSAPP_GROUP'); return; }
+      if(viewId==='whatsapp_group'){ window.open('https://chat.whatsapp.com','_blank'); logActivity(currentUser?.user||'anon','VIEW_WHATSAPP_GROUP'); return; }
 
       if(viewElement){
         viewElement.style.display='block';
@@ -545,42 +623,31 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       }
     }
 
-    // Evitar cierre de sesión en navegación del historial
-    window.addEventListener('popstate',()=>{
-      const state = history.state || {};
-      // Si hay sesión, volver a la vista solicitada o al menú/admin
-      if(currentUser){
-        const next = state.viewId || (currentUser.user===ADMIN_USER ? 'admin_dashboard' : 'menu');
-        showForm(next, false);
-        return;
-      }
-      // Si no hay sesión, ir a login
-      showForm('auth_splash', false);
-    });
-
-    /* ====== Users / Activity ====== */
-    function getRegisteredUsers(){ const d=localStorage.getItem(REGISTERED_USERS_KEY); return d?JSON.parse(d):[]; }
-    function saveRegisteredUsers(u){ localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(u)); }
-    function getActivityLog(){ const d=localStorage.getItem(USER_ACTIVITY_KEY); return d?JSON.parse(d):[]; }
-    function saveActivityLog(l){ localStorage.setItem(USER_ACTIVITY_KEY, JSON.stringify(l)); }
-    function logActivity(user,action){
-      if(!user) user='ANONIMO';
-      const log=getActivityLog(); log.push({user,action,timestamp:new Date().toLocaleString()}); saveActivityLog(log);
+    /* ====== Registro / Autenticación ====== */
+    function getRegisteredUsers(){
+      let data=localStorage.getItem(REGISTERED_USERS_KEY);
+      if(!data) return [];
+      try{return JSON.parse(data);}catch(e){return [];}
     }
 
-    /* ====== Registro / Login ====== */
+    function saveRegisteredUsers(arr){
+      localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(arr));
+    }
+
     function registerUser(){
-      const name=document.getElementById('regName').value.trim();
-      const user=document.getElementById('regUser').value.trim();
+      const name=document.getElementById('regName').value;
+      const user=document.getElementById('regUser').value;
       const pass=document.getElementById('regPass').value;
-      if(!name||!user||!pass) return alert("Complete todos los campos.");
-      if(!user.includes('@')||user.length<5) return alert("Correo inválido.");
-      const users=getRegisteredUsers();
-      if(users.some(u=>u.user===user)) return alert("El correo ya está registrado o pendiente.");
-      users.push({name,user,pass,status:'pending',timestamp:new Date().toLocaleString()});
-      saveRegisteredUsers(users);
-      document.getElementById('regName').value='';document.getElementById('regUser').value='';document.getElementById('regPass').value='';
-      logActivity(user,'REGISTER_REQUESTED'); alert("¡Registro enviado! Queda PENDIENTE de autorización.");
+      if(!name || !user || !pass){ alert("Complete todos los campos."); return; }
+
+      let registered=getRegisteredUsers();
+      if(registered.some(u=>u.user===user)){ alert("Este usuario ya existe."); return; }
+
+      const newUser={name,user,pass,status:'pending',createdAt:new Date().toISOString()};
+      registered.push(newUser);
+      saveRegisteredUsers(registered);
+      logActivity(user,'REGISTER_REQUEST');
+      alert("Registro enviado. Espere la autorización del administrador.");
       showForm('auth_splash');
     }
 
@@ -598,454 +665,241 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       const found=registered.find(u=>u.user===user && u.pass===pass);
       if(found){
         if(found.status==='pending'){ alert("Su cuenta está pendiente de autorización."); logActivity(user,'LOGIN_FAIL:PENDING'); return; }
-        currentUser=found; localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
-        logActivity(user,'USER_LOGIN_SUCCESS'); alert(`¡Bienvenido, ${found.name}!`);
-        showForm('menu'); return;
+        currentUser=found; localStorage.setItem(CURRENT_USER_KEY,JSON.stringify(found));
+        logActivity(user,'LOGIN_SUCCESS');
+        showForm('menu');
+      } else {
+        alert("Usuario o contraseña incorrectos.");
+        logActivity(user||'','LOGIN_FAIL:INVALID_CREDENTIALS');
       }
-      logActivity(user,'LOGIN_FAIL:INVALID_CREDENTIALS'); alert("Usuario o contraseña incorrectos.");
     }
 
     function logOut(){
-      if(currentUser) logActivity(currentUser.user,'LOGOUT');
       currentUser=null;
-      localStorage.removeItem(CURRENT_USER_KEY);
-      document.getElementById('loginUser').value=''; document.getElementById('loginPass').value='';
-      setupAdminAutoRefresh(false);
+      try{ localStorage.removeItem(CURRENT_USER_KEY); }catch(e){}
       showForm('auth_splash');
     }
 
-    /* ====== Admin ====== */
+    /* ====== Actividad y Solicitudes ====== */
+    function getActivityLog(){
+      let data=localStorage.getItem(USER_ACTIVITY_KEY);
+      if(!data) return [];
+      try{return JSON.parse(data);}catch(e){return [];}
+    }
+    function saveActivityLog(arr){
+      localStorage.setItem(USER_ACTIVITY_KEY, JSON.stringify(arr));
+    }
+    function logActivity(user,action,meta={}){
+      const log=getActivityLog();
+      log.push({time:new Date().toISOString(),user,action,meta});
+      saveActivityLog(log);
+    }
+
+    /* ====== Guardado de Solicitudes de Documentos ====== */
+    const REQUESTS_KEY='document_requests';
+
+    function getRequests(){
+      let data=localStorage.getItem(REQUESTS_KEY);
+      if(!data) return [];
+      try{return JSON.parse(data);}catch(e){return [];}
+    }
+
+    function saveRequests(arr){
+      localStorage.setItem(REQUESTS_KEY,JSON.stringify(arr));
+    }
+
+    function saveSolicitud(type){
+      if(!currentUser){
+        alert("Debe iniciar sesión para crear una solicitud.");
+        showForm('auth_splash');
+        return;
+      }
+      const reqs=getRequests();
+      const id = 'REQ-'+Date.now();
+      const newReq={
+        id,
+        user:currentUser.user,
+        type,
+        status:'pending',
+        createdAt:new Date().toISOString()
+      };
+      reqs.push(newReq);
+      saveRequests(reqs);
+      logActivity(currentUser.user,'CREATE_REQUEST',{type,id});
+      alert(`Solicitud creada con ID: ${id}.\nGuarde este ID para consultar su estatus.`);
+    }
+
+    /* ====== Panel Admin: carga y auto-refresco ====== */
     function loadAdminDashboard(){
-      loadPendingRequests();
-      loadRegisteredClients();
-      document.getElementById('activity-log-display').innerHTML='<p>Seleccione un cliente para ver su actividad.</p>';
+      const clientsContainer=document.getElementById('client-authorization-list');
+      const reqsContainer=document.getElementById('pending-requests-list');
+      const badge=document.getElementById('pending-badge');
+      const updated=document.getElementById('pending-updated');
+
+      if(!clientsContainer||!reqsContainer)return;
+
+      const registered=getRegisteredUsers();
+      const pendingUsers=registered.filter(u=>u.status==='pending');
+
+      clientsContainer.innerHTML='';
+      if(pendingUsers.length===0){
+        clientsContainer.innerHTML='<p>No hay cuentas pendientes de autorización.</p>';
+      } else {
+        pendingUsers.forEach(u=>{
+          const div=document.createElement('div');
+          div.className='client-item';
+          div.innerHTML=`
+            <div>
+              <strong>${u.name}</strong><br/>
+              <span>${u.user}</span><br/>
+              <small class="small-muted">Creado: ${new Date(u.createdAt).toLocaleString()}</small>
+            </div>
+            <div>
+              <button class="btn-authorize" data-user="${u.user}">Autorizar</button>
+              <button class="btn-reject" data-user="${u.user}">Rechazar</button>
+            </div>
+          `;
+          clientsContainer.appendChild(div);
+        });
+      }
+
+      const reqs=getRequests();
+      const pendingReqs=reqs.filter(r=>r.status==='pending');
+
+      reqsContainer.innerHTML='';
+      if(pendingReqs.length===0){
+        reqsContainer.innerHTML='<p id="no-requests-msg">No hay solicitudes pendientes.</p>';
+      } else {
+        pendingReqs.forEach(r=>{
+          const div=document.createElement('div');
+          div.className='request-item';
+          div.innerHTML=`
+            <div>
+              <strong>ID:</strong> ${r.id}<br/>
+              <strong>Usuario:</strong> ${r.user}<br/>
+              <strong>Tipo:</strong> ${r.type}<br/>
+              <small class="small-muted">Creada: ${new Date(r.createdAt).toLocaleString()}</small>
+            </div>
+            <div class="request-actions">
+              <button class="btn-authorize" data-id="${r.id}">Aprobar y Cargar PDF</button>
+              <button class="btn-reject" data-id="${r.id}">Rechazar</button>
+            </div>
+          `;
+          reqsContainer.appendChild(div);
+        });
+      }
+
+      // Actualizar badge
+      const totalPending=pendingUsers.length+pendingReqs.length;
+      if(totalPending>0){
+        badge.textContent=totalPending;
+        badge.style.display='inline-block';
+      } else {
+        badge.style.display='none';
+      }
+      updated.textContent='Última actualización: '+new Date().toLocaleTimeString();
+      updated.style.display='inline-block';
+
+      // Delegar events para autorizar/rechazar
+      clientsContainer.querySelectorAll('.btn-authorize').forEach(btn=>{
+        btn.onclick=()=>handleUserAuthorization(btn.dataset.user,true);
+      });
+      clientsContainer.querySelectorAll('.btn-reject').forEach(btn=>{
+        btn.onclick=()=>handleUserAuthorization(btn.dataset.user,false);
+      });
+
+      reqsContainer.querySelectorAll('.btn-authorize').forEach(btn=>{
+        btn.onclick=()=>handleRequestApproval(btn.dataset.id,true);
+      });
+      reqsContainer.querySelectorAll('.btn-reject').forEach(btn=>{
+        btn.onclick=()=>handleRequestApproval(btn.dataset.id,false);
+      });
+    }
+
+    function handleUserAuthorization(user,approved){
+      let registered=getRegisteredUsers();
+      const idx=registered.findIndex(u=>u.user===user);
+      if(idx===-1)return;
+      if(approved){
+        registered[idx].status='authorized';
+        logActivity(user,'ADMIN_USER_APPROVED');
+        alert(`Usuario ${user} autorizado.`);
+      } else {
+        logActivity(user,'ADMIN_USER_REJECTED');
+        alert(`Usuario ${user} rechazado y eliminado.`);
+        registered.splice(idx,1);
+      }
+      saveRegisteredUsers(registered);
+      loadAdminDashboard();
+    }
+
+    function handleRequestApproval(id,approved){
+      let reqs=getRequests();
+      const idx=reqs.findIndex(r=>r.id===id);
+      if(idx===-1)return;
+      const req=reqs[idx];
+
+      if(approved){
+        // Aqui se debería subir/generar el PDF y asociar la URL/base64
+        req.status='approved';
+        req.approvedAt=new Date().toISOString();
+        req.pdf='BASE64_PDF_EXAMPLE'; // placeholder
+        logActivity(req.user,'ADMIN_REQUEST_APPROVED',{id});
+        alert(`Solicitud ${id} aprobada. Recuerde subir el PDF real.`);
+      } else {
+        req.status='rejected';
+        req.rejectedAt=new Date().toISOString();
+        logActivity(req.user,'ADMIN_REQUEST_REJECTED',{id});
+        alert(`Solicitud ${id} rechazada.`);
+      }
+      reqs[idx]=req;
+      saveRequests(reqs);
+      loadAdminDashboard();
     }
 
     function setupAdminAutoRefresh(enable){
       if(enable){
         if(adminRefreshInterval) return;
-        adminRefreshInterval = setInterval(()=>{
-          if(currentUser && currentUser.user===ADMIN_USER){
-            loadPendingRequests();
-            loadRegisteredClients();
-          }
-        }, 5000);
+        adminRefreshInterval=setInterval(loadAdminDashboard,10000);
       } else {
-        if(adminRefreshInterval){ clearInterval(adminRefreshInterval); adminRefreshInterval=null; }
+        if(adminRefreshInterval){
+          clearInterval(adminRefreshInterval);
+          adminRefreshInterval=null;
+        }
       }
     }
 
-    function loadRegisteredClients(){
-      const users=getRegisteredUsers(); 
-      const list=document.getElementById('client-authorization-list'); 
-      list.innerHTML='';
-      if(users.length===0){ list.innerHTML='<p>No hay clientes registrados.</p>'; return; }
-      users.forEach(user=>{
-        const statusColor=user.status==='authorized'?'#27ae60':'#e67e22';
-        const item=document.createElement('div');
-        item.id=`client-${user.user.replace(/[^a-zA-Z0-9]/g,'-')}`; 
-        item.className='client-item';
-        item.innerHTML=`
-          <div class="client-info">
-            <strong>${user.name}</strong>
-            <p>Email: ${user.user}</p>
-            <p style="font-size:0.9em;">Estado: <strong style="color:${statusColor};">${user.status.toUpperCase()}</strong></p>
-          </div>
-          <div class="client-actions request-actions">
-            <button class="btn-authorize" ${user.status==='authorized'?'disabled':''} onclick="authorizeUser('${user.user}')">Autorizar</button>
-            <button class="back-button" onclick="viewUserActivity('${user.user}')">Ver Actividad</button>
-            <button class="btn-reject" onclick="deleteUser('${user.user}')">Eliminar</button>
-          </div>`;
-        list.appendChild(item);
-      });
-    }
-
-    function authorizeUser(email){
-      if(!confirm(`¿Autorizar al usuario ${email}?`)) return;
-      const users=getRegisteredUsers(); const i=users.findIndex(u=>u.user===email);
-      if(i>-1){ users[i].status='authorized'; saveRegisteredUsers(users); logActivity(ADMIN_USER,`AUTHORIZE_USER:${email}`); alert(`Usuario ${email} autorizado.`); loadRegisteredClients(); }
-      else alert("Usuario no encontrado.");
-    }
-    function deleteUser(email){
-      if(!confirm(`¿Eliminar al usuario ${email}?`)) return;
-      let users=getRegisteredUsers(); const len=users.length; users=users.filter(u=>u.user!==email);
-      if(users.length<len){ saveRegisteredUsers(users); logActivity(ADMIN_USER,`DELETE_USER:${email}`); alert("Usuario eliminado."); loadRegisteredClients(); }
-      else alert("Usuario no encontrado.");
-    }
-    function viewUserActivity(email){
-      const logEl=document.getElementById('activity-log-display'); 
-      const all=getActivityLog(); 
-      const items=all.filter(e=>e.user===email).reverse();
-      logEl.innerHTML=`<h4>Actividad de: ${email}</h4>`;
-      if(items.length===0){ logEl.innerHTML+='<p>Sin actividad registrada.</p>'; return; }
-      items.forEach(entry=>{
-        const div=document.createElement('div'); 
-        div.className='log-entry'; 
-        div.innerHTML=`[${entry.timestamp}] <strong>${entry.action}</strong>`; 
-        logEl.appendChild(div);
-      });
-      logActivity(ADMIN_USER,`VIEW_ACTIVITY_LOG:${email}`);
-    }
-
-    /* ====== Solicitudes ====== */
-    function getRequests(key){ const d=localStorage.getItem(key); return d?JSON.parse(d):[]; }
-    function saveRequests(key,req){ localStorage.setItem(key, JSON.stringify(req)); }
-
-    async function saveSolicitud(tipo){
-      if(!currentUser){ alert("Debe iniciar sesión para guardar una solicitud."); return; }
-      let nombreSolicitante=currentUser.name, nombreAsunto=tipo.toUpperCase(), pdfBase64=null;
-
-      if(tipo==='receta_similares'){
-        nombreSolicitante=document.getElementById('nombrePacienteSimilares').value||'Paciente';
-        nombreAsunto=nombreSolicitante;
-        pdfBase64=await generarPDFRecetaSimilares(false);
-      } else if(tipo==='laboral'){
-        nombreSolicitante=document.getElementById('nombreRecomendadoLaboral').value||currentUser.name||'RECOMENDADO';
-        nombreAsunto=`CARTA_LABORAL_${nombreSolicitante}`;
-        pdfBase64=await generarPDFCartaLaboral(false);
-      } else if(tipo==='personal'){
-        nombreSolicitante=document.getElementById('nombreRecomendadoPersonal').value||currentUser.name||'RECOMENDADO';
-        nombreAsunto=`CARTA_PERSONAL_${nombreSolicitante}`;
-        pdfBase64=await generarPDFCartaPersonal(false);
-      } else {
-        pdfBase64="BASE64_PLACEHOLDER_FOR_NEW_TYPE";
-      }
-
-      if(!pdfBase64){ alert(`Error al generar el documento ${tipo}.`); return; }
-      if(pdfBase64==="BASE64_PLACEHOLDER_FOR_NEW_TYPE"){ alert(`AVISO: solicitud ${tipo} guardada (prueba).`); }
-
-      const id=Date.now().toString();
-      const newReq={id,userEmail:currentUser.user,type:tipo,name:nombreAsunto,requesterName:nombreSolicitante,pdfBase64,status:'pending',timestamp:new Date().toLocaleString()};
-      const reqs=getRequests(STORAGE_KEY); reqs.push(newReq); saveRequests(STORAGE_KEY,reqs);
-
-      logActivity(currentUser.user,`SAVE_REQUEST:${tipo}:${id}`);
-      const url=`${getBaseUrl()}#status?id=${id}`; history.pushState({viewId:'status',requestId:id},'',url);
-      checkURL();
-    }
-
-    function loadPendingRequests(){
-      const reqs=getRequests(STORAGE_KEY).filter(r=>r.status==='pending');
-      const list=document.getElementById('pending-requests-list'); 
-      list.innerHTML='';
-      const badge=document.getElementById('pending-badge');
-      const stamp=document.getElementById('pending-updated');
-
-      if(reqs.length===0){
-        list.innerHTML='<p id="no-requests-msg">No hay solicitudes pendientes.</p>';
-        if(badge){ badge.style.display='none'; badge.textContent='0'; }
-        if(stamp){ stamp.style.display='inline'; stamp.textContent='Actualizado: '+new Date().toLocaleString(); }
+    /* ====== Manejo de URL para estatus o vistas ====== */
+    function checkURL(){
+      const hash=window.location.hash.replace('#','');
+      if(hash.startsWith('status')){
+        document.getElementById('status-page').style.display='block';
+        // Podrías agregar más lógica de estatus aquí
         return;
       }
-      // actualizar badge
-      if(badge){ badge.style.display='inline-block'; badge.textContent=String(reqs.length); }
-      if(stamp){ stamp.style.display='inline'; stamp.textContent='Actualizado: '+new Date().toLocaleString(); }
-
-      reqs.forEach(req=>{
-        const typeDisplay=req.type.replace(/_/g,' ').toUpperCase();
-        const item=document.createElement('div'); 
-        item.id=`request-${req.id}`; 
-        item.className='request-item';
-        item.innerHTML=`
-          <div class="request-info">
-            <strong>${typeDisplay} - ${req.name}</strong>
-            <p>Solicitante: ${req.requesterName} (Email: ${req.userEmail||'N/A'})</p>
-            <p style="font-size:.8em;">URL del Cliente: <code style="word-break:break-all;">${getBaseUrl()}#status?id=${req.id}</code></p>
-          </div>
-          <div class="request-actions">
-            <button class="btn-authorize" onclick="authorizeRequest('${req.id}')">Autorizar</button>
-            <button class="btn-reject" onclick="deleteRequest('${req.id}','${STORAGE_KEY}')">Rechazar</button>
-          </div>`;
-        list.appendChild(item);
-      });
-    }
-
-    function authorizeRequest(id){
-      let pending=getRequests(STORAGE_KEY);
-      const i=pending.findIndex(r=>r.id===id);
-      if(i===-1){ alert("Solicitud no encontrada."); loadPendingRequests(); return; }
-      const req=pending[i]; req.status='approved';
-      const approved=getRequests(APPROVED_KEY); approved.push(req); saveRequests(APPROVED_KEY,approved);
-      pending.splice(i,1); saveRequests(STORAGE_KEY,pending);
-      logActivity(ADMIN_USER,`AUTHORIZE_REQUEST:${req.type}:${id}`);
-      alert("¡Solicitud aprobada! El cliente ya puede descargar.");
-      loadPendingRequests();
-    }
-
-    function deleteRequest(id,key){
-      if(!confirm(`¿Eliminar la solicitud ${id}?`)) return;
-      let reqs=getRequests(key); const i=reqs.findIndex(r=>r.id===id);
-      if(i>-1){ const t=reqs[i].type; reqs.splice(i,1); saveRequests(key,reqs); logActivity(ADMIN_USER,`DELETE_REQUEST:${t}:${id}`); }
-      loadPendingRequests();
-    }
-
-    /* ====== Status Page ====== */
-    function checkURL(){
-      if(statusCheckInterval){ clearInterval(statusCheckInterval); statusCheckInterval=null; }
-      const hash=window.location.hash.substring(1); 
-      const params=new URLSearchParams(hash.split('?')[1]||''); 
-      const id=params.get('id');
-      if(hash.startsWith('status') && id){
-        document.getElementById('app-container').style.display='none';
-        document.getElementById('status-page').style.display='flex';
-        document.getElementById('status-page').innerHTML='<div class="disclaimer-notice">*NO SE GARANTIZA NI SE RESPALDA EL DOCUMENTO, TODO ES BAJO SU PROPIA RESPONSABILIDAD*</div>';
-        checkStatus(id); statusCheckInterval=setInterval(()=>checkStatus(id),5000); return;
-      }
-      // 🔧 Mantener al admin en su panel al recargar; el cliente queda en su menú
-      if(!currentUser){ 
-        showForm('auth_splash',false); 
-      } else { 
-        const view = (currentUser.user===ADMIN_USER) ? 'admin_dashboard' : 'menu';
-        showForm(view,false); 
-      }
-    }
-
-    function checkStatus(id){
-      const approved=getRequests(APPROVED_KEY); 
-      const req=approved.find(r=>r.id===id); 
-      const statusPage=document.getElementById('status-page');
-      const disclaimer=statusPage.querySelector('.disclaimer-notice')?statusPage.querySelector('.disclaimer-notice').outerHTML:'';
-      if(!req){
-        statusPage.innerHTML=disclaimer+`
-          <h2>⏳ Solicitud Enviada - Esperando Autorización</h2>
-          <div class="spinner"></div>
-          <p>Su solicitud <strong>${id}</strong> ha sido recibida y está a la espera de aprobación.</p>
-          <p style="font-size:.8em;color:#555;">(Esta página se actualiza cada 5 segundos)</p>
-          <p style="margin-top:20px;">Enlace: <code>${getBaseUrl()}#status?id=${id}</code></p>`;
+      if(hash && viewIdMap[hash]){
+        showForm(hash,false);
       } else {
-        if(statusCheckInterval){ clearInterval(statusCheckInterval); statusCheckInterval=null; }
-        statusPage.innerHTML=disclaimer+`
-          <h2>✅ ¡Solicitud Aprobada!</h2>
-          <p>El administrador ha autorizado su documento para <strong>${req.name}</strong>.</p>
-          <button class="btn-action btn-download-now" onclick="triggerDownload('${req.id}')">Descargar Documento Ahora</button>
-          <p style="margin-top:30px;"><a href="#" onclick="return goBackAfterDownload()">← Volver al Menú Principal</a></p>`;
+        if(currentUser){
+          if(currentUser.user===ADMIN_USER){
+            showForm('admin_dashboard',false);
+          } else {
+            showForm('menu',false);
+          }
+        } else {
+          showForm('auth_splash',false);
+        }
       }
     }
 
-    function triggerDownload(id){
-      const approved=getRequests(APPROVED_KEY); 
-      const req=approved.find(r=>r.id===id);
-      if(!req){ alert("Archivo no encontrado."); showForm('menu'); return; }
-      if(req.pdfBase64==="BASE64_PLACEHOLDER_FOR_NEW_TYPE"){ alert("Documento de prueba, no hay PDF real."); return; }
-      const link=document.createElement('a'); 
-      link.href=`data:application/pdf;base64,${req.pdfBase64}`;
-      const name=req.name.toUpperCase().replace(/\s/g,'_'); 
-      const type=req.type.toUpperCase().replace(/_/g,'-');
-      link.download=`Documento_Aprobado_${name}_${type}.pdf`; 
-      document.body.appendChild(link); link.click(); document.body.removeChild(link);
-      if(currentUser) logActivity(currentUser.user,`DOWNLOAD_DOCUMENT:${req.type}:${id}`);
-      const statusPage=document.getElementById('status-page');
-      const disclaimer=statusPage.querySelector('.disclaimer-notice')?statusPage.querySelector('.disclaimer-notice').outerHTML:'';
-      statusPage.innerHTML=disclaimer+`
-        <div>
-          <h1>✅ Descarga Exitosa</h1>
-          <p>Su documento para <strong>${req.name}</strong> ha sido descargado.</p>
-          <p style="margin-top:30px;"><a href="#" onclick="return goBackAfterDownload()">← Volver al Menú Principal</a></p>
-        </div>`;
-    }
+    window.onpopstate=function(event){
+      if(event.state && event.state.viewId){
+        showForm(event.state.viewId,false);
+      } else {
+        checkURL();
+      }
+    };
 
-    /* ====== Helpers PDF ====== */
-    const fileToBase64=(file)=>new Promise((resolve)=>{ if(!file) return resolve(null); const r=new FileReader(); r.readAsDataURL(file); r.onload=()=>resolve(r.result); r.onerror=()=>resolve(null); });
-
-    const DEFAULT_LOGO_DATAURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAuMBgV2c2HkAAAAASUVORK5CYII=';
-
-    function generarNumeroAleatorio(){ let n=''; for(let i=0;i<10;i++) n+=Math.floor(Math.random()*10); return n; }
-    function drawJustifiedText(doc,text,x,y,maxWidth,lineHeight){
-      const lines = doc.splitTextToSize(text, maxWidth);
-      lines.forEach(line=>{ doc.text(line, x, y); y += lineHeight; });
-      return y;
-    }
-
-    function drawBarcodeStyled(doc,x,y,w,h,code){
-      const digits=code.split(''); const total=digits.length*4; const unit=w/total; let cursor=x; doc.setFillColor(0);
-      for(let i=0;i<digits.length;i++){ const d=parseInt(digits[i],10); const pattern=[1+(d%3),1+((d+1)%3),1+((d+2)%3),1+((d+1)%2)];
-        for(let p=0;p<pattern.length;p++){ const pw=Math.max(.5,unit*pattern[p]/3); if(p%2===0) doc.rect(cursor,y,pw,h,'F'); cursor+=pw; } }
-      doc.setFontSize(8); doc.text(code, x+(w/2), y+h+4, {align:'center'});
-    }
-
-    /* ====== PDF Receta Similares ====== */
-    async function generarPDFRecetaSimilares(descargar=true){
-      const doc=new jsPDF('p','mm','a4'); const pageWidth=doc.internal.pageSize.getWidth(); const margin=10; let y=10; const lh=5;
-      const nombreDoc=(document.getElementById('doctorNombreSimilares').value||'').toUpperCase();
-      const cedula=(document.getElementById('cedulaSimilares').value||'').toUpperCase();
-      const direccion=(document.getElementById('direccionSimilares').value||'').toUpperCase();
-      const fechaEmisionVal=document.getElementById('fechaEmisionSimilares').value;
-      const hoy=new Date(); const fechaHora=`${fechaEmisionVal?new Date(fechaEmisionVal+'T12:00:00').toLocaleDateString('es-MX',{day:'2-digit',month:'2-digit',year:'numeric'}):new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'2-digit',year:'numeric'})} ${String(hoy.getHours()).padStart(2,'0')}:${String(hoy.getMinutes()).padStart(2,'0')}`;
-      const nombreP=(document.getElementById('nombrePacienteSimilares').value||'').toUpperCase();
-      const apellidoP=(document.getElementById('apellidoPSimilares').value||'').toUpperCase();
-      const apellidoM=(document.getElementById('apellidoMSimilares').value||'').toUpperCase();
-      const sexo=(document.getElementById('sexoSimilares').value||'').toUpperCase();
-      const edad=(document.getElementById('edadSimilares').value||'').toUpperCase();
-      const fechaNacVal=document.getElementById('fechaNacSimilares').value;
-      const fechaNac=fechaNacVal?new Date(fechaNacVal+'T12:00:00').toLocaleDateString('es-MX',{day:'2-digit',month:'2-digit',year:'numeric'}):'';
-      const alergias=(document.getElementById('alergiasSimilares').value||'').toUpperCase();
-      const ta=(document.getElementById('spo2Similares').value||'').toUpperCase();
-      const temp=(document.getElementById('fcSimilares').value||'').toUpperCase();
-      const fc=(document.getElementById('frSimilares').value||'').toUpperCase();
-      const peso=(document.getElementById('tempSimilares').value||'').toUpperCase();
-      const fr=(document.getElementById('pesoSimilares').value||'').toUpperCase();
-      const talla=(document.getElementById('tallaSimilares').value||'').toUpperCase();
-      const dx=(document.getElementById('dxSimilares').value||'').toUpperCase();
-      const contenido=document.getElementById('contenidoConsultaSimilares').value||'';
-      const tratamiento=document.getElementById('tratamientoSimilares').value||'';
-      const indicaciones=document.getElementById('indicacionesGeneralesSimilares').value||'';
-      const proxima=document.getElementById('proximaCitaSimilares').value||'';
-      const logoFile=document.getElementById('logoInputSimilares').files[0]; const logoBase64=logoFile?await fileToBase64(logoFile):DEFAULT_LOGO_DATAURL;
-      const barcodeNumber=generarNumeroAleatorio();
-
-      // Encabezado
-      if(logoBase64) { try{ doc.addImage(logoBase64,'PNG',margin,y,34,20); }catch(e){} }
-      doc.setFontSize(12); doc.setFont(undefined,'bold'); doc.text(nombreDoc,pageWidth/2,y+8,{align:'center'});
-      doc.setFontSize(10); doc.setFont(undefined,'normal'); doc.text(cedula,pageWidth/2,y+13,{align:'center'});
-      doc.text('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO',pageWidth/2,y+18,{align:'center'});
-      drawBarcodeStyled(doc, pageWidth-margin-45, y+4, 45, 12, barcodeNumber);
-      y+=22;
-      doc.setDrawColor(0); doc.setLineWidth(.4); doc.line(margin,y,pageWidth-margin,y); y+=6;
-      doc.setFontSize(9); doc.text(direccion,margin,y); doc.text(`FECHA Y HORA DE ELABORACION: ${fechaHora}`,pageWidth-margin,y,{align:'right'}); y+=6;
-      doc.setLineWidth(.3); doc.line(margin,y,pageWidth-margin,y); y+=6;
-
-      const colLeftX=margin; const colRightX=pageWidth/2+10; const gap=5;
-      doc.setFontSize(9); doc.setFont(undefined,'bold'); doc.text('NOMBRE:',colLeftX,y); doc.setFont(undefined,'normal'); doc.text(`${nombreP} ${apellidoP} ${apellidoM}`.trim(), colLeftX+20, y);
-      doc.setFont(undefined,'bold'); doc.text('NUMERO DE EXPEDIENTE:',colRightX,y); doc.setFont(undefined,'normal'); doc.text(barcodeNumber,colRightX+48,y); y+=gap;
-      doc.setFont(undefined,'bold'); doc.text('SEXO:',colLeftX,y); doc.setFont(undefined,'normal'); doc.text(sexo,colLeftX+14,y);
-      doc.setFont(undefined,'bold'); doc.text('EDAD:',colRightX,y); doc.setFont(undefined,'normal'); doc.text(edad,colRightX+14,y); y+=gap;
-      doc.setFont(undefined,'bold'); doc.text('FECHA DE NACIMIENTO:',colLeftX,y); doc.setFont(undefined,'normal'); doc.text(fechaNac,colLeftX+42,y); y+=gap+2;
-      doc.setLineWidth(.3); doc.line(margin,y,pageWidth-margin,y); y+=6;
-
-      const leftW=(pageWidth-margin*2)*.45; const rightX=margin+leftW+10; const rightW=pageWidth-margin-rightX; let yL=y, yR=y;
-      doc.setFont(undefined,'bold'); doc.text('T.A.',margin,yL); doc.setFont(undefined,'normal'); doc.text(ta,margin+10,yL);
-      doc.setFont(undefined,'bold'); doc.text('TEMP:',margin+42,yL); doc.setFont(undefined,'normal'); doc.text(temp,margin+56,yL); yL+=5;
-      doc.setFont(undefined,'bold'); doc.text('F.C X MIN',margin,yL); doc.setFont(undefined,'normal'); doc.text(fc,margin+21,yL);
-      doc.setFont(undefined,'bold'); doc.text('PESO:',margin+42,yL); doc.setFont(undefined,'normal'); doc.text(peso,margin+54,yL); yL+=5;
-      doc.setFont(undefined,'bold'); doc.text('F.R X MIN',margin,yL); doc.setFont(undefined,'normal'); doc.text(fr,margin+21,yL);
-      doc.setFont(undefined,'bold'); doc.text('TALLA:',margin+42,yL); doc.setFont(undefined,'normal'); doc.text(talla,margin+54,yL); yL+=7;
-      doc.setFont(undefined,'bold'); doc.text('I.D',margin,yL); doc.setFont(undefined,'normal'); doc.text(dx,margin+8,yL); yL+=9;
-
-      doc.setFont(undefined,'bold'); doc.text('TRATAMIENTO:',rightX,yR); yR+=5; doc.setFont(undefined,'normal');
-      tratamiento.split('\n').filter(l=>l.trim()).forEach(linea=>{ doc.splitTextToSize(linea,rightW-5).forEach(w=>{ doc.text(w,rightX,yR); yR+=5; }); });
-      y=Math.max(yL,yR)+4; doc.setLineWidth(.3); doc.line(margin,y,pageWidth-margin,y); y+=6;
-
-      doc.setFont(undefined,'bold'); doc.text('OBSERVACIONES',margin,y); y+=5; doc.setFont(undefined,'normal');
-      y=drawJustifiedText(doc,contenido,margin,y,pageWidth-margin*2,5); y+=4;
-      y=drawJustifiedText(doc,indicaciones,margin,y,pageWidth-margin*2,5); y+=8;
-      doc.setFont(undefined,'bold'); doc.text('PRÓXIMA CITA:',margin,y); doc.setFont(undefined,'normal'); doc.text(proxima,margin+30,y); y+=12;
-
-      const fx=pageWidth-margin-60; doc.setLineWidth(.4); doc.line(fx,y,fx+50,y); doc.setFont(undefined,'normal'); doc.text('COPIA',fx-30,y); doc.setFont(undefined,'bold'); doc.text('FIRMA:',fx,y+4);
-      y+=18;
-
-      if(descargar){ const safe=(nombreP||'PACIENTE').replace(/\s+/g,'_'); doc.save(`Receta_Similares_${safe}.pdf`); return true; }
-      else return doc.output('datauristring').split(',')[1];
-    }
-
-    /* ====== PDF CARTA LABORAL (modificado) ====== */
-    async function generarPDFCartaLaboral(descargar=true){
-      const doc=new jsPDF('p','mm','a4');
-      const pageWidth=doc.internal.pageSize.getWidth();
-      const margin=20; let y=30; const lineHeight=7;
-
-      const puesto=(document.getElementById('puestoLaboral').value||'').toUpperCase();
-      const periodo=(document.getElementById('periodoLaboral').value||'').toUpperCase();
-      const recomendado=(document.getElementById('nombreRecomendadoLaboral').value||'').toUpperCase();
-      const cuerpo=document.getElementById('cuerpoLaboral').value||'';
-
-      const nombreEmisor=(document.getElementById('nombreEmisorLaboral').value||'').toUpperCase();
-      const puestoEmisor=(document.getElementById('puestoEmisorLaboral').value||'').toUpperCase();
-      const telEmisor=(document.getElementById('telefonoEmisorLaboral').value||'').toUpperCase();
-      const correoEmisor=(document.getElementById('correoEmisorLaboral').value||'').toUpperCase();
-
-      const logoFile=document.getElementById('logoLaboralInput')?.files[0];
-      const logoBase64=logoFile?await fileToBase64(logoFile):DEFAULT_LOGO_DATAURL;
-      if(logoBase64){ try{ doc.addImage(logoBase64,'PNG',margin,10,35,20); }catch(e){} }
-
-      // Título
-      doc.setFont('helvetica','bold'); doc.setFontSize(14);
-      doc.text('CARTA DE RECOMENDACIÓN LABORAL', pageWidth/2, y, {align:'center'}); y += 10;
-
-      // Fecha derecha
-      const hoy=new Date();
-      const fechaTexto=hoy.toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
-      doc.setFont('helvetica','normal'); doc.setFontSize(11);
-      doc.text(fechaTexto, pageWidth - margin, y, {align:'right'}); y += 8;
-
-      // Subtítulo izquierda
-      doc.setFont('helvetica','bold'); doc.setFontSize(12);
-      doc.text('A QUIEN CORRESPONDA:', margin, y); y += 15;
-
-      // Cuerpo SIN negritas con reemplazos
-      doc.setFont('helvetica','normal'); doc.setFontSize(11);
-      const texto = cuerpo.replace(/\[NOMBRE DEL EMPLEADO\]/gi, recomendado)
-                          .replace(/\[PUESTO\]/gi, puesto)
-                          .replace(/\[PERIODO\]/gi, periodo);
-      const wrapped = doc.splitTextToSize(texto, pageWidth - margin*2);
-      wrapped.forEach(line => { doc.text(line, margin, y); y += lineHeight; });
-      y += 25;
-
-      // Firma / Recomendante centrado (uno debajo del otro)
-      doc.setFont('helvetica','normal');
-      doc.text('Atentamente,', pageWidth/2, y, {align:'center'}); y += 12;
-
-      doc.setFont('helvetica','bold');
-      if(nombreEmisor) doc.text(nombreEmisor, pageWidth/2, y, {align:'center'}); y += 6;
-      doc.setFont('helvetica','normal');
-      if(puestoEmisor) doc.text(puestoEmisor, pageWidth/2, y, {align:'center'}); y += 6;
-      if(telEmisor) doc.text('TEL: ' + telEmisor, pageWidth/2, y, {align:'center'}); y += 6;
-      if(correoEmisor) doc.text('EMAIL: ' + correoEmisor, pageWidth/2, y, {align:'center'}); y += 6;
-
-      if(descargar){ const safe=(recomendado||'RECOMENDADO').replace(/\s+/g,'_'); doc.save(`Carta_Laboral_${safe}.pdf`); return true; }
-      else return doc.output('datauristring').split(',')[1];
-    }
-
-    /* ====== PDF CARTA PERSONAL (modificado) ====== */
-    async function generarPDFCartaPersonal(descargar=true){
-      const doc=new jsPDF('p','mm','a4');
-      const pageWidth=doc.internal.pageSize.getWidth();
-      const margin=20; let y=30; const lineHeight=7;
-
-      const recomendado=(document.getElementById('nombreRecomendadoPersonal').value||'').toUpperCase();
-      const relacion=(document.getElementById('relacionPersonal').value||'').toUpperCase();
-      const cuerpo=document.getElementById('cuerpoPersonal').value||'';
-
-      const nombreEmisor=(document.getElementById('nombreEmisorPersonal').value||'').toUpperCase();
-      const telEmisor=(document.getElementById('telefonoEmisorPersonal').value||'').toUpperCase();
-      const correoEmisor=(document.getElementById('correoEmisorPersonal').value||'').toUpperCase();
-
-      // Título
-      doc.setFont('helvetica','bold'); doc.setFontSize(14);
-      doc.text('CARTA DE RECOMENDACIÓN PERSONAL', pageWidth/2, y, {align:'center'}); y += 10;
-
-      // Fecha derecha
-      const hoy=new Date();
-      const fechaTexto=hoy.toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
-      doc.setFont('helvetica','normal'); doc.setFontSize(11);
-      doc.text(fechaTexto, pageWidth - margin, y, {align:'right'}); y += 8;
-
-      // Subtítulo izquierda
-      doc.setFont('helvetica','bold'); doc.setFontSize(12);
-      doc.text('A QUIEN CORRESPONDA:', margin, y); y += 15;
-
-      // Cuerpo SIN negritas
-      doc.setFont('helvetica','normal'); doc.setFontSize(11);
-      const texto = cuerpo.replace(/\[NOMBRE\]/gi, recomendado).replace(/\[RELACIÓN\]/gi, relacion);
-      const wrapped = doc.splitTextToSize(texto, pageWidth - margin*2);
-      wrapped.forEach(line => { doc.text(line, margin, y); y += lineHeight; });
-      y += 25;
-
-      // Firma / Emisor centrado (uno debajo del otro)
-      doc.setFont('helvetica','normal');
-      doc.text('Atentamente,', pageWidth/2, y, {align:'center'}); y += 12;
-
-      doc.setFont('helvetica','bold');
-      if(nombreEmisor) doc.text(nombreEmisor, pageWidth/2, y, {align:'center'}); y += 6;
-
-      doc.setFont('helvetica','normal');
-      if(relacion) doc.text(relacion, pageWidth/2, y, {align:'center'}); y += 6;
-      if(telEmisor) doc.text('TEL: ' + telEmisor, pageWidth/2, y, {align:'center'}); y += 6;
-      if(correoEmisor) doc.text('EMAIL: ' + correoEmisor, pageWidth/2, y, {align:'center'}); y += 6;
-
-      if(descargar){ const safe=(recomendado||'PERSONA').replace(/\s+/g,'_'); doc.save(`Carta_Personal_${safe}.pdf`); return true; }
-      else return doc.output('datauristring').split(',')[1];
-    }
-
-    /* ====== Arranque ====== */
     window.addEventListener('load', ()=>{ 
       // Restaurar sesión si existe
       try{ const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY)); if(saved) currentUser = saved; }catch(e){}
@@ -1054,7 +908,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
   </script>
 
 <script>
-// --- Inserción automática: navegación segura tras descarga ---
+// --- Navegación segura tras descarga (ajustada para respetar rol de admin) ---
 (function(){
   if (window.goBackAfterDownload) return;
   window.goBackAfterDownload = function(){
@@ -1062,19 +916,18 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
       var cu = (typeof currentUser !== 'undefined' && currentUser) ? currentUser : null;
       if(!cu){
         try{
-          cu = JSON.parse(localStorage.getItem('current_user')
-               || localStorage.getItem('CUR_USER')
-               || localStorage.getItem('cur_user')
-               || localStorage.getItem('CURRENT_USER')
-               || localStorage.getItem('CURRENT_USER_KEY')
-               || 'null');
+          cu = JSON.parse(
+            localStorage.getItem('current_user') ||
+            localStorage.getItem('CUR_USER') ||
+            localStorage.getItem('cur_user') ||
+            localStorage.getItem('CURRENT_USER') ||
+            localStorage.getItem('CURRENT_USER_KEY') ||
+            'null'
+          );
         }catch(e){ cu = null; }
       }
-      var isAdmin = false;
-      try{
-        var ADMIN_USER = (typeof ADMIN_USER !== 'undefined') ? ADMIN_USER : null;
-        isAdmin = !!(cu && (cu.user === ADMIN_USER || cu.role === 'admin'));
-      }catch(_){ isAdmin = !!(cu && cu.role === 'admin'); }
+
+      var isAdmin = !!(cu && (cu.user === window.ADMIN_USER || cu.isAdmin));
 
       if(typeof showForm === 'function'){
         if(isAdmin){
