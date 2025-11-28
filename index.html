@@ -58,12 +58,7 @@
     .toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
     .btn-logout{background:#3498db;color:#fff;border:none;border-radius:6px;padding:10px 14px;cursor:pointer;font-weight:700}
     .btn-logout:hover{filter:brightness(0.95)}
-  
-    .btn-upload{background:#8e44ad;color:#fff;padding:8px 12px;border:none;border-radius:4px;cursor:pointer;font-size:.9em}
-    .btn-upload:hover{background:#732d91}
-    .logo-preview img{max-width:160px;max-height:80px;border:1px solid #ccc;border-radius:4px;display:block;margin-top:5px}
-    .small-muted{font-size:.85em;color:#7f8c8d}
-</style>
+  </style>
 </head>
 <body>
 
@@ -229,26 +224,24 @@
         <p>Seleccione un cliente para ver su actividad detallada.</p>
       </div>
 
-      <h3>Logo Certificado Médico Farmacia</h3>
-      <div id="logo-cert-farmacia-settings" class="input-group">
-        <p class="small-muted">
-          Aquí puede subir el logo que se usará en el Certificado Médico de Farmacia.
-          Se guarda como predeterminado en este navegador para todos los certificados.
-        </p>
-        <input type="file" id="logoCertFarmaciaInput" accept="image/*">
-        <div style="margin-top:10px;">
-          <button type="button" class="btn-upload" onclick="saveCertFarmaciaLogo()">Guardar logo por defecto</button>
-          <button type="button" class="btn-reject" onclick="removeCertFarmaciaLogo()">Quitar logo</button>
-        </div>
-        <div id="logoCertFarmaciaPreview" class="logo-preview small-muted" style="margin-top:10px;">
-          <p>No hay logo guardado actualmente.</p>
-        </div>
-      </div>
-
       <h3>Solicitudes de Documentos Pendientes</h3>
       <p>Al autorizar, el cliente verá automáticamente el botón de descarga en su página de espera.</p>
       <div id="pending-requests-list" class="input-group">
         <p id="no-requests-msg">No hay solicitudes pendientes.</p>
+      </div>
+
+      <h3>Logo Certificado Médico Farmacia</h3>
+      <div id="logo-cert-farmacia-settings" class="input-group">
+        <p class="small-muted">
+          Aquí puedes subir el logo que aparecerá en el Certificado Médico de Farmacia.
+          Se guardará de forma predeterminada en este navegador.
+        </p>
+        <input type="file" id="logoCertFarmaciaInput" accept="image/*">
+        <div style="margin-top:10px;">
+          <button class="btn-upload" type="button" onclick="saveCertFarmaciaLogo()">Guardar logo por defecto</button>
+          <button class="btn-reject" type="button" onclick="removeCertFarmaciaLogo()">Quitar logo</button>
+        </div>
+        <div id="logoCertFarmaciaPreview" class="small-muted" style="margin-top:10px;"></div>
       </div>
     </div>
 
@@ -625,7 +618,7 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
   </div>
 
   <script>
-    const { jsPDF } = window.jspdf;
+    const jsPDF = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
 
     /* ====== Storage Keys & Estado ====== */
     const STORAGE_KEY = 'pending_requests_list';
@@ -786,11 +779,59 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
     }
 
     /* ====== Admin ====== */
-    function loadAdminDashboard(){
+    
+    /* ====== Logo Certificado Médico Farmacia (admin) ====== */
+    function saveCertFarmaciaLogo(){
+      const input = document.getElementById('logoCertFarmaciaInput');
+      if(!input || !input.files || !input.files[0]){
+        alert('Seleccione una imagen de logo primero.');
+        return;
+      }
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e){
+        const dataUrl = e.target.result;
+        try{
+          localStorage.setItem(CERT_FARMACIA_LOGO_KEY, dataUrl);
+          updateCertFarmaciaLogoPreview();
+          alert('Logo guardado como predeterminado.');
+        }catch(err){
+          console.error('Error guardando logo', err);
+          alert('No se pudo guardar el logo (revise el espacio de almacenamiento del navegador).');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeCertFarmaciaLogo(){
+      try{
+        localStorage.removeItem(CERT_FARMACIA_LOGO_KEY);
+      }catch(e){}
+      updateCertFarmaciaLogoPreview();
+      alert('Logo eliminado. El certificado se generará sin logo.');
+    }
+
+    function updateCertFarmaciaLogoPreview(){
+      const container = document.getElementById('logoCertFarmaciaPreview');
+      if(!container) return;
+      let dataUrl = null;
+      try{
+        dataUrl = localStorage.getItem(CERT_FARMACIA_LOGO_KEY);
+      }catch(e){
+        dataUrl = null;
+      }
+      if(!dataUrl){
+        container.innerHTML = '<p>No hay logo guardado actualmente.</p>';
+        return;
+      }
+      container.innerHTML = '<p>Logo actual:</p><img src="'+dataUrl+'" alt="Logo certificado" style="max-width:180px;max-height:80px;border:1px solid #ccc;border-radius:4px;display:block;">';
+    }
+
+function loadAdminDashboard(){
       loadPendingRequests();
       loadRegisteredClients();
       document.getElementById('activity-log-display').innerHTML='<p>Seleccione un cliente para ver su actividad.</p>';
-      if(typeof updateCertFarmaciaLogoPreview==='function'){ updateCertFarmaciaLogoPreview(); }
+      updateCertFarmaciaLogoPreview();
     }
 
     function setupAdminAutoRefresh(enable){
@@ -879,6 +920,10 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
         nombreSolicitante=document.getElementById('nombreRecomendadoPersonal').value||currentUser.name||'RECOMENDADO';
         nombreAsunto=`CARTA_PERSONAL_${nombreSolicitante}`;
         pdfBase64=await generarPDFCartaPersonal(false);
+      } else if(tipo==='cert_medico_farmacia'){
+        nombreSolicitante=document.getElementById('cmfNombre').value||currentUser.name||'PACIENTE';
+        nombreAsunto=`CERT_MED_FARMACIA_${nombreSolicitante}`;
+        pdfBase64=generarCertMedicoFarmaciaPDF(false);
       } else {
         pdfBase64="BASE64_PLACEHOLDER_FOR_NEW_TYPE";
       }
@@ -1219,30 +1264,15 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
 
     
     /* ====== Certificado Médico Farmacia (PDF) ====== */
-    function generarCertMedicoFarmaciaPDF(descargar=true){
+    
+
+function generarCertMedicoFarmaciaPDF(descargar=true){
       const doc = new jsPDF('p','mm','letter');
       const pageWidth = doc.internal.pageSize.getWidth();
+      const marginX = 20;
       let y = 20;
 
-      // Logo de Certificado de Farmacia (configurado por el administrador)
-      try{
-        let logoBase64 = null;
-        try{
-          logoBase64 = localStorage.getItem(CERT_FARMACIA_LOGO_KEY);
-        }catch(e){ logoBase64 = null; }
-        if(!logoBase64){ logoBase64 = typeof DEFAULT_LOGO_DATAURL!=='undefined' ? DEFAULT_LOGO_DATAURL : null; }
-        if(logoBase64){
-          const logoWidth = 25;
-          const logoHeight = 25;
-          const logoX = pageWidth - logoWidth - 20;
-          const logoY = 18;
-          doc.addImage(logoBase64,'PNG',logoX,logoY,logoWidth,logoHeight);
-        }
-      }catch(e){
-        console.error('No se pudo agregar el logo al certificado:', e);
-      }
-
-      // Datos del formulario
+      // === Datos del formulario ===
       const nombre = (document.getElementById('cmfNombre').value || '').toUpperCase();
       const sexo = (document.getElementById('cmfSexo').value || '').toUpperCase();
       const edad = (document.getElementById('cmfEdad').value || '').toUpperCase();
@@ -1288,77 +1318,137 @@ Quedo a disposición para ampliar cualquier información que se requiera respect
         }catch(e){}
       }
 
+      // === Logo (opcional, configurado por el admin) ===
+      try{
+        const logoDataUrl = localStorage.getItem(CERT_FARMACIA_LOGO_KEY);
+        if(logoDataUrl){
+          // Logo arriba a la izquierda
+          doc.addImage(logoDataUrl, 'PNG', marginX, 10, 30, 30);
+        }
+      }catch(e){
+        console.error('No se pudo cargar el logo del certificado.', e);
+      }
+
+      // === Encabezado ===
       doc.setFont('helvetica','bold');
-      doc.setFontSize(16);
-      doc.text('FUNDACION BEST, A.C', pageWidth/2, y, {align:'center'}); y += 7;
       doc.setFontSize(12);
-      doc.text('DIVISION SALUD', pageWidth/2, y, {align:'center'}); y += 7;
-      doc.setFontSize(14);
-      doc.text('CERTIFICADO MEDICO', pageWidth/2, y, {align:'center'}); y += 10;
-
-      doc.setFontSize(10);
-      doc.setFont('helvetica','normal');
-      doc.text('El que suscribe, médico cirujano legalmente autorizado para ejercer su profesión.', pageWidth/2, y, {align:'center'}); 
+      doc.text('FUNDACION BEST, A.C', pageWidth/2, y, {align:'center'});
+      y += 6;
+      doc.text('DIVISION SALUD', pageWidth/2, y, {align:'center'});
+      y += 6;
+      doc.text('CERTIFICADO MEDICO', pageWidth/2, y, {align:'center'});
       y += 8;
+
+      // Línea horizontal completa bajo encabezado
+      doc.setLineWidth(0.4);
+      doc.line(marginX, y, pageWidth - marginX, y);
+      y += 6;
+
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(9);
+      doc.text('El que suscribe, médico cirujano legalmente autorizado para ejercer su profesión.', pageWidth/2, y, {align:'center'});
+      y += 10;
 
       doc.setFont('helvetica','bold');
-      doc.text('CERTIFICADO', pageWidth/2, y, {align:'center'}); 
-      y += 8;
+      doc.text('Certificado', pageWidth/2, y, {align:'center'});
+      y += 4;
+
+      // Línea bajo "Certificado"
+      doc.setLineWidth(0.3);
+      doc.line(marginX, y, pageWidth - marginX, y);
+      y += 6;
 
       doc.setFont('helvetica','normal');
-      doc.text('Que habiendo practicado reconocimiento médico a:', 20, y); 
+      doc.text('Que habiendo practicado reconocimiento médico a:', marginX, y);
+      y += 4;
+
+      // Línea bajo la frase "Que habiendo..."
+      doc.setLineWidth(0.3);
+      doc.line(marginX, y, pageWidth - marginX, y);
       y += 6;
 
-      doc.text(`Nombre: ${nombre}`, 20, y);
-      doc.text(`Sexo: ${sexo}`, pageWidth/2, y);
-      y += 6;
-      doc.text(`Edad: ${edad}`, 20, y);
-      doc.text(`No. expediente: ${expediente}`, pageWidth/2, y);
-      y += 6;
-      doc.text(`Fecha de nacimiento: ${nacimiento}`, 20, y);
+      // === Bloque de datos generales ===
+      doc.text(`Nombre: ${nombre}`, marginX, y);
+      doc.text(`Número de expediente: ${expediente}`, pageWidth/2 + 5, y);
+      y += 5;
+
+      doc.text(`Sexo: ${sexo}`, marginX, y);
+      doc.text(`Fecha de nacimiento: ${nacimiento}`, pageWidth/2 + 5, y);
+      y += 5;
+
+      doc.text(`Edad: ${edad}`, marginX, y);
       y += 8;
 
-      doc.text(`Peso: ${peso}`, 20, y);
-      doc.text(`Talla: ${talla}`, pageWidth/2, y);
-      y += 6;
-      doc.text(`IMC: ${imc}`, 20, y);
-      doc.text(`Temperatura: ${temp}`, pageWidth/2, y);
-      y += 6;
-      doc.text(`T.A.: ${ta}`, 20, y);
-      doc.text(`F.C.: ${fc}`, pageWidth/2, y);
-      y += 6;
-      doc.text(`F.R.: ${fr}`, 20, y);
-      doc.text(`Saturación: ${sat}`, pageWidth/2, y);
+      // === Signos vitales y medidas (alineados a 4 columnas que sí caben) ===
+      const col1X = marginX;
+      const col2X = marginX + 45;
+      const col3X = marginX + 105;
+      const col4X = pageWidth - marginX - 45; // cerca del margen derecho
+
+      doc.text(`Peso: ${peso}`, col1X, y);
+      doc.text(`Talla: ${talla}`, col2X, y);
+      doc.text(`IMC: ${imc}`, col3X, y);
+      doc.text(`Temperatura: ${temp}`, col4X, y);
+      y += 5;
+
+      doc.text(`T.A: ${ta}`, col1X, y);
+      doc.text(`F.C: ${fc}`, col2X, y);
+      doc.text(`F.R: ${fr}`, col3X, y);
+      doc.text(`Saturación: ${sat}`, col4X, y);
       y += 8;
 
-      doc.text(`Abdominal: ${abdominal}`, 20, y); y += 6;
+      // Abdominal
+      doc.text(`Abdominal: ${abdominal}`, marginX, y);
+      y += 6;
 
-      if(clinico){ doc.text(clinico, 20, y, {maxWidth: pageWidth-40}); y += 10; }
+      // === Exploración clínica ===
+      function addExploracion(label, value){
+        if(!value) return;
+        const txt = `${label}: ${value}`;
+        const lines = doc.splitTextToSize(txt, pageWidth - 2*marginX);
+        doc.text(lines, marginX, y);
+        y += lines.length * 4 + 2;
+      }
 
-      if(visual){ doc.text(`A visual: ${visual}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
-      if(auditiva){ doc.text(`A auditiva: ${auditiva}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
-      if(bucal){ doc.text(`C. bucal: ${bucal}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
-      if(sangre){ doc.text(`Tipo de sangre: ${sangre}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
-      if(alergias){ doc.text(`Alergias: ${alergias}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
-      if(dm){ doc.text(`DM: ${dm}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
-      if(has){ doc.text(`H.A.S.: ${has}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
-      if(ekg){ doc.text(`EKG: ${ekg}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
-      if(pies){ doc.text(`Pies: ${pies}`, 20, y, {maxWidth: pageWidth-40}); y += 6; }
-      if(resto){ doc.text(`Resto de exploración: ${resto}`, 20, y, {maxWidth: pageWidth-40}); y += 8; }
+      if(clinico){
+        const txt = `CLINICAMENTE: ${clinico}`;
+        const lines = doc.splitTextToSize(txt, pageWidth - 2*marginX);
+        doc.text(lines, marginX, y);
+        y += lines.length * 4 + 4;
+      }
 
+      addExploracion('A VISUAL', visual);
+      addExploracion('A AUDITIVA', auditiva);
+      addExploracion('C. BUCAL', bucal);
+      addExploracion('TIPO DE SANGRE', sangre);
+      addExploracion('ALERGIAS', alergias);
+      addExploracion('DM', dm);
+      addExploracion('H.A.S.', has);
+      addExploracion('EKG', ekg);
+      addExploracion('PIES', pies);
+      addExploracion('RESTO DE EXPLORACIÓN', resto);
+
+      // === Párrafo final ===
       const textoFinal = `Se extiende el presente certificado para fines que al interesado convengan, en la ciudad de ${ciudad}.`;
-      doc.text(textoFinal, 20, y, {maxWidth: pageWidth-40}); y += 10;
+      const finalLines = doc.splitTextToSize(textoFinal, pageWidth - 2*marginX);
+      doc.text(finalLines, marginX, y);
+      y += finalLines.length * 4 + 6;
 
       if(fechaCert){
-        doc.text(`A los ${fechaCert}`, 20, y, {maxWidth: pageWidth-40});
+        doc.text(`A los ${fechaCert}`, marginX, y);
         y += 10;
       }
 
+      // === Datos del médico ===
       doc.setFont('helvetica','bold');
-      doc.text(medicoNombre, pageWidth/2, y, {align:'center'}); y += 6;
+      doc.text(medicoNombre, pageWidth/2, y, {align:'center'});
+      y += 5;
+
       doc.setFont('helvetica','normal');
-      doc.text(`Cédula profesional: ${cedula}`, pageWidth/2, y, {align:'center'}); y += 6;
-      doc.text(`Universidad de egreso: ${universidad}`, pageWidth/2, y, {align:'center'}); y += 6;
+      doc.text(`CÉDULA PROFESIONAL: ${cedula}`, pageWidth/2, y, {align:'center'});
+      y += 5;
+      doc.text(`UNIVERSIDAD DE EGRESO: ${universidad}`, pageWidth/2, y, {align:'center'});
+      y += 5;
 
       if(descargar){
         const safeName = (nombre || 'PACIENTE').replace(/[^A-Z0-9]+/gi,'_');
