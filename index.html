@@ -1314,7 +1314,7 @@ function generarCertMedicoFarmaciaPDF(descargar=true){
           const dia = ('0'+d.getDate()).slice(-2);
           const mes = d.toLocaleString('es-MX',{month:'long'}).toUpperCase();
           const anio = d.getFullYear();
-          fechaCert = `${dia} DE ${mes} DE ${anio}`;
+          fechaCert = `${dia} DIAS DEL MES DE ${mes} DE ${anio}`;
         }catch(e){}
       }
 
@@ -1411,7 +1411,7 @@ function generarCertMedicoFarmaciaPDF(descargar=true){
       }
 
       if(clinico){
-        const txt = `CLINICAMENTE: ${clinico}`;
+        const txt = `${clinico}`;
         const lines = doc.splitTextToSize(txt, pageWidth - 2*marginX);
         doc.text(lines, marginX, y);
         y += lines.length * 4 + 4;
